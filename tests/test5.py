@@ -25,6 +25,7 @@ def main():
 
 def GetNS(domain):
     import DNS
+    # hm. this might fail if a server is off the air.
     r = DNS.Request(domain,qtype='SOA').req()
     if r.header['status'] != 'NOERROR':
         Error("received status of %s when attempting to look up SOA for domain"%
