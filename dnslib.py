@@ -325,7 +325,6 @@ class RRpacker(Packer):
 		self.endRR()
 
 def prettyTime(seconds):
-	print seconds,type(seconds)
 	if seconds<60:
 	    return seconds,"%d seconds"%(seconds)
 	if seconds<3600:
