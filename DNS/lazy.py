@@ -8,10 +8,10 @@
 
 # routines for lazy people.
 import Base
+import string
 
 def revlookup(name):
     "convenience routine for doing a reverse lookup of an address"
-    import string
     a = string.split(name, '.')
     a.reverse()
     b = string.join(a, '.')+'.in-addr.arpa'
@@ -23,7 +23,6 @@ def mxlookup(name):
     convenience routine for doing an MX lookup of a name. returns a
     sorted list of (preference, mail exchanger) records
     """
-
     a = Base.DnsRequest(name, qtype = 'mx').req().answers
     l = map(lambda x:x['data'], a)
     l.sort()
@@ -31,6 +30,10 @@ def mxlookup(name):
 
 #
 # $Log$
+# Revision 1.4  2002/03/19 12:41:33  anthonybaxter
+# tabnannied and reindented everything. 4 space indent, no tabs.
+# yay.
+#
 # Revision 1.3  2001/08/09 09:08:55  anthonybaxter
 # added identifying header to top of each file
 #
