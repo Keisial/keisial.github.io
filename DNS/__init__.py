@@ -8,7 +8,7 @@
 
 # __init__.py for DNS class.
 
-__version__ = '0.0.1'
+__version__ = '0.1.0'
 
 import Type,Opcode,Status,Class
 from Base import DnsRequest, DNSError
@@ -22,6 +22,11 @@ Result = DnsResult
 
 #
 # $Log$
+# Revision 1.6  2002/03/19 13:05:02  anthonybaxter
+# converted to class based exceptions (there goes the python1.4 compatibility :)
+#
+# removed a quite gross use of 'eval()'.
+#
 # Revision 1.5  2002/03/19 12:41:33  anthonybaxter
 # tabnannied and reindented everything. 4 space indent, no tabs.
 # yay.
