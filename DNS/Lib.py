@@ -392,7 +392,7 @@ class Hpacker(Packer):
 	def addHeader(self, id, qr, opcode, aa, tc, rd, ra, z, rcode,
 		  qdcount, ancount, nscount, arcount):
 		self.add16bit(id)
-		self.add16bit((qr&1)<<15 | (opcode*0xF)<<11 | (aa&1)<<10
+		self.add16bit((qr&1)<<15 | (opcode&0xF)<<11 | (aa&1)<<10
 			  | (tc&1)<<9 | (rd&1)<<8 | (ra&1)<<7
 			  | (z&7)<<4 | (rcode&0xF))
 		self.add16bit(qdcount)
@@ -591,4 +591,7 @@ def dumpRR(u):
 
 # 
 # $Log$
+# Revision 1.3  2001/07/19 06:57:07  anthony
+# cvs keywords added
+#
 #
