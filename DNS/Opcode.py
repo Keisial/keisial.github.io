@@ -6,7 +6,7 @@
 
  This code is covered by the standard Python License.
 
- Opcode values in message header (section 4.1.1)
+ Opcode values in message header. RFC 1035, 1996, 2136.
 """
 
 
@@ -14,6 +14,8 @@
 QUERY = 0
 IQUERY = 1
 STATUS = 2
+NOTIFY = 4
+UPDATE = 5
 
 # Construct reverse mapping dictionary
 
@@ -28,6 +30,10 @@ def opcodestr(opcode):
 
 #
 # $Log$
+# Revision 1.5  2002/03/19 12:41:33  anthonybaxter
+# tabnannied and reindented everything. 4 space indent, no tabs.
+# yay.
+#
 # Revision 1.4  2002/03/19 12:26:13  anthonybaxter
 # death to leading tabs.
 #
