@@ -2,7 +2,7 @@ Release 2.2, Mon Apr 27 22:59:16 EST 1998
 
 This is a test release of the DNS code, as originally written by 
 Guido van Rossum, and with a hopefully nicer API bolted over the
-top of it by Anthony Baxter <arb@connect.com.au>. It's also in a 
+top of it by Anthony Baxter <anthony@interlink.com.au>. It's also in a 
 python 1.5 package.
 
 There are several known bugs/unfinished bits
@@ -81,4 +81,4 @@ authoritative, and that the zone serial numbers match.
 
 see also README.guido for the original docs.
 
-comments to me - arb@connect.com.au
+comments to me - anthony@interlink.com.au
