@@ -1,4 +1,11 @@
 # $Id$
+#
+# This file is part of the pydns project.
+# Homepage: http://pydns.sourceforge.net
+#
+# This code is covered by the standard Python License.
+#
+
 # CLASS values (section 3.2.4)
 
 IN = 1		# the Internet
@@ -25,4 +32,7 @@ def classstr(klass):
 
 # 
 # $Log$
+# Revision 1.2  2001/07/19 06:57:07  anthony
+# cvs keywords added
+#
 #

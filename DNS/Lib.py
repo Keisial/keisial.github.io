@@ -1,4 +1,11 @@
 # Domain Name Server (DNS) interface
+#
+# This file is part of the pydns project.
+# Homepage: http://pydns.sourceforge.net
+#
+# This code is covered by the standard Python License.
+#
+
 # 
 # $Id$
 #
@@ -601,6 +608,9 @@ def dumpRR(u):
 
 # 
 # $Log$
+# Revision 1.7  2001/07/19 07:50:44  anthony
+# Added SRV (RFC 2782) support. Code from Michael Ströder.
+#
 # Revision 1.6  2001/07/19 07:39:18  anthony
 # 'type' -> 'rrtype' in getRRheader(). Fix from Michael Ströder.
 #

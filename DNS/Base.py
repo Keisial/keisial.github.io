@@ -1,4 +1,10 @@
 # $Id$
+#
+# This file is part of the pydns project. 
+# Homepage: http://pydns.sourceforge.net
+#
+# This code is covered by the standard Python License.
+# 
 import sys
 import getopt
 import socket
@@ -222,6 +228,10 @@ class DnsAsyncRequest(DnsRequest):
 
 # 
 # $Log$
+# Revision 1.3  2001/07/19 07:20:12  anthony
+# Handle blank resolv.conf lines.
+# Patch from Bastian Kleineidam
+#
 # Revision 1.2  2001/07/19 06:57:07  anthony
 # cvs keywords added
 #

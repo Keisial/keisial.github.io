@@ -1,4 +1,11 @@
 # $Id$
+#
+# This file is part of the pydns project.
+# Homepage: http://pydns.sourceforge.net
+#
+# This code is covered by the standard Python License.
+#
+
 # Opcode values in message header (section 4.1.1)
 
 QUERY = 0
@@ -18,4 +25,7 @@ def opcodestr(opcode):
 
 #
 # $Log$
+# Revision 1.2  2001/07/19 06:57:07  anthony
+# cvs keywords added
+#
 #

@@ -1,4 +1,11 @@
 # $Id$
+#
+# This file is part of the pydns project.
+# Homepage: http://pydns.sourceforge.net
+#
+# This code is covered by the standard Python License.
+#
+
 # Status values in message header
 
 NOERROR       = 0
@@ -21,4 +28,7 @@ def statusstr(status):
 
 #
 # $Log$
+# Revision 1.2  2001/07/19 06:57:07  anthony
+# cvs keywords added
+#
 #
