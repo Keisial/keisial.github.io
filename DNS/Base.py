@@ -17,7 +17,7 @@ defaults= { 'protocol':'udp', 'port':53, 'opcode':DNS.Opcode.QUERY,
 
 defaults['server']=[]
 
-def ParseResolvConf():
+def ParseResolvConf(resolv_path="/etc/resolv.conf"):
     "parses the /etc/resolv.conf file and sets defaults for name servers"
     import string, os
     global defaults
@@ -26,12 +26,10 @@ def ParseResolvConf():
 	defaults['server']=RegistryResolve()
 	return
     # else
-    lines=open("/etc/resolv.conf").readlines()
+    lines=open(resolv_path).readlines()
     for line in lines:
-	string.strip(line)
-	if not line: 
-	    continue
-	if line[0]==';' or line[0]=='#':
+	line = string.strip(line)
+	if not line or line[0]==';' or line[0]=='#':
 	    continue
 	fields=string.split(line)
 	if fields[0]=='domain':
@@ -231,6 +229,19 @@ class DnsAsyncRequest(DnsRequest):
 
 # 
 # $Log$
+# Revision 1.5  2001/08/09 09:22:28  anthonybaxter
+# added what I hope is win32 resolver lookup support. I'll need to try
+# and figure out how to get the CVS checkout onto my windows machine to
+# make sure it works (wow, doing something other than games on the
+# windows machine :)
+#
+# Code from Wolfgang.Strobl@gmd.de
+# win32dns.py from
+# http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/66260
+#
+# Really, ParseResolvConf() should be renamed "FindNameServers" or
+# some such.
+#
 # Revision 1.4  2001/08/09 09:08:55  anthonybaxter
 # added identifying header to top of each file
 #
