@@ -3,15 +3,19 @@
 # $Id$
 #
 
+import sys,os
+
+sys.path.insert(0,os.getcwd())
+
 from distutils.core import setup
 
-from DNS import __version__
+import DNS
 
 setup(
         #-- Package description
         name = 'pydns',
         license = 'Python license',
-        version = __version__,
+        version = DNS.__version__,
         description = 'Python DNS library',
         long_description = """Python DNS library:
 """,
@@ -23,6 +27,9 @@ setup(
 
 #
 # $Log$
+# Revision 1.2  2001/11/23 19:36:35  stroeder
+# Use DNS.__version__ as package version and corrected name
+#
 # Revision 1.1  2001/08/09 13:42:38  anthonybaxter
 # initial setup.py. That was easy. :)
 #
