@@ -19,7 +19,7 @@ setup(
         description = 'Python DNS library',
         long_description = """Python DNS library:
 """,
-        author = '', 
+        author = 'Anthony Baxter and others', 
         author_email = 'pydns-developer@lists.sourceforge.net',
         url = 'http://pydns.sourceforge.net/',
         packages = ['DNS'],
@@ -27,6 +27,9 @@ setup(
 
 #
 # $Log$
+# Revision 1.3  2001/11/23 19:43:57  stroeder
+# Prepend current directory to sys.path to enable import of DNS.
+#
 # Revision 1.2  2001/11/23 19:36:35  stroeder
 # Use DNS.__version__ as package version and corrected name
 #
