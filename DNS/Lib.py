@@ -565,7 +565,7 @@ class DnsResult:
 	if hasattr(u, mname):
 	    r['data']=getattr(u, mname)()
 	else:
-	    r['data']=u.getbytes(rdlength)
+	    r['data']=u.getbytes(r['rdlength'])
 	return r
 
 def dumpQ(u):
@@ -591,6 +591,10 @@ def dumpRR(u):
 
 # 
 # $Log$
+# Revision 1.4  2001/07/19 07:16:42  anthony
+# Changed (opcode&0xF)<<11 to (opcode*0xF)<<11.
+# Patch from Timothy J. Miller.
+#
 # Revision 1.3  2001/07/19 06:57:07  anthony
 # cvs keywords added
 #
