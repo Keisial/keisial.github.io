@@ -3,6 +3,10 @@
 #
 # Tests of the packet assembler/disassembler routines.
 #
+# only tests the simple packers for now. next is to test the 
+# classes: Packer/Unpacker, RRpacker/RRunpacker, Hpacker/Hunpacker,
+# Qpacker/Unpacker, then Mpacker/Munpacker
+#
 
 import DNS
 import unittest
