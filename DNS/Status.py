@@ -1,3 +1,4 @@
+# $Id$
 # Status values in message header
 
 NOERROR       = 0
@@ -17,3 +18,7 @@ for _name in _names:
 def statusstr(status):
 	if statusmap.has_key(status): return statusmap[status]
 	else: return `status`
+
+#
+# $Log$
+#

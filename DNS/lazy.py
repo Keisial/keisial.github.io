@@ -22,3 +22,6 @@ def mxlookup(name):
     l.sort()
     return l
 
+# 
+# $Log$
+#

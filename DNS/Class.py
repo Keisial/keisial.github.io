@@ -1,3 +1,4 @@
+# $Id$
 # CLASS values (section 3.2.4)
 
 IN = 1		# the Internet
@@ -21,3 +22,7 @@ for _name in _names:
 def classstr(klass):
 	if classmap.has_key(klass): return classmap[klass]
 	else: return `klass`
+
+# 
+# $Log$
+#

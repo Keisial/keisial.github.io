@@ -1,3 +1,4 @@
+# $Id$
 # TYPE values (section 3.2.2)
 
 A = 1		# a host address
@@ -40,3 +41,6 @@ for _name in _names:
 def typestr(type):
 	if typemap.has_key(type): return typemap[type]
 	else: return `type`
+#
+# $Log$
+#

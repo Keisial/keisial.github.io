@@ -1,3 +1,4 @@
+# $Id$
 # Opcode values in message header (section 4.1.1)
 
 QUERY = 0
@@ -14,3 +15,7 @@ for _name in _names:
 def opcodestr(opcode):
 	if opcodemap.has_key(opcode): return opcodemap[opcode]
 	else: return `opcode`
+
+#
+# $Log$
+#

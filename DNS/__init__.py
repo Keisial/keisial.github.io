@@ -1,3 +1,4 @@
+# $Id$
 # __init__.py for DNS class.
 
 Error='DNS API error'
@@ -8,3 +9,6 @@ from lazy import *
 Request = DnsRequest
 Result = DnsResult
 
+# 
+# $Log$
+#

@@ -217,3 +217,7 @@ class DnsAsyncRequest(DnsRequest):
 	pass
     def showResult(self,*s):
 	self.response.show()
+
+# 
+# $Log$
+#

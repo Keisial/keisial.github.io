@@ -1,4 +1,6 @@
 # Domain Name Server (DNS) interface
+# 
+# $Id$
 #
 # See RFC 1035:
 # ------------------------------------------------------------------------
@@ -587,3 +589,6 @@ def dumpRR(u):
 	else:
 		print '  binary rdata:', u.getbytes(rdlength)
 
+# 
+# $Log$
+#
