@@ -13,7 +13,8 @@ $Id$
 IN = 1          # the Internet
 CS = 2          # the CSNET class (Obsolete - used only for examples in
                 # some obsolete RFCs)
-CH = 3          # the CHAOS class
+CH = 3          # the CHAOS class. When someone shows me python running on
+                # a Symbolics Lisp machine, I'll look at implementing this.
 HS = 4          # Hesiod [Dyer 87]
 
 # QCLASS values (section 3.2.5)
@@ -34,6 +35,10 @@ def classstr(klass):
 
 #
 # $Log$
+# Revision 1.5  2002/03/19 12:41:33  anthonybaxter
+# tabnannied and reindented everything. 4 space indent, no tabs.
+# yay.
+#
 # Revision 1.4  2002/03/19 12:26:13  anthonybaxter
 # death to leading tabs.
 #

@@ -21,12 +21,12 @@ NXRRSET   = 8 #   RR Set that should exist does not  [RFC 2136]
 NOTAUTH   = 9 #   Server Not Authoritative for zone  [RFC 2136]
 NOTZONE   = 10 #  Name not contained in zone         [RFC 2136]
 BADVERS   = 16 #  Bad OPT Version                    [RFC 2671]
-BADSIG 	  = 16 #  TSIG Signature Failure             [RFC 2845]
+BADSIG    = 16 #  TSIG Signature Failure             [RFC 2845]
 BADKEY    = 17 #  Key not recognized                 [RFC 2845]
 BADTIME   = 18 #  Signature out of time window       [RFC 2845]
 BADMODE   = 19 #  Bad TKEY Mode                      [RFC 2930]
 BADNAME   = 20 #  Duplicate key name                 [RFC 2930]
-BADALG 	  = 21 #  Algorithm not supported            [RFC 2930]
+BADALG    = 21 #  Algorithm not supported            [RFC 2930]
 
 # Construct reverse mapping dictionary
 
@@ -41,6 +41,9 @@ def statusstr(status):
 
 #
 # $Log$
+# Revision 1.6  2002/04/23 10:57:57  anthonybaxter
+# update to complete the list of response codes.
+#
 # Revision 1.5  2002/03/19 12:41:33  anthonybaxter
 # tabnannied and reindented everything. 4 space indent, no tabs.
 # yay.
