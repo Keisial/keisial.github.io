@@ -18,6 +18,8 @@ MINFO = 14	# mailbox or mail list information
 MX = 15		# mail exchange
 TXT = 16	# text strings
 AAAA = 28	# IPv6 AAAA records (RFC 1886)
+SRV = 33	# DNS RR for specifying the location of services (RFC 2782)
+ 
 
 # Additional TYPE values from host.c source
 
@@ -43,4 +45,7 @@ def typestr(type):
 	else: return `type`
 #
 # $Log$
+# Revision 1.2  2001/07/19 06:57:07  anthony
+# cvs keywords added
+#
 #
