@@ -4,6 +4,8 @@ This is a another release of the pydns code, as originally written by
 Guido van Rossum, and with a hopefully nicer API bolted over the
 top of it by Anthony Baxter <anthony@interlink.com.au>. 
 
+This code is released under a Python-style license. 
+
 I'm making this release because there hasn't been a release in a 
 heck of a long time, and it probably deserves one. I'd also like to
 do a substantial refactor of some of the guts of the code, and this
