@@ -19,7 +19,7 @@
           License analog to the current Python license
 """
 
-import string
+import string, re
 import _winreg
 
 def binipdisplay(s):
@@ -37,8 +37,11 @@ def binipdisplay(s):
     return ol
 
 def stringdisplay(s):
-    'convert "d.d.d.d,d.d.d.d" to ["d.d.d.d","d.d.d.d"]'
-    return string.split(s,",")
+    '''convert "d.d.d.d,d.d.d.d" to ["d.d.d.d","d.d.d.d"].
+       also handle u'd.d.d.d d.d.d.d', as reporting on SF 
+    '''
+    import re
+    return map(str, re.split("[ ,]",s))
 
 def RegistryResolve():
     nameservers=[]
@@ -110,6 +113,10 @@ if __name__=="__main__":
 
 #
 # $Log$
+# Revision 1.2  2002/03/19 12:41:33  anthonybaxter
+# tabnannied and reindented everything. 4 space indent, no tabs.
+# yay.
+#
 # Revision 1.1  2001/08/09 09:22:28  anthonybaxter
 # added what I hope is win32 resolver lookup support. I'll need to try
 # and figure out how to get the CVS checkout onto my windows machine to
