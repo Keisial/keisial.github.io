@@ -21,8 +21,6 @@
 #             DOMAIN NAMES - IMPLEMENTATION AND SPECIFICATION
 # ------------------------------------------------------------------------
 
-UnpackError = 'DNS.Lib.UnpackError'  # Exception
-PackError = 'DNS.Lib.PackError'      # Exception
 
 import string, types
 
@@ -31,6 +29,10 @@ import Class
 import Opcode
 import Status
 
+from Base import DNSError
+
+class UnpackError(DNSError): pass
+class PackError(DNSError): pass
 
 # Low-level 16 and 32 bit integer packing and unpacking
 
@@ -629,6 +631,10 @@ if __name__ == "__main__":
     testpacker()
 #
 # $Log$
+# Revision 1.10  2002/03/19 12:41:33  anthonybaxter
+# tabnannied and reindented everything. 4 space indent, no tabs.
+# yay.
+#
 # Revision 1.9  2002/03/19 10:30:33  anthonybaxter
 # first round of major bits and pieces. The major stuff here (summarised
 # from my local, off-net CVS server :/ this will cause some oddities with

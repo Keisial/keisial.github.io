@@ -10,16 +10,22 @@
 
 __version__ = '0.0.1'
 
-Error='DNS API error'
 import Type,Opcode,Status,Class
+from Base import DnsRequest, DNSError
+from Lib import DnsResult
 from Base import *
 from Lib import *
+Error=DNSError
 from lazy import *
 Request = DnsRequest
 Result = DnsResult
 
 #
 # $Log$
+# Revision 1.5  2002/03/19 12:41:33  anthonybaxter
+# tabnannied and reindented everything. 4 space indent, no tabs.
+# yay.
+#
 # Revision 1.4  2001/11/26 17:57:51  stroeder
 # Added __version__
 #

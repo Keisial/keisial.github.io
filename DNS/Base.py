@@ -11,9 +11,10 @@ This code is covered by the standard Python License.
 
 import socket
 import string
-import Lib,Type,Class,Opcode
+import Type,Class,Opcode
 import asyncore
-from DNS import Error as DNSError
+
+class DNSError(Exception): pass
 
 defaults= { 'protocol':'udp', 'port':53, 'opcode':Opcode.QUERY,
             'qtype':Type.A, 'rd':1, 'timing':1, 'timeout': 30 }
@@ -91,7 +92,7 @@ class DnsRequest:
         return self.processReply()
 
     def processTCPReply(self):
-        import time
+        import time, Lib
         self.f = self.s.makefile('r')
         header = self.f.read(2)
         if len(header) < 2:
@@ -105,6 +106,7 @@ class DnsRequest:
         return self.processReply()
 
     def processReply(self):
+        import Lib
         self.args['elapsed']=(self.time_finish-self.time_start)*1000
         u = Lib.Munpacker(self.reply)
         r=Lib.DnsResult(u,self.args)
@@ -135,7 +137,7 @@ class DnsRequest:
 
     def req(self,*name,**args):
         " needs a refactoring "
-        import time
+        import time, Lib
         self.argparse(name,args)
         #if not self.args:
         #    raise DNSError,'reinitialize request before reuse'
@@ -146,8 +148,8 @@ class DnsRequest:
         server=self.args['server']
         if type(self.args['qtype']) == type('foo'):
             try:
-                qtype = eval(string.upper(self.args['qtype']),Type.__dict__)
-            except (NameError,SyntaxError):
+                qtype = getattr(Type, string.upper(self.args['qtype']))
+            except AttributeError:
                 raise DNSError,'unknown query type'
         else:
             qtype=self.args['qtype']
@@ -240,6 +242,10 @@ class DnsAsyncRequest(DnsRequest,asyncore.dispatcher_with_send):
 
 #
 # $Log$
+# Revision 1.10  2002/03/19 12:41:33  anthonybaxter
+# tabnannied and reindented everything. 4 space indent, no tabs.
+# yay.
+#
 # Revision 1.9  2002/03/19 12:26:13  anthonybaxter
 # death to leading tabs.
 #
