@@ -5,242 +5,241 @@ This file is part of the pydns project.
 Homepage: http://pydns.sourceforge.net
 
 This code is covered by the standard Python License.
+
+    Base functionality. Request and Response classes, that sort of thing.
 """
 
-import sys
-import getopt
 import socket
 import string
-import DNS,DNS.Lib,DNS.Type,DNS.Class,DNS.Opcode
-#import asyncore
+import Lib,Type,Class,Opcode
+import asyncore
+from DNS import Error as DNSError
 
-defaults= { 'protocol':'udp', 'port':53, 'opcode':DNS.Opcode.QUERY, 
-            'qtype':DNS.Type.A, 'rd':1, 'timing':1, 'timeout': 30 }
+defaults= { 'protocol':'udp', 'port':53, 'opcode':Opcode.QUERY, 
+            'qtype':Type.A, 'rd':1, 'timing':1, 'timeout': 30 }
 
 defaults['server']=[]
 
 def ParseResolvConf(resolv_path="/etc/resolv.conf"):
     "parses the /etc/resolv.conf file and sets defaults for name servers"
-    import string, os
     global defaults
-    if os.name=="nt":
-	from win32dns import RegistryResolve
-	defaults['server']=RegistryResolve()
-	return
-    # else
     lines=open(resolv_path).readlines()
     for line in lines:
-	line = string.strip(line)
-	if not line or line[0]==';' or line[0]=='#':
-	    continue
-	fields=string.split(line)
-	if fields[0]=='domain':
-	    defaults['domain']=fields[1]
-	if fields[0]=='search':
-	    pass
-	if fields[0]=='options':
-	    pass
-	if fields[0]=='sortlist':
-	    pass
-	if fields[0]=='nameserver':
-	    defaults['server'].append(fields[1])
+        line = string.strip(line)
+        if not line or line[0]==';' or line[0]=='#':
+            continue
+        fields=string.split(line)
+        if fields[0]=='domain':
+            defaults['domain']=fields[1]
+        if fields[0]=='search':
+            pass
+        if fields[0]=='options':
+            pass
+        if fields[0]=='sortlist':
+            pass
+        if fields[0]=='nameserver':
+            defaults['server'].append(fields[1])
+
+def DiscoverNameServers():
+    import sys
+    if sys.platform in ('win32', 'nt'):
+        import win32dns
+        defaults['server']=win32dns.RegistryResolve()
+    else:
+        return ParseResolvConf()
 
 class DnsRequest:
+    """ high level Request object """
     def __init__(self,*name,**args):
-	self.donefunc=None
-	self.async=None
-	self.defaults = {}
-	self.argparse(name,args)
-	self.defaults = self.args
+        self.donefunc=None
+        self.async=None
+        self.defaults = {}
+        self.argparse(name,args)
+        self.defaults = self.args
 
     def argparse(self,name,args):
-	if not name and self.defaults.has_key('name'):
-	    args['name'] = self.defaults['name']
-	if type(name) is type(""):
-	    args['name']=name
-	else:
-	    if len(name) == 1:
-		if name[0]:
-		    args['name']=name[0]
-	for i in defaults.keys():
-	    if not args.has_key(i):
-		if self.defaults.has_key(i):
-		    args[i]=self.defaults[i]
-		else:
-		    args[i]=defaults[i]
-	if type(args['server']) == type(''):
-	    args['server'] = [args['server']]
-	self.args=args
+        if not name and self.defaults.has_key('name'):
+            args['name'] = self.defaults['name']
+        if type(name) is type(""):
+            args['name']=name
+        else:
+            if len(name) == 1:
+                if name[0]:
+                    args['name']=name[0]
+        for i in defaults.keys():
+            if not args.has_key(i):
+                if self.defaults.has_key(i):
+                    args[i]=self.defaults[i]
+                else:
+                    args[i]=defaults[i]
+        if type(args['server']) == type(''):
+            args['server'] = [args['server']]
+        self.args=args
 
     def socketInit(self,a,b):
-	import socket
-	self.s = socket.socket(a,b)
+        self.s = socket.socket(a,b)
 
     def processUDPReply(self):
-	import time,select
-	if self.args['timeout'] > 0:
-	    r,w,e = select.select([self.s],[],[],self.args['timeout'])
-	    if not len(r):
-		raise DNS.Error, 'Timeout'
-	self.reply = self.s.recv(1024)
-	self.time_finish=time.time()
-	self.args['server']=self.ns
-	return self.processReply()
+        import time,select
+        if self.args['timeout'] > 0:
+            r,w,e = select.select([self.s],[],[],self.args['timeout'])
+            if not len(r):
+                raise DNSError, 'Timeout'
+        self.reply = self.s.recv(1024)
+        self.time_finish=time.time()
+        self.args['server']=self.ns
+        return self.processReply()
 
     def processTCPReply(self):
-	import time
-	self.f = self.s.makefile('r')
-	header = self.f.read(2)
-	if len(header) < 2:
-		raise DNS.Error,'EOF'
-	count = DNS.Lib.unpack16bit(header)
-	self.reply = self.f.read(count)
-	if len(self.reply) != count:
-	    raise DNS.Error,'incomplete reply'
-	self.time_finish=time.time()
-	self.args['server']=self.ns
-	return self.processReply()
+        import time
+        self.f = self.s.makefile('r')
+        header = self.f.read(2)
+        if len(header) < 2:
+                raise DNSError,'EOF'
+        count = Lib.unpack16bit(header)
+        self.reply = self.f.read(count)
+        if len(self.reply) != count:
+            raise DNSError,'incomplete reply'
+        self.time_finish=time.time()
+        self.args['server']=self.ns
+        return self.processReply()
 
     def processReply(self):
-	import time
-	self.args['elapsed']=(self.time_finish-self.time_start)*1000
-	u = DNS.Lib.Munpacker(self.reply)
-	r=DNS.Lib.DnsResult(u,self.args)
-	r.args=self.args
-	#self.args=None  # mark this DnsRequest object as used.
-	return r
-	#### TODO TODO TODO ####
-	if protocol == 'tcp' and qtype == DNS.Type.AXFR:
-	    while 1:
-		header = f.read(2)
-		if len(header) < 2:
-		    print '========== EOF =========='
-		    break
-		count = DNS.Lib.unpack16bit(header)
-		if not count:
-		    print '========== ZERO COUNT =========='
-		    break
-		print '========== NEXT =========='
-		reply = f.read(count)
-		if len(reply) != count:
-		    print '*** Incomplete reply ***'
-		    break
-		u = DNS.Lib.Munpacker(reply)
-		DNS.Lib.dumpM(u)
+        self.args['elapsed']=(self.time_finish-self.time_start)*1000
+        u = Lib.Munpacker(self.reply)
+        r=Lib.DnsResult(u,self.args)
+        r.args=self.args
+        #self.args=None  # mark this DnsRequest object as used.
+        return r
+        #### TODO TODO TODO ####
+#        if protocol == 'tcp' and qtype == Type.AXFR:
+#            while 1:
+#                header = f.read(2)
+#                if len(header) < 2:
+#                    print '========== EOF =========='
+#                    break
+#                count = Lib.unpack16bit(header)
+#                if not count:
+#                    print '========== ZERO COUNT =========='
+#                    break
+#                print '========== NEXT =========='
+#                reply = f.read(count)
+#                if len(reply) != count:
+#                    print '*** Incomplete reply ***'
+#                    break
+#                u = Lib.Munpacker(reply)
+#                Lib.dumpM(u)
 
     def conn(self):
-	self.s.connect((self.ns,self.port))
+        self.s.connect((self.ns,self.port))
 
     def req(self,*name,**args):
-	import time,sys
-	self.argparse(name,args)
-	#if not self.args:
-	#    raise DNS.Error,'reinitialize request before reuse'
-	protocol = self.args['protocol']
-	self.port = self.args['port']
-	opcode = self.args['opcode']
-	rd = self.args['rd']
-	server=self.args['server']
-	if type(self.args['qtype']) == type('foo'):
-	    try:
-		qtype = eval(string.upper(self.args['qtype']), DNS.Type.__dict__)
-	    except (NameError,SyntaxError):
-		raise DNS.Error,'unknown query type'
-	else:
-	    qtype=self.args['qtype']
-	if not self.args.has_key('name'):
-	    print self.args
-	    raise DNS.Error,'nothing to lookup'
-	qname = self.args['name']
-	if qtype == DNS.Type.AXFR:
-	    print 'Query type AXFR, protocol forced to TCP'
-	    protocol = 'tcp'
-	#print 'QTYPE %d(%s)' % (qtype, DNS.Type.typestr(qtype))
-	m = DNS.Lib.Mpacker()
-	m.addHeader(0,
-	      0, opcode, 0, 0, rd, 0, 0, 0,
-	      1, 0, 0, 0)
-	m.addQuestion(qname, qtype, DNS.Class.IN)
-	self.request = m.getbuf()
-	if protocol == 'udp':
-	    self.response=None
-	    self.socketInit(socket.AF_INET, socket.SOCK_DGRAM)
-	    for self.ns in server:
-		try:
-		    #self.s.connect((self.ns, self.port))
-		    self.conn()
-		    self.time_start=time.time()
-		    if not self.async:
-			self.s.send(self.request)
-			self.response=self.processUDPReply()
-		#except socket.error:
-		except None:
-		    continue
-		break
-	    if not self.response:
-		if not self.async:
-		    raise DNS.Error,'no working nameservers found'
-	else:
-	    self.response=None
-	    for self.ns in server:
-		try:
-		    self.socketInit(socket.AF_INET, socket.SOCK_STREAM)
-		    self.time_start=time.time()
-		    self.conn()
-		    self.s.send(DNS.Lib.pack16bit(len(self.request)) + self.request)
-		    self.s.shutdown(1)
-		    self.response=self.processTCPReply()
-		except socket.error:
-		    continue
-		break
-	    if not self.response:
-		raise DNS.Error,'no working nameservers found'
-	if not self.async:
-	    return self.response
+	" needs a refactoring "
+        import time
+        self.argparse(name,args)
+        #if not self.args:
+        #    raise DNSError,'reinitialize request before reuse'
+        protocol = self.args['protocol']
+        self.port = self.args['port']
+        opcode = self.args['opcode']
+        rd = self.args['rd']
+        server=self.args['server']
+        if type(self.args['qtype']) == type('foo'):
+            try:
+                qtype = eval(string.upper(self.args['qtype']),Type.__dict__)
+            except (NameError,SyntaxError):
+                raise DNSError,'unknown query type'
+        else:
+            qtype=self.args['qtype']
+        if not self.args.has_key('name'):
+            print self.args
+            raise DNSError,'nothing to lookup'
+        qname = self.args['name']
+        if qtype == Type.AXFR:
+            print 'Query type AXFR, protocol forced to TCP'
+            protocol = 'tcp'
+        #print 'QTYPE %d(%s)' % (qtype, Type.typestr(qtype))
+        m = Lib.Mpacker()
+        m.addHeader(0,
+              0, opcode, 0, 0, rd, 0, 0, 0,
+              1, 0, 0, 0)
+        m.addQuestion(qname, qtype, Class.IN)
+        self.request = m.getbuf()
+        if protocol == 'udp':
+            self.response=None
+            self.socketInit(socket.AF_INET, socket.SOCK_DGRAM)
+            for self.ns in server:
+                try:
+                    #self.s.connect((self.ns, self.port))
+                    self.conn()
+                    self.time_start=time.time()
+                    if not self.async:
+                        self.s.send(self.request)
+                        self.response=self.processUDPReply()
+                #except socket.error:
+                except None:
+                    continue
+                break
+            if not self.response:
+                if not self.async:
+                    raise DNSError,'no working nameservers found'
+        else:
+            self.response=None
+            for self.ns in server:
+                try:
+                    self.socketInit(socket.AF_INET, socket.SOCK_STREAM)
+                    self.time_start=time.time()
+                    self.conn()
+                    self.s.send(Lib.pack16bit(len(self.request)) + 
+                                                                self.request)
+                    self.s.shutdown(1)
+                    self.response=self.processTCPReply()
+                except socket.error:
+                    continue
+                break
+            if not self.response:
+                raise DNSError,'no working nameservers found'
+        if not self.async:
+            return self.response
+	else: 
+	    return None
 
-#class DnsAsyncRequest(DnsRequest,asyncore.dispatcher_with_send):
-class DnsAsyncRequest(DnsRequest):
+#class DnsAsyncRequest(DnsRequest):
+class DnsAsyncRequest(DnsRequest,asyncore.dispatcher_with_send):
+    " an asynchronous request object. out of date, probably broken "
     def __init__(self,*name,**args):
-	if args.has_key('done') and args['done']:
-	    self.donefunc=args['done']
-	else:
-	    self.donefunc=self.showResult
-	self.realinit(name,args)
-	self.async=1
+	DnsRequest.__init__(self, *name, **args)
+	# XXX todo
+        if args.has_key('done') and args['done']:
+            self.donefunc=args['done']
+        else:
+            self.donefunc=self.showResult
+        #self.realinit(name,args) # XXX todo
+        self.async=1
     def conn(self):
-	import time
-	self.connect(self.ns,self.port)
-	self.time_start=time.time()
-	if self.args.has_key('start') and self.args['start']:
-	    asyncore.dispatcher.go(self)
+        import time
+        self.connect((self.ns,self.port))
+        self.time_start=time.time()
+        if self.args.has_key('start') and self.args['start']:
+            asyncore.dispatcher.go(self)
     def socketInit(self,a,b):
-	self.create_socket(a,b)
-	asyncore.dispatcher.__init__(self)
-	self.s=self
+        self.create_socket(a,b)
+        asyncore.dispatcher.__init__(self)
+        self.s=self
     def handle_read(self):
-	if self.args['protocol'] == 'udp':
-	    self.response=self.processUDPReply()
-	    if self.donefunc: 
-		apply(self.donefunc,(self,))
+        if self.args['protocol'] == 'udp':
+            self.response=self.processUDPReply()
+            if self.donefunc: 
+                apply(self.donefunc,(self,))
     def handle_connect(self):
-	self.send(self.request)
+        self.send(self.request)
     def handle_write(self):
-	pass
+        pass
     def showResult(self,*s):
-	self.response.show()
+        self.response.show()
 
 # 
 # $Log$
-# Revision 1.6  2001/12/07 21:47:33  stroeder
-# ParseResolvConf():
-#
-# Assign line = string.strip(line) to avoid IndexError with parsing lines only
-# containing white-space chars.
-#
-# Key word parameter resolv_path for specifying path name of resolv.conf.
-#
-# Merge checking for empty lines and comments into one if-statement.
-#
 # Revision 1.5  2001/08/09 09:22:28  anthonybaxter
 # added what I hope is win32 resolver lookup support. I'll need to try
 # and figure out how to get the CVS checkout onto my windows machine to
