@@ -134,7 +134,7 @@ class DnsRequest:
         self.s.connect((self.ns,self.port))
 
     def req(self,*name,**args):
-	" needs a refactoring "
+        " needs a refactoring "
         import time
         self.argparse(name,args)
         #if not self.args:
@@ -201,15 +201,15 @@ class DnsRequest:
                 raise DNSError,'no working nameservers found'
         if not self.async:
             return self.response
-	else: 
-	    return None
+        else: 
+            return None
 
 #class DnsAsyncRequest(DnsRequest):
 class DnsAsyncRequest(DnsRequest,asyncore.dispatcher_with_send):
     " an asynchronous request object. out of date, probably broken "
     def __init__(self,*name,**args):
-	DnsRequest.__init__(self, *name, **args)
-	# XXX todo
+        DnsRequest.__init__(self, *name, **args)
+        # XXX todo
         if args.has_key('done') and args['done']:
             self.donefunc=args['done']
         else:
@@ -240,6 +240,31 @@ class DnsAsyncRequest(DnsRequest,asyncore.dispatcher_with_send):
 
 # 
 # $Log$
+# Revision 1.8  2002/03/19 10:30:33  anthonybaxter
+# first round of major bits and pieces. The major stuff here (summarised
+# from my local, off-net CVS server :/ this will cause some oddities with
+# the
+#
+# tests/testPackers.py:
+#   a large slab of unit tests for the packer and unpacker code in DNS.Lib
+#
+# DNS/Lib.py:
+#   placeholder for addSRV.
+#   added 'klass' to addA, make it the same as the other A* records.
+#   made addTXT check for being passed a string, turn it into a length 1 list.
+#   explicitly check for adding a string of length > 255 (prohibited).
+#   a bunch of cleanups from a first pass with pychecker
+#   new code for pack/unpack. the bitwise stuff uses struct, for a smallish
+#     (disappointly small, actually) improvement, while addr2bin is much
+#     much faster now.
+#
+# DNS/Base.py:
+#   added DiscoverNameServers. This automatically does the right thing
+#     on unix/ win32. No idea how MacOS handles this.  *sigh*
+#     Incompatible change: Don't use ParseResolvConf on non-unix, use this
+#     function, instead!
+#   a bunch of cleanups from a first pass with pychecker
+#
 # Revision 1.5  2001/08/09 09:22:28  anthonybaxter
 # added what I hope is win32 resolver lookup support. I'll need to try
 # and figure out how to get the CVS checkout onto my windows machine to

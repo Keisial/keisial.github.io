@@ -1,12 +1,13 @@
-# $Id$
-#
-# This file is part of the pydns project.
-# Homepage: http://pydns.sourceforge.net
-#
-# This code is covered by the standard Python License.
-#
+"""
+ $Id$
 
-# Status values in message header
+ This file is part of the pydns project.
+ Homepage: http://pydns.sourceforge.net
+
+ This code is covered by the standard Python License.
+
+ Status values in message header
+"""
 
 NOERROR       = 0
 FORMERR       = 1
@@ -28,6 +29,9 @@ def statusstr(status):
 
 #
 # $Log$
+# Revision 1.3  2001/08/09 09:08:55  anthonybaxter
+# added identifying header to top of each file
+#
 # Revision 1.2  2001/07/19 06:57:07  anthony
 # cvs keywords added
 #

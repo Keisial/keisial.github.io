@@ -1,12 +1,13 @@
-# $Id$
-#
-# This file is part of the pydns project.
-# Homepage: http://pydns.sourceforge.net
-#
-# This code is covered by the standard Python License.
-#
+"""
+ $Id$
 
-# TYPE values (section 3.2.2)
+ This file is part of the pydns project.
+ Homepage: http://pydns.sourceforge.net
+
+ This code is covered by the standard Python License.
+
+ TYPE values (section 3.2.2)
+"""
 
 A = 1		# a host address
 NS = 2		# an authoritative name server
@@ -45,13 +46,16 @@ ANY = 255	# A request for all records
 _names = dir()
 typemap = {}
 for _name in _names:
-	if _name[0] != '_': typemap[eval(_name)] = _name
+        if _name[0] != '_': typemap[eval(_name)] = _name
 
 def typestr(type):
-	if typemap.has_key(type): return typemap[type]
-	else: return `type`
+        if typemap.has_key(type): return typemap[type]
+        else: return `type`
 #
 # $Log$
+# Revision 1.4  2001/08/09 09:08:55  anthonybaxter
+# added identifying header to top of each file
+#
 # Revision 1.3  2001/07/19 07:38:28  anthony
 # added type code for SRV. From Michael Ströder.
 #
