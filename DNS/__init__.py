@@ -8,7 +8,7 @@
 
 # __init__.py for DNS class.
 
-__version__ = '0.1.0'
+__version__ = '2.3.0'
 
 import Type,Opcode,Status,Class
 from Base import DnsRequest, DNSError
@@ -22,6 +22,9 @@ Result = DnsResult
 
 #
 # $Log$
+# Revision 1.7  2002/05/06 06:16:15  anthonybaxter
+# make some sort of reasonable version string. releasewards ho!
+#
 # Revision 1.6  2002/03/19 13:05:02  anthonybaxter
 # converted to class based exceptions (there goes the python1.4 compatibility :)
 #
