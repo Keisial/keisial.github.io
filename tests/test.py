@@ -1,5 +1,7 @@
 #!/opt/python/bin/python1.5
 
+import sys ; sys.path.insert(0, '..')
+
 import DNS
 # automatically load nameserver(s) from /etc/resolv.conf
 # (works on unix - on others, YMMV)
