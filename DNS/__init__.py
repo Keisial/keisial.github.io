@@ -18,8 +18,11 @@ from lazy import *
 Request = DnsRequest
 Result = DnsResult
 
-# 
+#
 # $Log$
+# Revision 1.4  2001/11/26 17:57:51  stroeder
+# Added __version__
+#
 # Revision 1.3  2001/08/09 09:08:55  anthonybaxter
 # added identifying header to top of each file
 #

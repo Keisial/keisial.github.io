@@ -20,14 +20,17 @@ STATUS = 2
 _names = dir()
 opcodemap = {}
 for _name in _names:
-	if _name[0] != '_': opcodemap[eval(_name)] = _name
+    if _name[0] != '_': opcodemap[eval(_name)] = _name
 
 def opcodestr(opcode):
-	if opcodemap.has_key(opcode): return opcodemap[opcode]
-	else: return `opcode`
+    if opcodemap.has_key(opcode): return opcodemap[opcode]
+    else: return `opcode`
 
 #
 # $Log$
+# Revision 1.4  2002/03/19 12:26:13  anthonybaxter
+# death to leading tabs.
+#
 # Revision 1.3  2001/08/09 09:08:55  anthonybaxter
 # added identifying header to top of each file
 #

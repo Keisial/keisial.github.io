@@ -1,7 +1,7 @@
 """
 $Id$
 
-This file is part of the pydns project. 
+This file is part of the pydns project.
 Homepage: http://pydns.sourceforge.net
 
 This code is covered by the standard Python License.
@@ -15,7 +15,7 @@ import Lib,Type,Class,Opcode
 import asyncore
 from DNS import Error as DNSError
 
-defaults= { 'protocol':'udp', 'port':53, 'opcode':Opcode.QUERY, 
+defaults= { 'protocol':'udp', 'port':53, 'opcode':Opcode.QUERY,
             'qtype':Type.A, 'rd':1, 'timing':1, 'timeout': 30 }
 
 defaults['server']=[]
@@ -95,7 +95,7 @@ class DnsRequest:
         self.f = self.s.makefile('r')
         header = self.f.read(2)
         if len(header) < 2:
-                raise DNSError,'EOF'
+            raise DNSError,'EOF'
         count = Lib.unpack16bit(header)
         self.reply = self.f.read(count)
         if len(self.reply) != count:
@@ -190,7 +190,7 @@ class DnsRequest:
                     self.socketInit(socket.AF_INET, socket.SOCK_STREAM)
                     self.time_start=time.time()
                     self.conn()
-                    self.s.send(Lib.pack16bit(len(self.request)) + 
+                    self.s.send(Lib.pack16bit(len(self.request)) +
                                                                 self.request)
                     self.s.shutdown(1)
                     self.response=self.processTCPReply()
@@ -201,7 +201,7 @@ class DnsRequest:
                 raise DNSError,'no working nameservers found'
         if not self.async:
             return self.response
-        else: 
+        else:
             return None
 
 #class DnsAsyncRequest(DnsRequest):
@@ -229,7 +229,7 @@ class DnsAsyncRequest(DnsRequest,asyncore.dispatcher_with_send):
     def handle_read(self):
         if self.args['protocol'] == 'udp':
             self.response=self.processUDPReply()
-            if self.donefunc: 
+            if self.donefunc:
                 apply(self.donefunc,(self,))
     def handle_connect(self):
         self.send(self.request)
@@ -238,8 +238,11 @@ class DnsAsyncRequest(DnsRequest,asyncore.dispatcher_with_send):
     def showResult(self,*s):
         self.response.show()
 
-# 
+#
 # $Log$
+# Revision 1.9  2002/03/19 12:26:13  anthonybaxter
+# death to leading tabs.
+#
 # Revision 1.8  2002/03/19 10:30:33  anthonybaxter
 # first round of major bits and pieces. The major stuff here (summarised
 # from my local, off-net CVS server :/ this will cause some oddities with

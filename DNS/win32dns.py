@@ -1,22 +1,24 @@
-# $Id$
-#
-# Extract a list of TCP/IP name servers from the registry 0.1
-#    0.1 Strobl 2001-07-19
-# Usage:
-#    RegistryResolve() returns a list of ip numbers (dotted quads), by 
-#    scouring the registry for addresses of name servers
-# 
-# Tested on Windows NT4 Server SP6a, Windows 2000 Pro SP2 and 
-# Whistler Pro (XP) Build 2462 and Windows ME
-# ... all having a different registry layout wrt name servers :-/
-#
-# Todo:
-#
-#   Program doesn't check whether an interface is up or down
-#
-# (c) 2001 Copyright by Wolfgang Strobl ws@mystrobl.de,
-#          License analog to the current Python license
-#
+"""
+ $Id$
+
+ Extract a list of TCP/IP name servers from the registry 0.1
+    0.1 Strobl 2001-07-19
+ Usage:
+    RegistryResolve() returns a list of ip numbers (dotted quads), by
+    scouring the registry for addresses of name servers
+
+ Tested on Windows NT4 Server SP6a, Windows 2000 Pro SP2 and
+ Whistler Pro (XP) Build 2462 and Windows ME
+ ... all having a different registry layout wrt name servers :-/
+
+ Todo:
+
+   Program doesn't check whether an interface is up or down
+
+ (c) 2001 Copyright by Wolfgang Strobl ws@mystrobl.de,
+          License analog to the current Python license
+"""
+
 import string
 import _winreg
 
@@ -31,14 +33,14 @@ def binipdisplay(s):
         ip=[]
         for j in s1:
             ip.append(str(ord(j)))
-        ol.append(string.join(ip,'.')) 
+        ol.append(string.join(ip,'.'))
     return ol
 
 def stringdisplay(s):
     'convert "d.d.d.d,d.d.d.d" to ["d.d.d.d","d.d.d.d"]'
     return string.split(s,",")
 
-def RegistryResolve():    
+def RegistryResolve():
     nameservers=[]
     x=_winreg.ConnectRegistry(None,_winreg.HKEY_LOCAL_MACHINE)
     try:
@@ -48,14 +50,14 @@ def RegistryResolve():
         # windows ME, perhaps?
         try: # for Windows ME
             y= _winreg.OpenKey(x,
-             r"SYSTEM\CurrentControlSet\Services\VxD\MSTCP")
+                 r"SYSTEM\CurrentControlSet\Services\VxD\MSTCP")
             nameserver,dummytype=_winreg.QueryValueEx(y,'NameServer')
             if nameserver and not (nameserver in nameservers):
                 nameservers.extend(stringdisplay(nameserver))
         except EnvironmentError:
             pass
         return nameservers # no idea
-        
+
     nameserver = _winreg.QueryValueEx(y,"NameServer")[0]
     if nameserver:
         nameservers=[nameserver]
@@ -105,7 +107,20 @@ def RegistryResolve():
 
 if __name__=="__main__":
     print "Name servers:",RegistryResolve()
-    
-# 
+
+#
 # $Log$
+# Revision 1.1  2001/08/09 09:22:28  anthonybaxter
+# added what I hope is win32 resolver lookup support. I'll need to try
+# and figure out how to get the CVS checkout onto my windows machine to
+# make sure it works (wow, doing something other than games on the
+# windows machine :)
+#
+# Code from Wolfgang.Strobl@gmd.de
+# win32dns.py from
+# http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/66260
+#
+# Really, ParseResolvConf() should be renamed "FindNameServers" or
+# some such.
+#
 #

@@ -21,14 +21,17 @@ REFUSED       = 5
 _names = dir()
 statusmap = {}
 for _name in _names:
-	if _name[0] != '_': statusmap[eval(_name)] = _name
+    if _name[0] != '_': statusmap[eval(_name)] = _name
 
 def statusstr(status):
-	if statusmap.has_key(status): return statusmap[status]
-	else: return `status`
+    if statusmap.has_key(status): return statusmap[status]
+    else: return `status`
 
 #
 # $Log$
+# Revision 1.4  2002/03/19 12:26:13  anthonybaxter
+# death to leading tabs.
+#
 # Revision 1.3  2001/08/09 09:08:55  anthonybaxter
 # added identifying header to top of each file
 #
