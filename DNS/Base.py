@@ -1,10 +1,12 @@
-# $Id$
-#
-# This file is part of the pydns project. 
-# Homepage: http://pydns.sourceforge.net
-#
-# This code is covered by the standard Python License.
-# 
+"""
+$Id$
+
+This file is part of the pydns project. 
+Homepage: http://pydns.sourceforge.net
+
+This code is covered by the standard Python License.
+"""
+
 import sys
 import getopt
 import socket
@@ -229,6 +231,16 @@ class DnsAsyncRequest(DnsRequest):
 
 # 
 # $Log$
+# Revision 1.6  2001/12/07 21:47:33  stroeder
+# ParseResolvConf():
+#
+# Assign line = string.strip(line) to avoid IndexError with parsing lines only
+# containing white-space chars.
+#
+# Key word parameter resolv_path for specifying path name of resolv.conf.
+#
+# Merge checking for empty lines and comments into one if-statement.
+#
 # Revision 1.5  2001/08/09 09:22:28  anthonybaxter
 # added what I hope is win32 resolver lookup support. I'll need to try
 # and figure out how to get the CVS checkout onto my windows machine to
