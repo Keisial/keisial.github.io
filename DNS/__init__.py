@@ -8,6 +8,8 @@
 
 # __init__.py for DNS class.
 
+__version__ = '0.0.1'
+
 Error='DNS API error'
 import Type,Opcode,Status,Class
 from Base import *
@@ -18,6 +20,9 @@ Result = DnsResult
 
 # 
 # $Log$
+# Revision 1.3  2001/08/09 09:08:55  anthonybaxter
+# added identifying header to top of each file
+#
 # Revision 1.2  2001/07/19 06:57:07  anthony
 # cvs keywords added
 #
