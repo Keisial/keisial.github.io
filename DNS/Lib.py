@@ -345,12 +345,12 @@ class RRunpacker(Unpacker):
 		self.rdend = None
 	def getRRheader(self):
 		name = self.getname()
-		type = self.get16bit()
+		rrtype = self.get16bit()
 		klass = self.get16bit()
 		ttl = self.get32bit()
 		rdlength = self.get16bit()
 		self.rdend = self.offset + rdlength
-		return (name, type, klass, ttl, rdlength)
+		return (name, rrtype, klass, ttl, rdlength)
 	def endRR(self):
 		if self.offset != self.rdend:
 			raise UnpackError, 'end of RR not reached'
@@ -591,6 +591,10 @@ def dumpRR(u):
 
 # 
 # $Log$
+# Revision 1.5  2001/07/19 07:34:19  anthony
+# oops. glitch in storeRR (fixed now).
+# Reported by Bastian Kleineidam and by greg lin.
+#
 # Revision 1.4  2001/07/19 07:16:42  anthony
 # Changed (opcode&0xF)<<11 to (opcode*0xF)<<11.
 # Patch from Timothy J. Miller.
