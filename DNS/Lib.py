@@ -384,6 +384,16 @@ class RRunpacker(Unpacker):
 		protocol = ord(self.getbyte())
 		bitmap = self.getbytes(self.rdend - self.offset)
 		return address, protocol, bitmap
+        def getSRVdata(self):
+	       """
+	       _Service._Proto.Name TTL Class SRV Priority Weight Port Target
+	       """
+	       priority = self.get16bit()
+	       weight = self.get16bit()
+	       port = self.get16bit()
+	       target = self.getname()
+	       #print '***priority, weight, port, target', priority, weight, port, target
+	       return priority, weight, port, target
 
 
 # Pack/unpack Message Header (section 4.1)
@@ -591,6 +601,9 @@ def dumpRR(u):
 
 # 
 # $Log$
+# Revision 1.6  2001/07/19 07:39:18  anthony
+# 'type' -> 'rrtype' in getRRheader(). Fix from Michael Ströder.
+#
 # Revision 1.5  2001/07/19 07:34:19  anthony
 # oops. glitch in storeRR (fixed now).
 # Reported by Bastian Kleineidam and by greg lin.
