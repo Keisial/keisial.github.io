@@ -3,7 +3,7 @@
 #
 # Tests of the packet assembler/disassembler routines.
 #
-# only tests the simple packers for now. next is to test the 
+# only tests the simple packers for now. next is to test the
 # classes: Hpacker/Hunpacker,
 # Qpacker/Unpacker, then Mpacker/Munpacker
 #
@@ -57,10 +57,10 @@ class Int32Packing(unittest.TestCase):
             result = DNS.Lib.unpack32bit(s)
             self.assertEqual(i,result)
 
-            
+
 class IPaddrPacking(unittest.TestCase):
-    knownValues = ( 
-                    ('127.0.0.1', 2130706433 ), 
+    knownValues = (
+                    ('127.0.0.1', 2130706433 ),
                     ('10.99.23.13', 174266125 ),
                     ('192.35.59.45', -1071432915 ), # signed, sigh
                     ('255.255.255.255', -1),
@@ -83,21 +83,21 @@ class PackerClassPacking(unittest.TestCase):
         ( ['www.ekit.com'], '\x03www\x04ekit\x03com\x00' ),
         ( ['ns1.ekorp.com', 'ns2.ekorp.com', 'ns3.ekorp.com'],
                '\x03ns1\x05ekorp\x03com\x00\x03ns2\xc0\x04\x03ns3\xc0\x04'),
-        ( ['a.root-servers.net.', 'b.root-servers.net.', 
-           'c.root-servers.net.', 'd.root-servers.net.', 
-           'e.root-servers.net.', 'f.root-servers.net.'], 
+        ( ['a.root-servers.net.', 'b.root-servers.net.',
+           'c.root-servers.net.', 'd.root-servers.net.',
+           'e.root-servers.net.', 'f.root-servers.net.'],
                '\x01a\x0croot-servers\x03net\x00\x01b\xc0\x02\x01c\xc0'+
-               '\x02\x01d\xc0\x02\x01e\xc0\x02\x01f\xc0\x02' ), 
+               '\x02\x01d\xc0\x02\x01e\xc0\x02\x01f\xc0\x02' ),
         ]
     knownUnpackValues = [
         ( ['www.ekit.com'], '\x03www\x04ekit\x03com\x00' ),
         ( ['ns1.ekorp.com', 'ns2.ekorp.com', 'ns3.ekorp.com'],
                '\x03ns1\x05ekorp\x03com\x00\x03ns2\xc0\x04\x03ns3\xc0\x04'),
-        ( ['a.root-servers.net', 'b.root-servers.net', 
-           'c.root-servers.net', 'd.root-servers.net', 
-           'e.root-servers.net', 'f.root-servers.net'], 
+        ( ['a.root-servers.net', 'b.root-servers.net',
+           'c.root-servers.net', 'd.root-servers.net',
+           'e.root-servers.net', 'f.root-servers.net'],
                '\x01a\x0croot-servers\x03net\x00\x01b\xc0\x02\x01c\xc0'+
-               '\x02\x01d\xc0\x02\x01e\xc0\x02\x01f\xc0\x02' ), 
+               '\x02\x01d\xc0\x02\x01e\xc0\x02\x01f\xc0\x02' ),
         ]
 
     def testPackNames(self):
@@ -121,7 +121,7 @@ class PackerClassPacking(unittest.TestCase):
     def testUnpackerLimitCheck(self):
         from DNS.Lib import Unpacker
         u=Unpacker('\x03ns1\x05ekorp\x03com\x00\x03ns2\xc0\x04\x03ns3\xc0\x04')
-        u.getname() ; u.getname() ; u.getname() 
+        u.getname() ; u.getname() ; u.getname()
         # 4th call should fail
         self.assertRaises(IndexError, u.getname)
 
@@ -129,78 +129,78 @@ class testUnpackingMangled(unittest.TestCase):
     "addA(self, name, klass, ttl, address)"
     packerCorrect = '\x05www02\x04ekit\x03com\x00\x00\x01\x00\x01\x00\x01Q\x80\x00\x04\xc0\xa8\n\x02'
     def testWithoutRR(self):
-	u = DNS.Lib.RRunpacker(self.packerCorrect)
-	u.getAdata()
+        u = DNS.Lib.RRunpacker(self.packerCorrect)
+        u.getAdata()
     def testWithTwoRRs(self):
-	u = DNS.Lib.RRunpacker(self.packerCorrect)
-	u.getRRheader()
-	self.assertRaises(DNS.Lib.UnpackError, u.getRRheader)
+        u = DNS.Lib.RRunpacker(self.packerCorrect)
+        u.getRRheader()
+        self.assertRaises(DNS.Lib.UnpackError, u.getRRheader)
     def testWithNoGetData(self):
-	u = DNS.Lib.RRunpacker(self.packerCorrect)
-	u.getRRheader()
-	self.assertRaises(DNS.Lib.UnpackError, u.endRR)
+        u = DNS.Lib.RRunpacker(self.packerCorrect)
+        u.getRRheader()
+        self.assertRaises(DNS.Lib.UnpackError, u.endRR)
 
 class PackerTestCase(unittest.TestCase):
     " base class for tests of Packing code. Laziness on my part, I know. "
     def testPacker(self):
         from DNS.Lib import RRpacker
         p = RRpacker()
-	check = self.doPack(p)
-	if (p is not None) and (check is not TestCompleted):
-	    return self.checkPackResult(p)
+        check = self.doPack(p)
+        if (p is not None) and (check is not TestCompleted):
+            return self.checkPackResult(p)
 
     def checkPackResult(self, buf):
-	if not hasattr(self, 'packerExpectedResult'):
-	    if self.__class__.__name__ != 'PackerTestCase':
-		print "P***", self, repr(buf.getbuf()) #cheat testcase
-	else:
-	    return self.assertEqual(buf.getbuf(), 
-				self.packerExpectedResult)
+        if not hasattr(self, 'packerExpectedResult'):
+            if self.__class__.__name__ != 'PackerTestCase':
+                print "P***", self, repr(buf.getbuf()) #cheat testcase
+        else:
+            return self.assertEqual(buf.getbuf(),
+                                self.packerExpectedResult)
 
     def checkUnpackResult(self, rrbits, specbits):
-	if not hasattr(self, 'unpackerExpectedResult'):
-	    if self.__class__.__name__ != 'PackerTestCase':
-		print "U***", self, repr((rrbits,specbits)) #cheat testcase
-	else:
-	    return self.assertEqual((rrbits, specbits), 
-				self.unpackerExpectedResult)
+        if not hasattr(self, 'unpackerExpectedResult'):
+            if self.__class__.__name__ != 'PackerTestCase':
+                print "U***", self, repr((rrbits,specbits)) #cheat testcase
+        else:
+            return self.assertEqual((rrbits, specbits),
+                                self.unpackerExpectedResult)
 
     def testUnpacker(self):
         from DNS.Lib import RRunpacker
-	if self.doUnpack is not None:
-	    if hasattr(self.__class__, 'doUnpack') \
-		    and hasattr(self, 'packerExpectedResult'):
-		u = RRunpacker(self.packerExpectedResult)
-		rrbits = u.getRRheader()[:4]
-		specbits = self.doUnpack(u)
-		try:
-		    u.endRR()
-		except DNS.Lib.UnpackError:
-		    self.assertEqual(0, 'Not at end of RR!')
-		return self.checkUnpackResult(rrbits, specbits)
-	    else:
-		me = self.__class__.__name__
-		if me != 'PackerTestCase':
-		    self.assertEquals(self.__class__.__name__, 
-						'Unpack NotImplemented')
+        if self.doUnpack is not None:
+            if hasattr(self.__class__, 'doUnpack') \
+                    and hasattr(self, 'packerExpectedResult'):
+                u = RRunpacker(self.packerExpectedResult)
+                rrbits = u.getRRheader()[:4]
+                specbits = self.doUnpack(u)
+                try:
+                    u.endRR()
+                except DNS.Lib.UnpackError:
+                    self.assertEqual(0, 'Not at end of RR!')
+                return self.checkUnpackResult(rrbits, specbits)
+            else:
+                me = self.__class__.__name__
+                if me != 'PackerTestCase':
+                    self.assertEquals(self.__class__.__name__,
+                                                'Unpack NotImplemented')
 
     def doPack(self, p):
-	" stub. don't test the base class "
-	return None
+        " stub. don't test the base class "
+        return None
 
     def doUnpack(self, p):
-	" stub. don't test the base class "
-	return None
+        " stub. don't test the base class "
+        return None
 
-    
+
 
 class testPackingOfCNAME(PackerTestCase):
     "addCNAME(self, name, klass, ttl, cname)"
     def doPack(self,p):
         p.addCNAME('www.sub.domain', DNS.Class.IN, 3600, 'realhost.sub.domain')
     def doUnpack(self, u):
-	return u.getCNAMEdata()
-	
+        return u.getCNAMEdata()
+
     unpackerExpectedResult = (('www.sub.domain', DNS.Type.CNAME, DNS.Class.IN, 3600), 'realhost.sub.domain')
     packerExpectedResult = \
                 '\x03www\x03sub\x06domain\x00\x00\x05\x00\x01\x00'+ \
@@ -211,7 +211,7 @@ class testPackingOfCNAME2(PackerTestCase):
     def doPack(self,p):
         p.addCNAME('www.cust.com', DNS.Class.IN, 200, 'www023.big.isp.com')
     def doUnpack(self, u):
-	return u.getCNAMEdata()
+        return u.getCNAMEdata()
     unpackerExpectedResult = (('www.cust.com', DNS.Type.CNAME, DNS.Class.IN, 200), 'www023.big.isp.com')
     packerExpectedResult = \
                 '\x03www\x04cust\x03com\x00\x00\x05\x00\x01\x00'+ \
@@ -222,7 +222,7 @@ class testPackingOfCNAME3(PackerTestCase):
     def doPack(self,p):
         p.addCNAME('www.fred.com', DNS.Class.IN, 86400, 'webhost.loa.com')
     def doUnpack(self, u):
-	return u.getCNAMEdata()
+        return u.getCNAMEdata()
     unpackerExpectedResult = (('www.fred.com', DNS.Type.CNAME, DNS.Class.IN, 86400), 'webhost.loa.com')
     packerExpectedResult = \
                 '\x03www\x04fred\x03com\x00\x00\x05\x00\x01\x00\x01Q'+ \
@@ -233,8 +233,8 @@ class testPackingOfHINFO(PackerTestCase):
     def doPack(self,p):
         p.addHINFO('www.sub.domain.com', DNS.Class.IN, 3600, 'i686', 'linux')
     def doUnpack(self, u):
-	return u.getHINFOdata()
-    unpackerExpectedResult = (('www.sub.domain.com', 13, 1, 3600), ('i686', 'linux')) 
+        return u.getHINFOdata()
+    unpackerExpectedResult = (('www.sub.domain.com', 13, 1, 3600), ('i686', 'linux'))
     packerExpectedResult = \
                 '\x03www\x03sub\x06domain\x03com\x00\x00\r\x00\x01'+ \
                 '\x00\x00\x0e\x10\x00\x0b\x04i686\x05linux'
@@ -244,8 +244,8 @@ class testPackingOfHINFO2(PackerTestCase):
     def doPack(self,p):
         p.addHINFO('core1.lax.foo.com', DNS.Class.IN, 3600, 'cisco', 'ios')
     def doUnpack(self, u):
-	return u.getHINFOdata()
-    unpackerExpectedResult = (('core1.lax.foo.com', 13, 1, 3600), ('cisco', 'ios')) 
+        return u.getHINFOdata()
+    unpackerExpectedResult = (('core1.lax.foo.com', 13, 1, 3600), ('cisco', 'ios'))
     packerExpectedResult = \
                 '\x05core1\x03lax\x03foo\x03com\x00\x00\r\x00\x01'+ \
                 '\x00\x00\x0e\x10\x00\n\x05cisco\x03ios'
@@ -255,7 +255,7 @@ class testPackingOfMX(PackerTestCase):
     def doPack(self, p):
         p.addMX('sub.domain.com', DNS.Class.IN, 86400, 10, 'mailhost1.isp.com')
     def doUnpack(self, u):
-	return u.getMXdata()
+        return u.getMXdata()
     packerExpectedResult = \
                 '\x03sub\x06domain\x03com\x00\x00\x0f\x00\x01'+ \
                 '\x00\x01Q\x80\x00\x12\x00\n\tmailhost1\x03isp\xc0\x0b'
@@ -268,12 +268,12 @@ class testPackingOfMX2(PackerTestCase):
         p.addMX('ekit-inc.com.', DNS.Class.IN, 86400, 20, 'mx2.ekorp.com')
         p.addMX('ekit-inc.com.', DNS.Class.IN, 86400, 30, 'mx3.ekorp.com')
     def doUnpack(self, u):
-	res = [u.getMXdata(),]
-	dummy = u.getRRheader()[:4]
-	res += u.getMXdata()
-	dummy = u.getRRheader()[:4]
-	res += u.getMXdata()
-	return res
+        res = [u.getMXdata(),]
+        dummy = u.getRRheader()[:4]
+        res += u.getMXdata()
+        dummy = u.getRRheader()[:4]
+        res += u.getMXdata()
+        return res
     unpackerExpectedResult = (('ekit-inc.com', 15, 1, 86400), [(10, 'mx1.ekorp.com'), 20, 'mx2.ekorp.com', 30, 'mx3.ekorp.com'])
     packerExpectedResult = \
                 '\x08ekit-inc\x03com\x00\x00\x0f\x00\x01\x00\x01Q\x80\x00'+\
@@ -286,7 +286,7 @@ class testPackingOfNS(PackerTestCase):
     def doPack(self, p):
         p.addNS('ekit-inc.com', DNS.Class.IN, 86400, 'ns1.ekorp.com')
     def doUnpack(self, u):
-	return u.getNSdata()
+        return u.getNSdata()
     unpackerExpectedResult = (('ekit-inc.com', 2, 1, 86400), 'ns1.ekorp.com')
     packerExpectedResult = '\x08ekit-inc\x03com\x00\x00\x02\x00\x01\x00\x01Q\x80\x00\x0c\x03ns1\x05ekorp\xc0\t'
 
@@ -295,28 +295,28 @@ class testPackingOfPTR(PackerTestCase):
     def doPack(self, p):
         p.addPTR('www.ekit-inc.com', DNS.Class.IN, 3600, 'www-real01.ekorp.com')
     def doUnpack(self, u):
-	return u.getPTRdata()
+        return u.getPTRdata()
     unpackerExpectedResult = (('www.ekit-inc.com', 12, 1, 3600), 'www-real01.ekorp.com')
     packerExpectedResult = '\x03www\x08ekit-inc\x03com\x00\x00\x0c\x00\x01\x00\x00\x0e\x10\x00\x13\nwww-real01\x05ekorp\xc0\r'
 
 class testPackingOfSOA(PackerTestCase):
-    """addSOA(self, name, klass, ttl, mname, 
+    """addSOA(self, name, klass, ttl, mname,
            rname, serial, refresh, retry, expire, minimum)"""
     def doPack(self, p):
-        p.addSOA('ekit-inc.com', DNS.Class.IN, 3600, 'ns1.ekorp.com', 
-		 'hostmaster.ekit-inc.com', 2002020301, 100, 200, 300, 400)
+        p.addSOA('ekit-inc.com', DNS.Class.IN, 3600, 'ns1.ekorp.com',
+                 'hostmaster.ekit-inc.com', 2002020301, 100, 200, 300, 400)
     def doUnpack(self, u):
-	return u.getSOAdata()
+        return u.getSOAdata()
     unpackerExpectedResult = (('ekit-inc.com', 6, 1, 3600), ('ns1.ekorp.com', 'hostmaster', ('serial', 2002020301), ('refresh ', 100, '1 minutes'), ('retry', 200, '3 minutes'), ('expire', 300, '5 minutes'), ('minimum', 400, '6 minutes')))
     packerExpectedResult = '\x08ekit-inc\x03com\x00\x00\x06\x00\x01\x00\x00\x0e\x10\x00,\x03ns1\x05ekorp\xc0\t\nhostmaster\x00wTg\xcd\x00\x00\x00d\x00\x00\x00\xc8\x00\x00\x01,\x00\x00\x01\x90'
-        
+
 
 class testPackingOfA(PackerTestCase):
     "addA(self, name, klass, ttl, address)"
     def doPack(self, p):
         p.addA('www02.ekit.com', DNS.Class.IN, 86400, '192.168.10.2')
     def doUnpack(self, u):
-	return u.getAdata()
+        return u.getAdata()
     unpackerExpectedResult = (('www02.ekit.com', 1, 1, 86400), '192.168.10.2')
     packerExpectedResult = '\x05www02\x04ekit\x03com\x00\x00\x01\x00\x01\x00\x01Q\x80\x00\x04\xc0\xa8\n\x02'
 
@@ -325,7 +325,7 @@ class testPackingOfA2(PackerTestCase):
     def doPack(self, p):
         p.addA('www.ekit.com', DNS.Class.IN, 86400, '10.98.1.0')
     def doUnpack(self, u):
-	return u.getAdata()
+        return u.getAdata()
     unpackerExpectedResult = (('www.ekit.com', 1, 1, 86400), '10.98.1.0')
     packerExpectedResult = '\x03www\x04ekit\x03com\x00\x00\x01\x00\x01\x00\x01Q\x80\x00\x04\nb\x01\x00'
 
@@ -337,8 +337,8 @@ class testPackingOfA3(PackerTestCase):
         p.addA('www.zol.com', DNS.Class.IN, 86400, '192.168.10.2')
         p.addA('www.zol.com', DNS.Class.IN, 86400, '192.168.10.1')
     def doUnpack(self, u):
-	u1,d1,u2,d2,u3,d3,u4=u.getAdata(),u.getRRheader(),u.getAdata(),u.getRRheader(),u.getAdata(),u.getRRheader(),u.getAdata()
-	return u1,u2,u3,u4
+        u1,d1,u2,d2,u3,d3,u4=u.getAdata(),u.getRRheader(),u.getAdata(),u.getRRheader(),u.getAdata(),u.getRRheader(),u.getAdata()
+        return u1,u2,u3,u4
     unpackerExpectedResult = (('www.zol.com', 1, 1, 86400), ('192.168.10.4', '192.168.10.3', '192.168.10.2', '192.168.10.1'))
     packerExpectedResult = '\x03www\x03zol\x03com\x00\x00\x01\x00\x01\x00\x01Q\x80\x00\x04\xc0\xa8\n\x04\x00\x00\x01\x00\x01\x00\x01Q\x80\x00\x04\xc0\xa8\n\x03\x00\x00\x01\x00\x01\x00\x01Q\x80\x00\x04\xc0\xa8\n\x02\x00\x00\x01\x00\x01\x00\x01Q\x80\x00\x04\xc0\xa8\n\x01'
 
@@ -347,17 +347,17 @@ class testPackingOfTXT(PackerTestCase):
     def doPack(self, p):
         p.addTXT('ekit-inc.com', DNS.Class.IN, 3600, 'this is a text record')
     def doUnpack(self, u):
-	return u.getTXTdata()
+        return u.getTXTdata()
     packerExpectedResult = '\x08ekit-inc\x03com\x00\x00\x10\x00\x01\x00\x00\x0e\x10\x00\x16\x15this is a text record'
     unpackerExpectedResult = (('ekit-inc.com', 16, 1, 3600), ['this is a text record'])
 
-# check what the maximum/minimum &c of TXT records are. 
+# check what the maximum/minimum &c of TXT records are.
 class testPackingOfTXT2(PackerTestCase):
     "addTXT(self, name, klass, ttl, list)"
     def doPack(self, p):
         f = lambda p=p:p.addTXT('ekit-inc.com', DNS.Class.IN, 3600, 'the quick brown fox jumped over the lazy brown dog\n'*20)
-	self.assertRaises(ValueError, f)
-	return TestCompleted
+        self.assertRaises(ValueError, f)
+        return TestCompleted
     doUnpack = None
 
 #class testPackingOfQuestion(PackerTestCase):

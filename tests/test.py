@@ -21,4 +21,3 @@ res = r.req("a.root-servers.nex",qtype='ANY')
 res.show()
 res = r.req("proxy.connect.com.au")
 res.show()
-

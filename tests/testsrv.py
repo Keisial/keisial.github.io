@@ -11,5 +11,3 @@ r=DNS.Request(qtype='srv')
 res = r.req('_ldap._tcp.openldap.org')
 res.show()
 print res.answers
-
-

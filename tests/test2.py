@@ -15,4 +15,3 @@ res = r.req('connect.com.au')
 res.show()
 
 print DNS.revlookup('192.189.54.17')
-
