@@ -19,8 +19,13 @@ defaults['server']=[]
 
 def ParseResolvConf():
     "parses the /etc/resolv.conf file and sets defaults for name servers"
-    import string
+    import string, os
     global defaults
+    if os.name=="nt":
+	from win32dns import RegistryResolve
+	defaults['server']=RegistryResolve()
+	return
+    # else
     lines=open("/etc/resolv.conf").readlines()
     for line in lines:
 	string.strip(line)
@@ -39,8 +44,6 @@ def ParseResolvConf():
 	    pass
 	if fields[0]=='nameserver':
 	    defaults['server'].append(fields[1])
-
-
 
 class DnsRequest:
     def __init__(self,*name,**args):
@@ -228,6 +231,9 @@ class DnsAsyncRequest(DnsRequest):
 
 # 
 # $Log$
+# Revision 1.4  2001/08/09 09:08:55  anthonybaxter
+# added identifying header to top of each file
+#
 # Revision 1.3  2001/07/19 07:20:12  anthony
 # Handle blank resolv.conf lines.
 # Patch from Bastian Kleineidam
