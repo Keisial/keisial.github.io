@@ -9,8 +9,7 @@ This code is covered by the standard Python License.
     Base functionality. Request and Response classes, that sort of thing.
 """
 
-import socket
-import string
+import socket, string, types, time
 import Type,Class,Opcode
 import asyncore
 
@@ -30,6 +29,8 @@ def ParseResolvConf(resolv_path="/etc/resolv.conf"):
         if not line or line[0]==';' or line[0]=='#':
             continue
         fields=string.split(line)
+        if len(fields) == 0: 
+            continue
         if fields[0]=='domain':
             defaults['domain']=fields[1]
         if fields[0]=='search':
@@ -61,7 +62,7 @@ class DnsRequest:
     def argparse(self,name,args):
         if not name and self.defaults.has_key('name'):
             args['name'] = self.defaults['name']
-        if type(name) is type(""):
+        if type(name) is types.StringType:
             args['name']=name
         else:
             if len(name) == 1:
@@ -73,7 +74,7 @@ class DnsRequest:
                     args[i]=self.defaults[i]
                 else:
                     args[i]=defaults[i]
-        if type(args['server']) == type(''):
+        if type(args['server']) == types.StringType:
             args['server'] = [args['server']]
         self.args=args
 
@@ -146,7 +147,7 @@ class DnsRequest:
         opcode = self.args['opcode']
         rd = self.args['rd']
         server=self.args['server']
-        if type(self.args['qtype']) == type('foo'):
+        if type(self.args['qtype']) == types.StringType:
             try:
                 qtype = getattr(Type, string.upper(self.args['qtype']))
             except AttributeError:
@@ -162,49 +163,58 @@ class DnsRequest:
             protocol = 'tcp'
         #print 'QTYPE %d(%s)' % (qtype, Type.typestr(qtype))
         m = Lib.Mpacker()
+        # jesus. keywords and default args would be good. TODO.
         m.addHeader(0,
               0, opcode, 0, 0, rd, 0, 0, 0,
               1, 0, 0, 0)
         m.addQuestion(qname, qtype, Class.IN)
         self.request = m.getbuf()
         if protocol == 'udp':
-            self.response=None
-            self.socketInit(socket.AF_INET, socket.SOCK_DGRAM)
-            for self.ns in server:
-                try:
-                    #self.s.connect((self.ns, self.port))
-                    self.conn()
-                    self.time_start=time.time()
-                    if not self.async:
-                        self.s.send(self.request)
-                        self.response=self.processUDPReply()
-                #except socket.error:
-                except None:
-                    continue
-                break
-            if not self.response:
-                if not self.async:
-                    raise DNSError,'no working nameservers found'
+            self.sendUDPRequest(server)
         else:
-            self.response=None
-            for self.ns in server:
-                try:
-                    self.socketInit(socket.AF_INET, socket.SOCK_STREAM)
-                    self.time_start=time.time()
-                    self.conn()
-                    self.s.send(Lib.pack16bit(len(self.request)) +
-                                                                self.request)
-                    self.s.shutdown(1)
-                    self.response=self.processTCPReply()
-                except socket.error:
-                    continue
-                break
-            if not self.response:
-                raise DNSError,'no working nameservers found'
-        if not self.async:
-            return self.response
-        else:
+            self.sendTCPRequest(server)
+        if self.async:
             return None
+        else:
+            return self.response
+
+    def sendUDPRequest(self, server):
+        "refactor me"
+        self.response=None
+        self.socketInit(socket.AF_INET, socket.SOCK_DGRAM)
+        for self.ns in server:
+            try:
+                # TODO. Handle timeouts &c correctly (RFC)
+                #self.s.connect((self.ns, self.port))
+                self.conn()
+                self.time_start=time.time()
+                if not self.async:
+                    self.s.send(self.request)
+                    self.response=self.processUDPReply()
+            #except socket.error:
+            except None:
+                continue
+            break
+        if not self.response:
+            if not self.async:
+                raise DNSError,'no working nameservers found'
+
+    def sendTCPRequest(self, server):
+        " do the work of sending a TCP request "
+        self.response=None
+        for self.ns in server:
+            try:
+                self.socketInit(socket.AF_INET, socket.SOCK_STREAM)
+                self.time_start=time.time()
+                self.conn()
+                self.s.send(Lib.pack16bit(len(self.request))+self.request)
+                self.s.shutdown(1)
+                self.response=self.processTCPReply()
+            except socket.error:
+                continue
+            break
+        if not self.response:
+            raise DNSError,'no working nameservers found'
 
 #class DnsAsyncRequest(DnsRequest):
 class DnsAsyncRequest(DnsRequest,asyncore.dispatcher_with_send):
@@ -242,6 +252,11 @@ class DnsAsyncRequest(DnsRequest,asyncore.dispatcher_with_send):
 
 #
 # $Log$
+# Revision 1.11  2002/03/19 13:05:02  anthonybaxter
+# converted to class based exceptions (there goes the python1.4 compatibility :)
+#
+# removed a quite gross use of 'eval()'.
+#
 # Revision 1.10  2002/03/19 12:41:33  anthonybaxter
 # tabnannied and reindented everything. 4 space indent, no tabs.
 # yay.
