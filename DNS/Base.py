@@ -169,10 +169,13 @@ class DnsRequest:
               1, 0, 0, 0)
         m.addQuestion(qname, qtype, Class.IN)
         self.request = m.getbuf()
-        if protocol == 'udp':
-            self.sendUDPRequest(server)
-        else:
-            self.sendTCPRequest(server)
+        try:
+            if protocol == 'udp':
+                self.sendUDPRequest(server)
+            else:
+                self.sendTCPRequest(server)
+        except socket.error, reason:
+            raise DNSError, reason
         if self.async:
             return None
         else:
@@ -252,6 +255,9 @@ class DnsAsyncRequest(DnsRequest,asyncore.dispatcher_with_send):
 
 #
 # $Log$
+# Revision 1.12.2.1  2007/05/22 20:19:35  customdesigned
+# Skip bogus but non-empty lines in resolv.conf
+#
 # Revision 1.12  2002/04/23 06:04:27  anthonybaxter
 # attempt to refactor the DNSRequest.req method a little. after doing a bit
 # of this, I've decided to bite the bullet and just rewrite the puppy. will
