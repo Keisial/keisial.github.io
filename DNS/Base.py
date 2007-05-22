@@ -204,6 +204,7 @@ class DnsRequest:
 
     def sendTCPRequest(self, server):
         " do the work of sending a TCP request "
+        import time, Lib
         self.response=None
         for self.ns in server:
             try:
@@ -255,6 +256,9 @@ class DnsAsyncRequest(DnsRequest,asyncore.dispatcher_with_send):
 
 #
 # $Log$
+# Revision 1.12.2.3  2007/05/22 20:25:52  customdesigned
+# Use socket.inetntoa,inetaton.
+#
 # Revision 1.12.2.2  2007/05/22 20:21:46  customdesigned
 # Trap socket error
 #
