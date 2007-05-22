@@ -8,8 +8,10 @@ by:
  Bastian Kleineidam
  Timothy J. Miller
  Wolfgang Strobl
+ Arnaud Fontaine
+ Scott Kitterman
+ Stuart Gathman
 
 It's possible there's other people - the old RCS logs for my
 code were lost some time ago. The list above is almost certainly
 incomplete - let me know if I've forgotten you...
-

@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 # $Id$
 #
 # This file is part of the pydns project.
@@ -22,6 +23,9 @@ Result = DnsResult
 
 #
 # $Log$
+# Revision 1.8.2.1  2007/05/22 20:39:20  customdesigned
+# Release 2.3.1
+#
 # Revision 1.8  2002/05/06 06:17:49  anthonybaxter
 # found that the old README file called itself release 2.2. So make
 # this one 2.3...
