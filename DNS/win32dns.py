@@ -60,10 +60,13 @@ def RegistryResolve():
         except EnvironmentError:
             pass
         return nameservers # no idea
-
-    nameserver = _winreg.QueryValueEx(y,"NameServer")[0]
+    try:
+        nameserver = _winreg.QueryValueEx(y, "DhcpNameServer")[0].split()
+    except:
+        nameserver = _winreg.QueryValueEx(y, "NameServer")[0].split()
     if nameserver:
-        nameservers=[nameserver]
+        nameservers=nameserver
+    nameserver = _winreg.QueryValueEx(y,"NameServer")[0]
     _winreg.CloseKey(y)
     try: # for win2000
         y= _winreg.OpenKey(x,
@@ -113,6 +116,11 @@ if __name__=="__main__":
 
 #
 # $Log$
+# Revision 1.3  2002/05/06 06:15:31  anthonybaxter
+# apparently some versions of windows return servers as unicode
+# string with space sep, rather than strings with comma sep.
+# *sigh*
+#
 # Revision 1.2  2002/03/19 12:41:33  anthonybaxter
 # tabnannied and reindented everything. 4 space indent, no tabs.
 # yay.
