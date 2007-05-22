@@ -29,7 +29,7 @@ def ParseResolvConf(resolv_path="/etc/resolv.conf"):
         if not line or line[0]==';' or line[0]=='#':
             continue
         fields=string.split(line)
-        if len(fields) == 0: 
+        if len(fields) < 2: 
             continue
         if fields[0]=='domain':
             defaults['domain']=fields[1]
@@ -252,6 +252,11 @@ class DnsAsyncRequest(DnsRequest,asyncore.dispatcher_with_send):
 
 #
 # $Log$
+# Revision 1.12  2002/04/23 06:04:27  anthonybaxter
+# attempt to refactor the DNSRequest.req method a little. after doing a bit
+# of this, I've decided to bite the bullet and just rewrite the puppy. will
+# be checkin in some design notes, then unit tests and then writing the sod.
+#
 # Revision 1.11  2002/03/19 13:05:02  anthonybaxter
 # converted to class based exceptions (there goes the python1.4 compatibility :)
 #
