@@ -12,6 +12,7 @@ import string
 
 def revlookup(name):
     "convenience routine for doing a reverse lookup of an address"
+    if Base.defaults['server'] == []: Base.DiscoverNameServers()
     a = string.split(name, '.')
     a.reverse()
     b = string.join(a, '.')+'.in-addr.arpa'
@@ -23,6 +24,7 @@ def mxlookup(name):
     convenience routine for doing an MX lookup of a name. returns a
     sorted list of (preference, mail exchanger) records
     """
+    if Base.defaults['server'] == []: Base.DiscoverNameServers()
     a = Base.DnsRequest(name, qtype = 'mx').req().answers
     l = map(lambda x:x['data'], a)
     l.sort()
@@ -30,6 +32,9 @@ def mxlookup(name):
 
 #
 # $Log$
+# Revision 1.5  2002/05/06 06:14:38  anthonybaxter
+# reformat, move import to top of file.
+#
 # Revision 1.4  2002/03/19 12:41:33  anthonybaxter
 # tabnannied and reindented everything. 4 space indent, no tabs.
 # yay.
