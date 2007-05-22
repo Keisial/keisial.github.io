@@ -39,6 +39,7 @@ class PackError(DNSError): pass
 
 from struct import pack as struct_pack
 from struct import unpack as struct_unpack
+from socket import inet_ntoa, inet_aton
 
 def pack16bit(n):
     return struct_pack('!H', n)
@@ -53,17 +54,10 @@ def unpack32bit(s):
     return struct_unpack('!L', s)[0]
 
 def addr2bin(addr):
-    if type(addr) == type(0): return addr
-    bytes = addr.split('.')
-    if len(bytes) != 4: raise ValueError, 'bad IP address'
-    n = 0
-    for byte in bytes: n = n<<8 | int(byte)
-    return n
+    return struct_unpack('!l', inet_aton(addr))[0]
 
 def bin2addr(n):
-    return '%d.%d.%d.%d' % ((n>>24)&0xFF, (n>>16)&0xFF,
-                  (n>>8)&0xFF, n&0xFF)
-
+    return inet_ntoa(struct_pack('!L', n))
 
 # Packing class
 
@@ -632,6 +626,9 @@ if __name__ == "__main__":
     testpacker()
 #
 # $Log$
+# Revision 1.11.2.1  2007/05/22 20:20:39  customdesigned
+# Mark utf-8 encoding
+#
 # Revision 1.11  2002/03/19 13:05:02  anthonybaxter
 # converted to class based exceptions (there goes the python1.4 compatibility :)
 #

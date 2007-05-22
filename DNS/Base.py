@@ -31,7 +31,7 @@ def ParseResolvConf(resolv_path="/etc/resolv.conf"):
         fields=string.split(line)
         if len(fields) < 2: 
             continue
-        if fields[0]=='domain':
+        if fields[0]=='domain' and len(fields) > 1:
             defaults['domain']=fields[1]
         if fields[0]=='search':
             pass
@@ -255,6 +255,9 @@ class DnsAsyncRequest(DnsRequest,asyncore.dispatcher_with_send):
 
 #
 # $Log$
+# Revision 1.12.2.2  2007/05/22 20:21:46  customdesigned
+# Trap socket error
+#
 # Revision 1.12.2.1  2007/05/22 20:19:35  customdesigned
 # Skip bogus but non-empty lines in resolv.conf
 #

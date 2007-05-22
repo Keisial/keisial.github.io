@@ -1,4 +1,4 @@
-#!/opt/python/bin/python1.5
+#!usr/bin/python
 
 import sys ; sys.path.insert(0, '..')
 
