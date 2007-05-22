@@ -8,7 +8,7 @@
 
 # __init__.py for DNS class.
 
-__version__ = '2.3.0'
+__version__ = '2.3.1'
 
 import Type,Opcode,Status,Class
 from Base import DnsRequest, DNSError
@@ -22,6 +22,10 @@ Result = DnsResult
 
 #
 # $Log$
+# Revision 1.8  2002/05/06 06:17:49  anthonybaxter
+# found that the old README file called itself release 2.2. So make
+# this one 2.3...
+#
 # Revision 1.7  2002/05/06 06:16:15  anthonybaxter
 # make some sort of reasonable version string. releasewards ho!
 #
