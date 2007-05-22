@@ -160,7 +160,7 @@ class Unpacker:
         self.buf = buf
         self.offset = 0
     def getbyte(self):
-        if self.offset > len(self.buf):
+        if self.offset >= len(self.buf):
             raise UnpackError, "Ran off end of data"
         c = self.buf[self.offset]
         self.offset = self.offset + 1
@@ -626,6 +626,9 @@ if __name__ == "__main__":
     testpacker()
 #
 # $Log$
+# Revision 1.11.2.2  2007/05/22 20:25:53  customdesigned
+# Use socket.inetntoa,inetaton.
+#
 # Revision 1.11.2.1  2007/05/22 20:20:39  customdesigned
 # Mark utf-8 encoding
 #
