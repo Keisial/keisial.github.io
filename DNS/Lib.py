@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 """
  $Id$
 
@@ -631,6 +632,11 @@ if __name__ == "__main__":
     testpacker()
 #
 # $Log$
+# Revision 1.11  2002/03/19 13:05:02  anthonybaxter
+# converted to class based exceptions (there goes the python1.4 compatibility :)
+#
+# removed a quite gross use of 'eval()'.
+#
 # Revision 1.10  2002/03/19 12:41:33  anthonybaxter
 # tabnannied and reindented everything. 4 space indent, no tabs.
 # yay.

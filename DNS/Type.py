@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 """
  $Id$
 
@@ -53,6 +54,10 @@ def typestr(type):
     else: return `type`
 #
 # $Log$
+# Revision 1.6  2002/03/19 12:41:33  anthonybaxter
+# tabnannied and reindented everything. 4 space indent, no tabs.
+# yay.
+#
 # Revision 1.5  2002/03/19 12:26:13  anthonybaxter
 # death to leading tabs.
 #
