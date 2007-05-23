@@ -37,3 +37,14 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Tue May 22 2007 Stuart Gathman <stuart@bmsi.com> 2.3.1-1
 - Bug fix release
+- BTS Patches:
+- 01resolv-conf-parse patch, thanks to Arnaud Fontaine <arnaud@andesi.org>
+  (closes: #378991)
+- Changes from Ubuntu (SF = Sourceforge project bug #) (closes: #411138):
+- 02utf-8 patch for files with UTF-8 content
+- 03socket-error-trap patch, Added DNSError trap for socket.error.
+- 04lazy-init SF 1563723 lazy should initilize defaults['server']
+- 05addr2bin2addr SF 863364 Mac OS X, Win2000 DHCP, addr2bin and bin2addr.
+- 06win32-fix SF 1180344 win32dns.py fails on windows server 2003
+- 07unpacker SF 954095 Bug in DNS.Lib.Unpacker.getbyte()
+- 08import-lib SF 658601 Missing "import Lib"; for TCP protocol
