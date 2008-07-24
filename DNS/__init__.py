@@ -22,7 +22,23 @@ Request = DnsRequest
 Result = DnsResult
 
 #
+# This random generator is used for transaction ids and port selection.  This
+# is important to prevent spurious results from lost packets, and malicious
+# cache poisoning.  This doesn't matter if you are behind a caching nameserver
+# or your app is a primary DNS server only. To install your own generator,
+# replace DNS.random.  SystemRandom uses /dev/urandom or similar source.  
+#
+try:
+  from random import SystemRandom
+  random = SystemRandom()
+except:
+  import random
+
+#
 # $Log$
+# Revision 1.8.2.2  2007/05/22 21:06:52  customdesigned
+# utf-8 in __init__.py
+#
 # Revision 1.8.2.1  2007/05/22 20:39:20  customdesigned
 # Release 2.3.1
 #

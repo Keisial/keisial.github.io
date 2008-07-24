@@ -1,5 +1,5 @@
 %define name pydns
-%define version 2.3.1
+%define version 2.3.2
 %define release 2.4
 
 Summary: Python DNS library
@@ -35,6 +35,8 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 
 %changelog
+* Thu Jul 24 2008 Stuart Gathman <stuart@bmsi.com> 2.3.2-1
+- Randomize TID
 * Tue May 22 2007 Stuart Gathman <stuart@bmsi.com> 2.3.1-1
 - Bug fix release
 - BTS Patches:

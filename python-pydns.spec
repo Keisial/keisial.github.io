@@ -1,7 +1,7 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-pydns
-Version:        2.3.1
+Version:        2.3.2
 Release:        1%{?dist}
 Summary:        Python module for DNS (Domain Name Service).
 
@@ -47,6 +47,8 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/DNS/*.py*
 
 %changelog
+* Thu Jul 24 2008 Stuart Gathman <stuart@bmsi.com> 2.3.2-1
+- Randomize TID
 * Tue May 22 2007 Stuart Gathman <stuart@bmsi.com> 2.3.1-1
 - Bug fix release
 - BTS Patches:

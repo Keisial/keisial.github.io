@@ -12,6 +12,7 @@ This code is covered by the standard Python License.
 import socket, string, types, time
 import Type,Class,Opcode
 import asyncore
+import DNS
 
 class DNSError(Exception): pass
 
@@ -58,6 +59,7 @@ class DnsRequest:
         self.defaults = {}
         self.argparse(name,args)
         self.defaults = self.args
+        self.tid = 0
 
     def argparse(self,name,args):
         if not name and self.defaults.has_key('name'):
@@ -144,6 +146,7 @@ class DnsRequest:
         #    raise DNSError,'reinitialize request before reuse'
         protocol = self.args['protocol']
         self.port = self.args['port']
+        self.tid = DNS.random.randint(0,65535)
         opcode = self.args['opcode']
         rd = self.args['rd']
         server=self.args['server']
@@ -164,7 +167,7 @@ class DnsRequest:
         #print 'QTYPE %d(%s)' % (qtype, Type.typestr(qtype))
         m = Lib.Mpacker()
         # jesus. keywords and default args would be good. TODO.
-        m.addHeader(0,
+        m.addHeader(self.tid,
               0, opcode, 0, 0, rd, 0, 0, 0,
               1, 0, 0, 0)
         m.addQuestion(qname, qtype, Class.IN)
@@ -193,7 +196,11 @@ class DnsRequest:
                 self.time_start=time.time()
                 if not self.async:
                     self.s.send(self.request)
-                    self.response=self.processUDPReply()
+                    r=self.processUDPReply()
+                    while r.header['id'] != self.tid:
+                      r=self.processUDPReply()
+                    self.response = r
+                    # FIXME: check waiting async queries
             #except socket.error:
             except None:
                 continue
@@ -211,9 +218,11 @@ class DnsRequest:
                 self.socketInit(socket.AF_INET, socket.SOCK_STREAM)
                 self.time_start=time.time()
                 self.conn()
-                self.s.send(Lib.pack16bit(len(self.request))+self.request)
-                self.s.shutdown(1)
-                self.response=self.processTCPReply()
+                self.s.sendall(Lib.pack16bit(len(self.request))+self.request)
+                self.s.shutdown(socket.SHUT_WR)
+                r=self.processTCPReply()
+                if r.header['id'] != self.tid: continue
+                self.response = r
             except socket.error:
                 continue
             break
@@ -256,6 +265,9 @@ class DnsAsyncRequest(DnsRequest,asyncore.dispatcher_with_send):
 
 #
 # $Log$
+# Revision 1.12.2.4  2007/05/22 20:28:31  customdesigned
+# Missing import Lib
+#
 # Revision 1.12.2.3  2007/05/22 20:25:52  customdesigned
 # Use socket.inetntoa,inetaton.
 #
