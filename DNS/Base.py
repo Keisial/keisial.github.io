@@ -9,12 +9,26 @@ This code is covered by the standard Python License.
     Base functionality. Request and Response classes, that sort of thing.
 """
 
-import socket, string, types, time
+import socket, string, types, time, select
 import Type,Class,Opcode
 import asyncore
-import DNS
+#
+# This random generator is used for transaction ids and port selection.  This
+# is important to prevent spurious results from lost packets, and malicious
+# cache poisoning.  This doesn't matter if you are behind a caching nameserver
+# or your app is a primary DNS server only. To install your own generator,
+# replace DNS.Base.random.  SystemRandom uses /dev/urandom or similar source.  
+#
+try:
+  from random import SystemRandom
+  random = SystemRandom()
+except:
+  import random
 
 class DNSError(Exception): pass
+
+# Lib uses DNSError, so import after defining.
+import Lib
 
 defaults= { 'protocol':'udp', 'port':53, 'opcode':Opcode.QUERY,
             'qtype':Type.A, 'rd':1, 'timing':1, 'timeout': 30 }
@@ -84,18 +98,16 @@ class DnsRequest:
         self.s = socket.socket(a,b)
 
     def processUDPReply(self):
-        import time,select
         if self.args['timeout'] > 0:
             r,w,e = select.select([self.s],[],[],self.args['timeout'])
             if not len(r):
                 raise DNSError, 'Timeout'
-        self.reply = self.s.recv(1024)
+        (self.reply, self.from_address) = self.s.recvfrom(65535)
         self.time_finish=time.time()
         self.args['server']=self.ns
         return self.processReply()
 
     def processTCPReply(self):
-        import time, Lib
         self.f = self.s.makefile('r')
         header = self.f.read(2)
         if len(header) < 2:
@@ -109,7 +121,6 @@ class DnsRequest:
         return self.processReply()
 
     def processReply(self):
-        import Lib
         self.args['elapsed']=(self.time_finish-self.time_start)*1000
         u = Lib.Munpacker(self.reply)
         r=Lib.DnsResult(u,self.args)
@@ -135,18 +146,29 @@ class DnsRequest:
 #                u = Lib.Munpacker(reply)
 #                Lib.dumpM(u)
 
+    def getSource(self):
+        "Pick random source port to avoid DNS cache poisoning attack."
+        while True:
+            try:
+                source_port = random.randint(1024,65535)
+                self.s.bind(('', source_port))
+                break
+            except socket.error, msg: 
+                # Error 98, 'Address already in use'
+                if msg[0] != 98: raise
+
     def conn(self):
+        self.getSource()
         self.s.connect((self.ns,self.port))
 
     def req(self,*name,**args):
         " needs a refactoring "
-        import time, Lib
         self.argparse(name,args)
         #if not self.args:
         #    raise DNSError,'reinitialize request before reuse'
         protocol = self.args['protocol']
         self.port = self.args['port']
-        self.tid = DNS.random.randint(0,65535)
+        self.tid = random.randint(0,65535)
         opcode = self.args['opcode']
         rd = self.args['rd']
         server=self.args['server']
@@ -190,44 +212,55 @@ class DnsRequest:
         self.socketInit(socket.AF_INET, socket.SOCK_DGRAM)
         for self.ns in server:
             try:
-                # TODO. Handle timeouts &c correctly (RFC)
-                #self.s.connect((self.ns, self.port))
-                self.conn()
-                self.time_start=time.time()
+                try:
+                    # TODO. Handle timeouts &c correctly (RFC)
+                    self.conn()
+                    self.time_start=time.time()
+                    if not self.async:
+                        self.s.send(self.request)
+                        r=self.processUDPReply()
+                        # Since we bind to the source port, we don't need to
+                        # check that here, but do make sure it's actually a DNS
+                        # request that the packet is in reply to.
+                        while r.header['id'] != self.tid    \
+                            or self.from_address[1] != 53:
+                          r=self.processUDPReply()
+                        self.response = r
+                        # FIXME: check waiting async queries
+                #except socket.error:
+                except None:
+                    continue
+                break
+            finally:
                 if not self.async:
-                    self.s.send(self.request)
-                    r=self.processUDPReply()
-                    while r.header['id'] != self.tid:
-                      r=self.processUDPReply()
-                    self.response = r
-                    # FIXME: check waiting async queries
-            #except socket.error:
-            except None:
-                continue
-            break
-        if not self.response:
-            if not self.async:
-                raise DNSError,'no working nameservers found'
+                    self.s.close()
+        if not self.response and not self.async:
+            raise DNSError,'no working nameservers found'
 
     def sendTCPRequest(self, server):
         " do the work of sending a TCP request "
-        import time, Lib
         self.response=None
         for self.ns in server:
             try:
-                self.socketInit(socket.AF_INET, socket.SOCK_STREAM)
-                self.time_start=time.time()
-                self.conn()
-                self.s.sendall(Lib.pack16bit(len(self.request))+self.request)
-                self.s.shutdown(socket.SHUT_WR)
-                r=self.processTCPReply()
-                if r.header['id'] != self.tid: continue
-                self.response = r
-            except socket.error:
-                continue
-            break
+                try:
+                    # TODO. Handle timeouts &c correctly (RFC)
+                    self.socketInit(socket.AF_INET, socket.SOCK_STREAM)
+                    self.time_start=time.time()
+                    self.conn()
+                    self.s.setblocking(0)
+                    buf = Lib.pack16bit(len(self.request))+self.request
+                    self.s.sendall(buf)
+                    self.s.shutdown(socket.SHUT_WR)
+                    r=self.processTCPReply()
+                    if r.header['id'] == self.tid:
+                        self.response = r
+                        break
+                except socket.error:
+                    continue
+            finally:
+                self.s.close()
         if not self.response:
-            raise DNSError,'no working nameservers found'
+            raise DNSError, 'no working nameservers found'
 
 #class DnsAsyncRequest(DnsRequest):
 class DnsAsyncRequest(DnsRequest,asyncore.dispatcher_with_send):
@@ -242,7 +275,7 @@ class DnsAsyncRequest(DnsRequest,asyncore.dispatcher_with_send):
         #self.realinit(name,args) # XXX todo
         self.async=1
     def conn(self):
-        import time
+        self.getSource()
         self.connect((self.ns,self.port))
         self.time_start=time.time()
         if self.args.has_key('start') and self.args['start']:
@@ -265,6 +298,9 @@ class DnsAsyncRequest(DnsRequest,asyncore.dispatcher_with_send):
 
 #
 # $Log$
+# Revision 1.12.2.5  2008/07/24 20:10:55  customdesigned
+# Randomize tid in requests, and check in response.
+#
 # Revision 1.12.2.4  2007/05/22 20:28:31  customdesigned
 # Missing import Lib
 #
