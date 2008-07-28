@@ -219,12 +219,13 @@ class DnsRequest:
                     if not self.async:
                         self.s.send(self.request)
                         r=self.processUDPReply()
-                        # Since we bind to the source port, we don't need to
-                        # check that here, but do make sure it's actually a DNS
-                        # request that the packet is in reply to.
-                        while r.header['id'] != self.tid    \
-                            or self.from_address[1] != 53:
-                          r=self.processUDPReply()
+                        # Since we bind to the source port and connect to the
+                        # destination port, we don't need to check that here,
+                        # but do make sure it's actually a DNS request that the
+                        # packet is in reply to.
+                        while r.header['id'] != self.tid        \
+                                or self.from_address[1] != self.port:
+                            r=self.processUDPReply()
                         self.response = r
                         # FIXME: check waiting async queries
                 #except socket.error:
@@ -298,6 +299,9 @@ class DnsAsyncRequest(DnsRequest,asyncore.dispatcher_with_send):
 
 #
 # $Log$
+# Revision 1.12.2.6  2008/07/28 00:17:10  customdesigned
+# Randomize source ports.
+#
 # Revision 1.12.2.5  2008/07/24 20:10:55  customdesigned
 # Randomize tid in requests, and check in response.
 #
