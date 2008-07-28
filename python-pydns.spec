@@ -48,7 +48,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Thu Jul 24 2008 Stuart Gathman <stuart@bmsi.com> 2.3.2-1
-- Randomize TID
+- Randomize TID and source port
 * Tue May 22 2007 Stuart Gathman <stuart@bmsi.com> 2.3.1-1
 - Bug fix release
 - BTS Patches:

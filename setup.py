@@ -14,19 +14,35 @@ import DNS
 setup(
         #-- Package description
         name = 'pydns',
-        license = 'Python license',
+        license = 'Python License',
         version = DNS.__version__,
         description = 'Python DNS library',
         long_description = """Python DNS library:
 """,
         author = 'Anthony Baxter and others', 
         author_email = 'pydns-developer@lists.sourceforge.net',
-        url = 'http://pydns.sourceforge.net/',
-        packages = ['DNS'],
+      maintainer="Stuart D. Gathman",
+      maintainer_email="stuart@bmsi.com",
+      url = 'http://pydns.sourceforge.net/',
+      packages = ['DNS'], keywords = ['DNS'],
+      classifiers = [
+        'Development Status :: 5 - Production/Stable',
+        'Environment :: No Input/Output (Daemon)',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: Python License (CNRI Python License)',
+        'Natural Language :: English',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python',
+        'Topic :: Internet :: Name Service (DNS)',
+        'Topic :: Software Development :: Libraries :: Python Modules'
+      ]
 )
 
 #
 # $Log$
+# Revision 1.4  2002/05/06 06:32:07  anthonybaxter
+# filled in a blank
+#
 # Revision 1.3  2001/11/23 19:43:57  stroeder
 # Prepend current directory to sys.path to enable import of DNS.
 #
