@@ -98,8 +98,8 @@ class DnsRequest:
         self.s = socket.socket(a,b)
 
     def processUDPReply(self):
-        if self.args['timeout'] > 0:
-            r,w,e = select.select([self.s],[],[],self.args['timeout'])
+        if self.timeout > 0:
+            r,w,e = select.select([self.s],[],[],self.timeout)
             if not len(r):
                 raise DNSError, 'Timeout'
         (self.reply, self.from_address) = self.s.recvfrom(65535)
@@ -108,13 +108,19 @@ class DnsRequest:
         return self.processReply()
 
     def processTCPReply(self):
-        self.f = self.s.makefile('r')
-        header = self.f.read(2)
+        if self.timeout > 0:
+            r,w,e = select.select([self.s],[],[],self.timeout)
+            if not len(r):
+                raise DNSError, 'Timeout'
+        f = self.s.makefile('r')
+        header = f.read(2)
         if len(header) < 2:
             raise DNSError,'EOF'
         count = Lib.unpack16bit(header)
-        self.reply = self.f.read(count)
+        self.reply = f.read(count)
         if len(self.reply) != count:
+            # FIXME: Since we are non-blocking, it could just be a large reply
+            # that we need to loop and wait for.
             raise DNSError,'incomplete reply'
         self.time_finish=time.time()
         self.args['server']=self.ns
@@ -169,6 +175,7 @@ class DnsRequest:
         protocol = self.args['protocol']
         self.port = self.args['port']
         self.tid = random.randint(0,65535)
+        self.timeout = self.args['timeout'];
         opcode = self.args['opcode']
         rd = self.args['rd']
         server=self.args['server']
@@ -248,8 +255,11 @@ class DnsRequest:
                     self.socketInit(socket.AF_INET, socket.SOCK_STREAM)
                     self.time_start=time.time()
                     self.conn()
-                    self.s.setblocking(0)
                     buf = Lib.pack16bit(len(self.request))+self.request
+                    # Keep server from making sendall hang
+                    self.s.setblocking(0)
+                    # FIXME: throws WOULDBLOCK if request too large to fit in
+                    # system buffer
                     self.s.sendall(buf)
                     self.s.shutdown(socket.SHUT_WR)
                     r=self.processTCPReply()
@@ -299,6 +309,9 @@ class DnsAsyncRequest(DnsRequest,asyncore.dispatcher_with_send):
 
 #
 # $Log$
+# Revision 1.12.2.7  2008/07/28 01:27:00  customdesigned
+# Check configured port.
+#
 # Revision 1.12.2.6  2008/07/28 00:17:10  customdesigned
 # Randomize source ports.
 #
