@@ -2,13 +2,14 @@
 
 Name:           python-pydns
 Version:        2.3.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Python module for DNS (Domain Name Service).
 
 Group:          Development/Languages
 License:        Python Software Foundation License
 URL:            http://pydns.sourceforge.net/
 Source0:        pydns-%{version}.tar.gz
+Patch0:         pydns-%{version}.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
@@ -26,7 +27,7 @@ symbolic constants used by DNS (dnstype, dnsclass, dnsopcode).
 %define namewithoutpythonprefix %(echo %{name} | sed 's/^python-//')
 %prep
 %setup -q -n %{namewithoutpythonprefix}-%{version}
-
+%patch -b .bms
 
 %build
 %{__python} setup.py build
@@ -47,6 +48,8 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/DNS/*.py*
 
 %changelog
+* Thu Jul 24 2008 Stuart Gathman <stuart@bmsi.com> 2.3.2-2
+- Fix tcp timeout
 * Thu Jul 24 2008 Stuart Gathman <stuart@bmsi.com> 2.3.2-1
 - Randomize TID and source port
 * Tue May 22 2007 Stuart Gathman <stuart@bmsi.com> 2.3.1-1
