@@ -15,7 +15,7 @@ setup(
         #-- Package description
         name = 'pydns',
         license = 'Python License',
-        version = DNS.__version__,
+        version = DNS.__version__+'p1',
         description = 'Python DNS library',
         long_description = """Python DNS library:
 """,
@@ -40,6 +40,9 @@ setup(
 
 #
 # $Log$
+# Revision 1.4.2.1  2008/07/28 19:54:13  customdesigned
+# Add pypi metadata to setup.py
+#
 # Revision 1.4  2002/05/06 06:32:07  anthonybaxter
 # filled in a blank
 #

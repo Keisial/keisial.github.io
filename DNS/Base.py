@@ -219,18 +219,18 @@ class DnsRequest:
         "refactor me"
         self.response=None
         for self.ns in server:
-	    #print "trying udp",self.ns
+            #print "trying udp",self.ns
             try:
+                if self.ns.count(':'):
+                    if hasattr(socket,'has_ipv6') and socket.has_ipv6:
+                        self.socketInit(socket.AF_INET6, socket.SOCK_DGRAM)
+                    else: continue
+                else:
+                    self.socketInit(socket.AF_INET, socket.SOCK_DGRAM)
                 try:
-                    if self.ns.count(':'):
-                        if hasattr(socket,'has_ipv6') and socket.has_ipv6:
-                            self.socketInit(socket.AF_INET6, socket.SOCK_DGRAM)
-                        else: continue
-                    else:
-                        self.socketInit(socket.AF_INET, socket.SOCK_DGRAM)
                     # TODO. Handle timeouts &c correctly (RFC)
-                    self.conn()
                     self.time_start=time.time()
+                    self.conn()
                     if not self.async:
                         self.s.send(self.request)
                         r=self.processUDPReply()
@@ -243,26 +243,26 @@ class DnsRequest:
                             r=self.processUDPReply()
                         self.response = r
                         # FIXME: check waiting async queries
-                except socket.error:
-                    continue
-            finally:
-                if not self.async:
-                    self.s.close()
+                finally:
+                    if not self.async:
+                        self.s.close()
+            except socket.error:
+                continue
             break
 
     def sendTCPRequest(self, server):
         " do the work of sending a TCP request "
         self.response=None
         for self.ns in server:
-	    #print "trying tcp",self.ns
+            #print "trying tcp",self.ns
             try:
+                if self.ns.count(':'):
+                    if hasattr(socket,'has_ipv6') and socket.has_ipv6:
+                        self.socketInit(socket.AF_INET6, socket.SOCK_STREAM)
+                    else: continue
+                else:
+                    self.socketInit(socket.AF_INET, socket.SOCK_STREAM)
                 try:
-                    if self.ns.count(':'):
-                        if hasattr(socket,'has_ipv6') and socket.has_ipv6:
-                            self.socketInit(socket.AF_INET6, socket.SOCK_STREAM)
-                        else: continue
-                    else:
-                        self.socketInit(socket.AF_INET, socket.SOCK_STREAM)
                     # TODO. Handle timeouts &c correctly (RFC)
                     self.time_start=time.time()
                     self.conn()
@@ -277,10 +277,10 @@ class DnsRequest:
                     if r.header['id'] == self.tid:
                         self.response = r
                         break
-                except socket.error:
-                    continue
-            finally:
-                self.s.close()
+                finally:
+                    self.s.close()
+            except socket.error:
+                continue
 
 #class DnsAsyncRequest(DnsRequest):
 class DnsAsyncRequest(DnsRequest,asyncore.dispatcher_with_send):
@@ -318,6 +318,9 @@ class DnsAsyncRequest(DnsRequest,asyncore.dispatcher_with_send):
 
 #
 # $Log$
+# Revision 1.12.2.9  2008/08/01 03:48:31  customdesigned
+# Fix more breakage from port randomization patch.  Support Ipv6 queries.
+#
 # Revision 1.12.2.8  2008/07/31 18:22:59  customdesigned
 # Wait until tcp response at least starts coming in.
 #

@@ -1,12 +1,13 @@
 %define name pydns
 %define version 2.3.2
-%define release 2.4
+%define release 2.4p1
 
 Summary: Python DNS library
 Name: %{name}
 Version: %{version}
 Release: %{release}
 Source0: %{name}-%{version}.tar.gz
+Patch0:         pydns-%{version}.patch
 License: Python license
 Group: Development/Libraries
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
@@ -21,6 +22,7 @@ Python DNS library
 
 %prep
 %setup
+%patch -b .bms
 
 %build
 python2.4 setup.py build
