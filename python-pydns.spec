@@ -9,7 +9,6 @@ Group:          Development/Languages
 License:        Python Software Foundation License
 URL:            http://pydns.sourceforge.net/
 Source0:        pydns-%{version}.tar.gz
-Patch0:         pydns-%{version}.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
@@ -27,7 +26,6 @@ symbolic constants used by DNS (dnstype, dnsclass, dnsopcode).
 %define namewithoutpythonprefix %(echo %{name} | sed 's/^python-//')
 %prep
 %setup -q -n %{namewithoutpythonprefix}-%{version}
-%patch -b .bms
 
 %build
 %{__python} setup.py build

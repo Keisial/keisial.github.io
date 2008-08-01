@@ -7,7 +7,6 @@ Name: %{name}
 Version: %{version}
 Release: %{release}
 Source0: %{name}-%{version}.tar.gz
-Patch0:         pydns-%{version}.patch
 License: Python license
 Group: Development/Libraries
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
@@ -22,7 +21,6 @@ Python DNS library
 
 %prep
 %setup
-%patch -b .bms
 
 %build
 python2.4 setup.py build
