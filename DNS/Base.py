@@ -211,15 +211,23 @@ class DnsRequest:
         if self.async:
             return None
         else:
+            if not self.response:
+                raise DNSError,'no working nameservers found'
             return self.response
 
     def sendUDPRequest(self, server):
         "refactor me"
         self.response=None
-        self.socketInit(socket.AF_INET, socket.SOCK_DGRAM)
         for self.ns in server:
+	    #print "trying udp",self.ns
             try:
                 try:
+                    if self.ns.count(':'):
+                        if hasattr(socket,'has_ipv6') and socket.has_ipv6:
+                            self.socketInit(socket.AF_INET6, socket.SOCK_DGRAM)
+                        else: continue
+                    else:
+                        self.socketInit(socket.AF_INET, socket.SOCK_DGRAM)
                     # TODO. Handle timeouts &c correctly (RFC)
                     self.conn()
                     self.time_start=time.time()
@@ -235,24 +243,27 @@ class DnsRequest:
                             r=self.processUDPReply()
                         self.response = r
                         # FIXME: check waiting async queries
-                #except socket.error:
-                except None:
+                except socket.error:
                     continue
-                break
             finally:
                 if not self.async:
                     self.s.close()
-        if not self.response and not self.async:
-            raise DNSError,'no working nameservers found'
+            break
 
     def sendTCPRequest(self, server):
         " do the work of sending a TCP request "
         self.response=None
         for self.ns in server:
+	    #print "trying tcp",self.ns
             try:
                 try:
+                    if self.ns.count(':'):
+                        if hasattr(socket,'has_ipv6') and socket.has_ipv6:
+                            self.socketInit(socket.AF_INET6, socket.SOCK_STREAM)
+                        else: continue
+                    else:
+                        self.socketInit(socket.AF_INET, socket.SOCK_STREAM)
                     # TODO. Handle timeouts &c correctly (RFC)
-                    self.socketInit(socket.AF_INET, socket.SOCK_STREAM)
                     self.time_start=time.time()
                     self.conn()
                     buf = Lib.pack16bit(len(self.request))+self.request
@@ -270,8 +281,6 @@ class DnsRequest:
                     continue
             finally:
                 self.s.close()
-        if not self.response:
-            raise DNSError, 'no working nameservers found'
 
 #class DnsAsyncRequest(DnsRequest):
 class DnsAsyncRequest(DnsRequest,asyncore.dispatcher_with_send):
@@ -309,6 +318,9 @@ class DnsAsyncRequest(DnsRequest,asyncore.dispatcher_with_send):
 
 #
 # $Log$
+# Revision 1.12.2.8  2008/07/31 18:22:59  customdesigned
+# Wait until tcp response at least starts coming in.
+#
 # Revision 1.12.2.7  2008/07/28 01:27:00  customdesigned
 # Check configured port.
 #
