@@ -9,7 +9,7 @@
 
 # __init__.py for DNS class.
 
-__version__ = '2.3.2'
+__version__ = '2.3.3'
 
 import Type,Opcode,Status,Class
 from Base import DnsRequest, DNSError
@@ -24,6 +24,9 @@ Result = DnsResult
 
 #
 # $Log$
+# Revision 1.8.2.5  2008/07/28 02:11:07  customdesigned
+# Bump version.
+#
 # Revision 1.8.2.4  2008/07/28 00:17:10  customdesigned
 # Randomize source ports.
 #

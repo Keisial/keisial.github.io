@@ -15,7 +15,7 @@ setup(
         #-- Package description
         name = 'pydns',
         license = 'Python License',
-        version = DNS.__version__+'p1',
+        version = DNS.__version__,
         description = 'Python DNS library',
         long_description = """Python DNS library:
 """,
@@ -40,6 +40,9 @@ setup(
 
 #
 # $Log$
+# Revision 1.4.2.2  2008/08/01 03:58:03  customdesigned
+# Don't try to close socket when never opened.
+#
 # Revision 1.4.2.1  2008/07/28 19:54:13  customdesigned
 # Add pypi metadata to setup.py
 #

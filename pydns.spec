@@ -1,6 +1,6 @@
 %define name pydns
-%define version 2.3.2
-%define release 2.4p1
+%define version 2.3.3
+%define release 2.4
 
 Summary: Python DNS library
 Name: %{name}
