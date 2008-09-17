@@ -35,6 +35,8 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 
 %changelog
+* Fri Aug 01 2008 Stuart Gathman <stuart@bmsi.com> 2.3.3-1
+- Support IPv6 nameservers
 * Thu Jul 24 2008 Stuart Gathman <stuart@bmsi.com> 2.3.2-2
 - Fix tcp timeout
 * Thu Jul 24 2008 Stuart Gathman <stuart@bmsi.com> 2.3.2-1

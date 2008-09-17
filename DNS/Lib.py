@@ -94,6 +94,7 @@ class Packer:
         list = []
         for label in string.splitfields(name, '.'):
             if label:
+                label = label.encode('utf8')
                 if len(label) > 63:
                     raise PackError, 'label too long'
                 list.append(label)
@@ -626,6 +627,9 @@ if __name__ == "__main__":
     testpacker()
 #
 # $Log$
+# Revision 1.11.2.3  2007/05/22 20:27:40  customdesigned
+# Fix unpacker underflow.
+#
 # Revision 1.11.2.2  2007/05/22 20:25:53  customdesigned
 # Use socket.inetntoa,inetaton.
 #
