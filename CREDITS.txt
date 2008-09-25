@@ -4,7 +4,7 @@ by Guido van Rossum somewhere near the dawn of time.
 Since then, as well as myself (Anthony), I have had contributions
 by:
 
- Michael Ströder
+ Michael StrÃ¶der
  Bastian Kleineidam
  Timothy J. Miller
  Wolfgang Strobl
