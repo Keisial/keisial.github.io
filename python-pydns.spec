@@ -2,13 +2,14 @@
 
 Name:           python-pydns
 Version:        2.3.3
-Release:        2%{?dist}
-Summary:        Python module for DNS (Domain Name Service).
+Release:        3%{?dist}
+Summary:        Python module for DNS (Domain Name Service)
 
 Group:          Development/Languages
 License:        Python Software Foundation License
 URL:            http://pydns.sourceforge.net/
 Source0:        pydns-%{version}.tar.gz
+Patch0:         pydns.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
@@ -26,6 +27,7 @@ symbolic constants used by DNS (dnstype, dnsclass, dnsopcode).
 %define namewithoutpythonprefix %(echo %{name} | sed 's/^python-//')
 %prep
 %setup -q -n %{namewithoutpythonprefix}-%{version}
+%patch -p1 -b .sdg
 
 %build
 %{__python} setup.py build
@@ -44,12 +46,17 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %doc CREDITS.txt PKG-INFO README-guido.txt README.txt
 %{python_sitelib}/DNS/*.py*
+%{python_sitelib}/pydns-2.3.3-py2.5.egg-info
 
 %changelog
+* Thu Sep 25 2008 Stuart Gathman <stuart@bmsi.com> 2.3.3-3
+- Accept unicode names, encode to ascii with exception if non-ascii
+* Thu Sep 25 2008 Stuart Gathman <stuart@bmsi.com> 2.3.3-2
+- Support IPv6 queries
 * Thu Jul 24 2008 Stuart Gathman <stuart@bmsi.com> 2.3.2-2
 - Fix tcp timeout
 * Thu Jul 24 2008 Stuart Gathman <stuart@bmsi.com> 2.3.2-1
-- Randomize TID and source port
+- Randomize TID and source port, CVE-2008-4099 CVE-2008-4126
 * Tue May 22 2007 Stuart Gathman <stuart@bmsi.com> 2.3.1-1
 - Bug fix release
 - BTS Patches:
