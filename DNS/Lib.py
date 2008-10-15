@@ -29,8 +29,12 @@ import Type
 import Class
 import Opcode
 import Status
+import DNS
 
 from Base import DNSError
+
+LABEL_UTF8 = False
+LABEL_ENCODING = 'idna'
 
 class UnpackError(DNSError): pass
 class PackError(DNSError): pass
@@ -93,11 +97,9 @@ class Packer:
         # Redundant dots are ignored.
         list = []
         for label in string.splitfields(name, '.'):
-            if label:
-                label = label.encode('ascii')
-                if len(label) > 63:
-                    raise PackError, 'label too long'
-                list.append(label)
+            if not label:
+                raise PackError, 'empty label'
+            list.append(label)
         keys = []
         for i in range(len(list)):
             key = string.upper(string.joinfields(list[i:], '.'))
@@ -113,9 +115,22 @@ class Packer:
         buf = ''
         offset = len(self.buf)
         index = []
+        if DNS.LABEL_UTF8:
+          enc = 'utf8'
+        else:
+          enc = DNS.LABEL_ENCODING
         for j in range(i):
             label = list[j]
+            try:
+                label = label.encode(enc)
+            except UnicodeEncodeError:
+                if not DNS.LABEL_UTF8: raise
+                if not label.startswith('\ufeff'):
+                    label = '\ufeff'+label
+                label = label.encode(enc)
             n = len(label)
+            if n > 63:
+                raise PackError, 'label too long'
             if offset + len(buf) < 0x3FFF:
                 index.append((keys[j], offset + len(buf)))
             else:
@@ -627,6 +642,10 @@ if __name__ == "__main__":
     testpacker()
 #
 # $Log$
+# Revision 1.11.2.5  2008/09/17 17:35:14  customdesigned
+# Use 7-bit ascii encoding, because case folding needs to be disabled
+# before utf8 is safe to use, even experimentally.
+#
 # Revision 1.11.2.4  2008/09/17 16:09:53  customdesigned
 # Encode unicode labels as UTF-8
 #
