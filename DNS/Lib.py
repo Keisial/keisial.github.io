@@ -416,6 +416,7 @@ class RRunpacker(Unpacker):
         while self.offset != self.rdend:
             list.append(self.getstring())
         return list
+    getSPFdata = getTXTdata
     def getAdata(self):
         return self.getaddr()
     def getWKSdata(self):
@@ -642,6 +643,9 @@ if __name__ == "__main__":
     testpacker()
 #
 # $Log$
+# Revision 1.11.2.6  2008/10/15 22:34:06  customdesigned
+# Default to idna encoding.
+#
 # Revision 1.11.2.5  2008/09/17 17:35:14  customdesigned
 # Use 7-bit ascii encoding, because case folding needs to be disabled
 # before utf8 is safe to use, even experimentally.
