@@ -1,15 +1,14 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-pydns
-Version:        2.3.3
-Release:        3%{?dist}
-Summary:        Python module for DNS (Domain Name Service)
+Version:        2.3.4
+Release:        1%{?dist}
+Summary:        Python module for DNS (Domain Name Service).
 
 Group:          Development/Languages
 License:        Python Software Foundation License
 URL:            http://pydns.sourceforge.net/
 Source0:        pydns-%{version}.tar.gz
-Patch0:         pydns.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
@@ -27,7 +26,7 @@ symbolic constants used by DNS (dnstype, dnsclass, dnsopcode).
 %define namewithoutpythonprefix %(echo %{name} | sed 's/^python-//')
 %prep
 %setup -q -n %{namewithoutpythonprefix}-%{version}
-%patch -p1 -b .sdg
+#patch -p1 -b .sdg
 
 %build
 %{__python} setup.py build
@@ -49,10 +48,15 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/pydns-2.3.3-py2.5.egg-info
 
 %changelog
+* Tue Jun 09 2009 Stuart Gathman <stuart@bmsi.com> 2.3.4-1
+- Support IDNA label encoding
+- Optionally support M$ compatible UTF-8 label encoding.
 * Thu Sep 25 2008 Stuart Gathman <stuart@bmsi.com> 2.3.3-3
 - Accept unicode names, encode to ascii with exception if non-ascii
 * Thu Sep 25 2008 Stuart Gathman <stuart@bmsi.com> 2.3.3-2
 - Support IPv6 queries
+* Fri Aug 01 2008 Stuart Gathman <stuart@bmsi.com> 2.3.3-1
+- Support IPv6 nameservers
 * Thu Jul 24 2008 Stuart Gathman <stuart@bmsi.com> 2.3.2-2
 - Fix tcp timeout
 * Thu Jul 24 2008 Stuart Gathman <stuart@bmsi.com> 2.3.2-1

@@ -1,5 +1,5 @@
 %define name pydns
-%define version 2.3.3
+%define version 2.3.4
 %define release 2.4
 
 Summary: Python DNS library
@@ -35,6 +35,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 
 %changelog
+* Tue Jun 09 2009 Stuart Gathman <stuart@bmsi.com> 2.3.4-1
+- Support IDNA label encoding
+- Optionally support M$ compatible UTF-8 label encoding.
 * Fri Aug 01 2008 Stuart Gathman <stuart@bmsi.com> 2.3.3-1
 - Support IPv6 nameservers
 * Thu Jul 24 2008 Stuart Gathman <stuart@bmsi.com> 2.3.2-2

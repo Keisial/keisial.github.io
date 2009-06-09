@@ -9,7 +9,7 @@
 
 # __init__.py for DNS class.
 
-__version__ = '2.3.3'
+__version__ = '2.3.4'
 
 import Type,Opcode,Status,Class
 from Base import DnsRequest, DNSError
@@ -21,9 +21,11 @@ from lazy import *
 Request = DnsRequest
 Result = DnsResult
 
-
 #
 # $Log$
+# Revision 1.8.2.6  2008/08/01 04:01:25  customdesigned
+# Release 2.3.3
+#
 # Revision 1.8.2.5  2008/07/28 02:11:07  customdesigned
 # Bump version.
 #
