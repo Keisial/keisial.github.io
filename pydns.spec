@@ -1,11 +1,7 @@
-%define name pydns
-%define version 2.3.4
-%define release 2.4
-
 Summary: Python DNS library
-Name: %{name}
-Version: %{version}
-Release: %{release}
+Name: pydns
+Version: 2.3.4
+Release: 1.py24
 Source0: %{name}-%{version}.tar.gz
 License: Python license
 Group: Development/Libraries
