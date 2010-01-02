@@ -110,18 +110,25 @@ class DnsRequest:
     def processTCPReply(self):
         if self.timeout > 0:
             r,w,e = select.select([self.s],[],[],self.timeout)
-            if not len(r):
-                raise DNSError, 'Timeout'
+            if not len(r): raise DNSError, 'Timeout'
         f = self.s.makefile('r')
         header = f.read(2)
         if len(header) < 2:
             raise DNSError,'EOF'
         count = Lib.unpack16bit(header)
         self.reply = f.read(count)
-        if len(self.reply) != count:
-            # FIXME: Since we are non-blocking, it could just be a large reply
-            # that we need to loop and wait for.
+        while len(self.reply) < count:
+          # untested!
+          if self.timeout > 0:
+              # should we restart timeout everytime we get a dribble of data?
+              rem = self.time_start + self.timeout - time.time()
+              if rem <= 0: raise DNSError,'Timeout'
+              r,w,e = select.select([self.s],[],[],rem)
+              if not len(r): raise DNSError, 'Timeout'
+          buf = f.read(count - len(self.reply))
+          if not buf:
             raise DNSError,'incomplete reply'
+          self.reply += buf
         self.time_finish=time.time()
         self.args['server']=self.ns
         return self.processReply()
@@ -318,6 +325,9 @@ class DnsAsyncRequest(DnsRequest,asyncore.dispatcher_with_send):
 
 #
 # $Log$
+# Revision 1.12.2.10  2008/08/01 03:58:03  customdesigned
+# Don't try to close socket when never opened.
+#
 # Revision 1.12.2.9  2008/08/01 03:48:31  customdesigned
 # Fix more breakage from port randomization patch.  Support Ipv6 queries.
 #

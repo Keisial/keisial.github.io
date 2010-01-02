@@ -36,8 +36,9 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Jun 09 2009 Stuart Gathman <stuart@bmsi.com> 2.3.4-1
-- Support IDNA label encoding
-- Optionally support M$ compatible UTF-8 label encoding.
+- Support IDNA label encoding (from 2.3.3-3)
+- Optionally support M$ compatible UTF-8 label encoding (DNS.LABEL_UTF8)
+- Built-in SPF RR support
 * Fri Aug 01 2008 Stuart Gathman <stuart@bmsi.com> 2.3.3-1
 - Support IPv6 nameservers
 * Thu Jul 24 2008 Stuart Gathman <stuart@bmsi.com> 2.3.2-2
