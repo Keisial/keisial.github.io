@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/python3
 # 
 # $Id$
 #
@@ -40,6 +40,9 @@ setup(
 
 #
 # $Log$
+# Revision 1.4.2.3  2008/08/01 04:01:25  customdesigned
+# Release 2.3.3
+#
 # Revision 1.4.2.2  2008/08/01 03:58:03  customdesigned
 # Don't try to close socket when never opened.
 #

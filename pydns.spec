@@ -1,7 +1,11 @@
+%define name py3dns
+%define version 3.0.0
+%define release 3.0
+
 Summary: Python DNS library
-Name: pydns
-Version: 2.3.4
-Release: 1.py24
+Name: %{name}
+Version: %{version}
+Release: %{release}
 Source0: %{name}-%{version}.tar.gz
 License: Python license
 Group: Development/Libraries
@@ -13,16 +17,16 @@ Packager: Stuart D. Gathman <stuart@bmsi.com>
 Url: http://pydns.sourceforge.net/
 
 %description
-Python DNS library
+Python3 DNS library
 
 %prep
 %setup
 
 %build
-python2.4 setup.py build
+python3 setup.py build
 
 %install
-python2.4 setup.py install --root=$RPM_BUILD_ROOT --record=INSTALLED_FILES
+python3 setup.py install --root=$RPM_BUILD_ROOT --record=INSTALLED_FILES
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -32,9 +36,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Jun 09 2009 Stuart Gathman <stuart@bmsi.com> 2.3.4-1
-- Support IDNA label encoding (from 2.3.3-3)
-- Optionally support M$ compatible UTF-8 label encoding (DNS.LABEL_UTF8)
-- Built-in SPF RR support
+- Support IDNA label encoding
+- Optionally support M$ compatible UTF-8 label encoding.
 * Fri Aug 01 2008 Stuart Gathman <stuart@bmsi.com> 2.3.3-1
 - Support IPv6 nameservers
 * Thu Jul 24 2008 Stuart Gathman <stuart@bmsi.com> 2.3.2-2

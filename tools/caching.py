@@ -35,7 +35,7 @@ class DNSCache:
                 return None
             cache = self.forCache
             qt = 'a'
-        if cache.has_key(name):
+        if name in cache:
 	    # Check if it's timed out or not
             if cache[name][1] < now:
                 del(cache[name])

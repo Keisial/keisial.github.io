@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import sys ; sys.path.insert(0, '..')
 import DNS
@@ -14,4 +14,4 @@ r=DNS.Request(qtype='soa')
 res = r.req('connect.com.au')
 res.show()
 
-print DNS.revlookup('192.189.54.17')
+print(DNS.revlookup('192.189.54.17'))

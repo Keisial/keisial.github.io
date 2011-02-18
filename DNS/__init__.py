@@ -4,25 +4,35 @@
 # This file is part of the pydns project.
 # Homepage: http://pydns.sourceforge.net
 #
-# This code is covered by the standard Python License.
+# Changes for Python3 port © 2011 Scott Kitterman <scott@kitterman.com>
 #
+# This code is covered by the standard Python License.
 
 # __init__.py for DNS class.
 
-__version__ = '2.3.4'
+__version__ = '3.0.0'
 
-import Type,Opcode,Status,Class
-from Base import DnsRequest, DNSError
-from Lib import DnsResult
-from Base import *
-from Lib import *
+from . import Type
+from . import Opcode
+from . import Status
+from . import Class
+from .Base import DnsRequest
+from .Base import DNSError
+from .Lib import DnsResult
+from .Base import *
+from .Lib import *
 Error=DNSError
-from lazy import *
+from .lazy import *
 Request = DnsRequest
 Result = DnsResult
 
+Base._DiscoverNameServers()
+
 #
 # $Log$
+# Revision 1.8.2.7  2009/06/09 18:05:29  customdesigned
+# Release 2.3.4
+#
 # Revision 1.8.2.6  2008/08/01 04:01:25  customdesigned
 # Release 2.3.3
 #

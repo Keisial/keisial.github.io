@@ -10,7 +10,7 @@ This code is covered by the standard Python License.
 """
 
 import socket, string, types, time, select
-import Type,Class,Opcode
+from . import Type,Class,Opcode
 import asyncore
 #
 # This random generator is used for transaction ids and port selection.  This
@@ -28,22 +28,21 @@ except:
 class DNSError(Exception): pass
 
 # Lib uses DNSError, so import after defining.
-import Lib
+from . import Lib
 
 defaults= { 'protocol':'udp', 'port':53, 'opcode':Opcode.QUERY,
-            'qtype':Type.A, 'rd':1, 'timing':1, 'timeout': 30 }
-
-defaults['server']=[]
+            'qtype':Type.A, 'rd':1, 'timing':1, 'timeout': 30, 'server_rotate': 0,
+            'server': [] }
 
 def ParseResolvConf(resolv_path="/etc/resolv.conf"):
     "parses the /etc/resolv.conf file and sets defaults for name servers"
     global defaults
     lines=open(resolv_path).readlines()
     for line in lines:
-        line = string.strip(line)
+        line = line.strip()
         if not line or line[0]==';' or line[0]=='#':
             continue
-        fields=string.split(line)
+        fields=line.split()
         if len(fields) < 2: 
             continue
         if fields[0]=='domain' and len(fields) > 1:
@@ -57,13 +56,19 @@ def ParseResolvConf(resolv_path="/etc/resolv.conf"):
         if fields[0]=='nameserver':
             defaults['server'].append(fields[1])
 
-def DiscoverNameServers():
+def _DiscoverNameServers():
     import sys
     if sys.platform in ('win32', 'nt'):
-        import win32dns
+        from . import win32dns
         defaults['server']=win32dns.RegistryResolve()
     else:
         return ParseResolvConf()
+
+def DiscoverNameServers():
+    """Don't call, only here for backward compatability.  We do discovery for
+    you automatically.
+    """
+    pass
 
 class DnsRequest:
     """ high level Request object """
@@ -76,21 +81,23 @@ class DnsRequest:
         self.tid = 0
 
     def argparse(self,name,args):
-        if not name and self.defaults.has_key('name'):
+        if not name and 'name' in self.defaults:
             args['name'] = self.defaults['name']
-        if type(name) is types.StringType:
+        if type(name) is bytes or type(name) is str:
             args['name']=name
         else:
             if len(name) == 1:
                 if name[0]:
                     args['name']=name[0]
-        for i in defaults.keys():
-            if not args.has_key(i):
-                if self.defaults.has_key(i):
+        if defaults['server_rotate'] and type(defaults['server']) == types.ListType:
+            defaults['server'] = defaults['server'][1:]+defaults['server'][:1]
+        for i in list(defaults.keys()):
+            if i not in args:
+                if i in self.defaults:
                     args[i]=self.defaults[i]
                 else:
                     args[i]=defaults[i]
-        if type(args['server']) == types.StringType:
+        if type(args['server']) == bytes or type(args['server']) == str:
             args['server'] = [args['server']]
         self.args=args
 
@@ -101,7 +108,7 @@ class DnsRequest:
         if self.timeout > 0:
             r,w,e = select.select([self.s],[],[],self.timeout)
             if not len(r):
-                raise DNSError, 'Timeout'
+                raise DNSError('Timeout')
         (self.reply, self.from_address) = self.s.recvfrom(65535)
         self.time_finish=time.time()
         self.args['server']=self.ns
@@ -110,25 +117,18 @@ class DnsRequest:
     def processTCPReply(self):
         if self.timeout > 0:
             r,w,e = select.select([self.s],[],[],self.timeout)
-            if not len(r): raise DNSError, 'Timeout'
+            if not len(r):
+                raise DNSError('Timeout')
         f = self.s.makefile('r')
         header = f.read(2)
         if len(header) < 2:
-            raise DNSError,'EOF'
+            raise DNSError('EOF')
         count = Lib.unpack16bit(header)
         self.reply = f.read(count)
-        while len(self.reply) < count:
-          # untested!
-          if self.timeout > 0:
-              # should we restart timeout everytime we get a dribble of data?
-              rem = self.time_start + self.timeout - time.time()
-              if rem <= 0: raise DNSError,'Timeout'
-              r,w,e = select.select([self.s],[],[],rem)
-              if not len(r): raise DNSError, 'Timeout'
-          buf = f.read(count - len(self.reply))
-          if not buf:
-            raise DNSError,'incomplete reply'
-          self.reply += buf
+        if len(self.reply) != count:
+            # FIXME: Since we are non-blocking, it could just be a large reply
+            # that we need to loop and wait for.
+            raise DNSError('incomplete reply')
         self.time_finish=time.time()
         self.args['server']=self.ns
         return self.processReply()
@@ -166,7 +166,7 @@ class DnsRequest:
                 source_port = random.randint(1024,65535)
                 self.s.bind(('', source_port))
                 break
-            except socket.error, msg: 
+            except socket.error as msg: 
                 # Error 98, 'Address already in use'
                 if msg[0] != 98: raise
 
@@ -186,21 +186,21 @@ class DnsRequest:
         opcode = self.args['opcode']
         rd = self.args['rd']
         server=self.args['server']
-        if type(self.args['qtype']) == types.StringType:
+        if type(self.args['qtype']) == bytes or type(self.args['qtype']) == str:
             try:
-                qtype = getattr(Type, string.upper(self.args['qtype']))
+                qtype = getattr(Type, str(self.args['qtype'].upper()))
             except AttributeError:
-                raise DNSError,'unknown query type'
+                raise DNSError('unknown query type')
         else:
-            qtype=self.args['qtype']
-        if not self.args.has_key('name'):
-            print self.args
-            raise DNSError,'nothing to lookup'
+            qtype = self.args['qtype']
+        if 'name' not in self.args:
+            print((self.args))
+            raise DNSError('nothing to lookup')
         qname = self.args['name']
         if qtype == Type.AXFR:
-            print 'Query type AXFR, protocol forced to TCP'
+            print('Query type AXFR, protocol forced to TCP')
             protocol = 'tcp'
-        #print 'QTYPE %d(%s)' % (qtype, Type.typestr(qtype))
+        #print('QTYPE %d(%s)' % (qtype, Type.typestr(qtype)))
         m = Lib.Mpacker()
         # jesus. keywords and default args would be good. TODO.
         m.addHeader(self.tid,
@@ -213,20 +213,19 @@ class DnsRequest:
                 self.sendUDPRequest(server)
             else:
                 self.sendTCPRequest(server)
-        except socket.error, reason:
-            raise DNSError, reason
+        except socket.error as reason:
+            raise DNSError(reason)
         if self.async:
             return None
         else:
             if not self.response:
-                raise DNSError,'no working nameservers found'
+                raise DNSError('no working nameservers found')
             return self.response
 
     def sendUDPRequest(self, server):
         "refactor me"
         self.response=None
         for self.ns in server:
-            #print "trying udp",self.ns
             try:
                 if self.ns.count(':'):
                     if hasattr(socket,'has_ipv6') and socket.has_ipv6:
@@ -295,7 +294,7 @@ class DnsAsyncRequest(DnsRequest,asyncore.dispatcher_with_send):
     def __init__(self,*name,**args):
         DnsRequest.__init__(self, *name, **args)
         # XXX todo
-        if args.has_key('done') and args['done']:
+        if 'done' in args and args['done']:
             self.donefunc=args['done']
         else:
             self.donefunc=self.showResult
@@ -305,7 +304,7 @@ class DnsAsyncRequest(DnsRequest,asyncore.dispatcher_with_send):
         self.getSource()
         self.connect((self.ns,self.port))
         self.time_start=time.time()
-        if self.args.has_key('start') and self.args['start']:
+        if 'start' in self.args and self.args['start']:
             asyncore.dispatcher.go(self)
     def socketInit(self,a,b):
         self.create_socket(a,b)
@@ -315,7 +314,7 @@ class DnsAsyncRequest(DnsRequest,asyncore.dispatcher_with_send):
         if self.args['protocol'] == 'udp':
             self.response=self.processUDPReply()
             if self.donefunc:
-                apply(self.donefunc,(self,))
+                self.donefunc(*(self,))
     def handle_connect(self):
         self.send(self.request)
     def handle_write(self):

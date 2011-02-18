@@ -30,11 +30,14 @@ for _name in _names:
     if _name[0] != '_': classmap[eval(_name)] = _name
 
 def classstr(klass):
-    if classmap.has_key(klass): return classmap[klass]
-    else: return `klass`
+    if klass in classmap: return classmap[klass]
+    else: return repr(klass)
 
 #
 # $Log$
+# Revision 1.6  2002/04/23 12:52:19  anthonybaxter
+# cleanup whitespace.
+#
 # Revision 1.5  2002/03/19 12:41:33  anthonybaxter
 # tabnannied and reindented everything. 4 space indent, no tabs.
 # yay.

@@ -25,11 +25,14 @@ for _name in _names:
     if _name[0] != '_': opcodemap[eval(_name)] = _name
 
 def opcodestr(opcode):
-    if opcodemap.has_key(opcode): return opcodemap[opcode]
-    else: return `opcode`
+    if opcode in opcodemap: return opcodemap[opcode]
+    else: return repr(opcode)
 
 #
 # $Log$
+# Revision 1.6  2002/04/23 10:51:43  anthonybaxter
+# Added UPDATE, NOTIFY.
+#
 # Revision 1.5  2002/03/19 12:41:33  anthonybaxter
 # tabnannied and reindented everything. 4 space indent, no tabs.
 # yay.

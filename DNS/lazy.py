@@ -7,17 +7,38 @@
 #
 
 # routines for lazy people.
-import Base
-import string
+from . import Base
+
+class NoDataError(IndexError): pass
+class StatusError(IndexError): pass
 
 def revlookup(name):
     "convenience routine for doing a reverse lookup of an address"
     if Base.defaults['server'] == []: Base.DiscoverNameServers()
-    a = string.split(name, '.')
+    a = name.split('.')
     a.reverse()
-    b = string.join(a, '.')+'.in-addr.arpa'
+    b = '.'.join(a)+'.in-addr.arpa'
     # this will only return one of any records returned.
-    return Base.DnsRequest(b, qtype = 'ptr').req().answers[0]['data']
+    result = Base.DnsRequest(b, qtype = 'ptr').req()
+    if result.header['status'] != 'NOERROR':
+        raise StatusError("DNS query status: %s" % result.header['status'])
+    elif len(result.answers) == 0:
+        raise NoDataError("No PTR records for %s" % name)
+    else:
+        return result.answers[0]['data']
+
+def revlookupfull(name):
+    "convenience routine for doing a reverse lookup of an address"
+    if Base.defaults['server'] == []: Base.DiscoverNameServers()
+    a = name.split('.')
+    a.reverse()
+    b = '.'.join(a)+'.in-addr.arpa'
+    # this will return all records.
+    names = list(map(lambda x: x['data'], Base.DnsRequest(b, qtype = 'ptr').req().answers))
+    if len(names)==0 and Base.defaults['server_rotate']: # check with next DNS server
+        names = list(map(lambda x: x['data'], Base.DnsRequest(b, qtype = 'ptr').req().answers))
+    names.sort(key=str.__len__)
+    return names
 
 def mxlookup(name):
     """
@@ -26,12 +47,15 @@ def mxlookup(name):
     """
     if Base.defaults['server'] == []: Base.DiscoverNameServers()
     a = Base.DnsRequest(name, qtype = 'mx').req().answers
-    l = map(lambda x:x['data'], a)
+    l = [x['data'] for x in a]
     l.sort()
     return l
 
 #
 # $Log$
+# Revision 1.5.2.1  2007/05/22 20:23:38  customdesigned
+# Lazy call to DiscoverNameServers
+#
 # Revision 1.5  2002/05/06 06:14:38  anthonybaxter
 # reformat, move import to top of file.
 #

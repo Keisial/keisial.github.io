@@ -36,11 +36,14 @@ for _name in _names:
     if _name[0] != '_': statusmap[eval(_name)] = _name
 
 def statusstr(status):
-    if statusmap.has_key(status): return statusmap[status]
-    else: return `status`
+    if status in statusmap: return statusmap[status]
+    else: return repr(status)
 
 #
 # $Log$
+# Revision 1.7  2002/04/23 12:52:19  anthonybaxter
+# cleanup whitespace.
+#
 # Revision 1.6  2002/04/23 10:57:57  anthonybaxter
 # update to complete the list of response codes.
 #

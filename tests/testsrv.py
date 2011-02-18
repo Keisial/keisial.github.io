@@ -1,4 +1,4 @@
-#!usr/bin/python
+#!/usr/bin/python3
 
 import sys ; sys.path.insert(0, '..')
 
@@ -10,4 +10,4 @@ DNS.ParseResolvConf()
 r=DNS.Request(qtype='srv')
 res = r.req('_ldap._tcp.openldap.org')
 res.show()
-print res.answers
+print(res.answers)

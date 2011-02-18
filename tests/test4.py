@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import sys ; sys.path.insert(0, '..')
 
@@ -6,4 +6,4 @@ import DNS
 
 DNS.ParseResolvConf()
 
-print DNS.mxlookup("connect.com.au")
+print(DNS.mxlookup("connect.com.au"))

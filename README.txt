@@ -1,3 +1,10 @@
+Release 3.0 Wed Feb  9 23:35:22 EST 2011
+
+Ported to Python3 by Scott Kitterman <scott@kitterman.com>.  This is mostly a
+minimal port to work with Python3 (tested with python3.2) plus addition of
+some of the patches that people have submitted on Sourceforge.  It should be
+fully API compatible with 2.3.
+
 Release 2.3 Mon May  6 16:18:02 EST 2002
 
 This is a another release of the pydns code, as originally written by 

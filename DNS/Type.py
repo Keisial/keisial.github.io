@@ -50,10 +50,13 @@ for _name in _names:
     if _name[0] != '_': typemap[eval(_name)] = _name
 
 def typestr(type):
-    if typemap.has_key(type): return typemap[type]
-    else: return `type`
+    if type in typemap: return typemap[type]
+    else: return repr(type)
 #
 # $Log$
+# Revision 1.6.2.2  2009/06/09 18:39:06  customdesigned
+# Built-in SPF support
+#
 # Revision 1.6.2.1  2007/05/22 20:20:39  customdesigned
 # Mark utf-8 encoding
 #
@@ -68,7 +71,7 @@ def typestr(type):
 # added identifying header to top of each file
 #
 # Revision 1.3  2001/07/19 07:38:28  anthony
-# added type code for SRV. From Michael Ströder.
+# added type code for SRV. From Michael StrÃ¶der.
 #
 # Revision 1.2  2001/07/19 06:57:07  anthony
 # cvs keywords added

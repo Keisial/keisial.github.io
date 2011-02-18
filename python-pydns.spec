@@ -1,7 +1,7 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
-Name:           python-pydns
-Version:        2.3.4
+Name:           python3-pydns
+Version:        3.0.0
 Release:        1%{?dist}
 Summary:        Python module for DNS (Domain Name Service).
 
@@ -12,7 +12,6 @@ Source0:        pydns-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
-#BuildRequires:  python-setuptools
 
 %description
 This is a another release of the pydns code, as originally written by
@@ -22,6 +21,8 @@ top of it by Anthony Baxter <anthony@interlink.com.au>.
 This package contains a module (dnslib) that implements a DNS
 (Domain Name Server) client, plus additional modules that define some
 symbolic constants used by DNS (dnstype, dnsclass, dnsopcode).
+
+This version was ported to Python3 by Scott Kitterman <scott@kitterman.com>
 
 %define namewithoutpythonprefix %(echo %{name} | sed 's/^python-//')
 %prep
@@ -49,9 +50,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Jun 09 2009 Stuart Gathman <stuart@bmsi.com> 2.3.4-1
-- Support IDNA label encoding (from 2.3.3-3)
-- Optionally support M$ compatible UTF-8 label encoding (DNS.LABEL_UTF8)
-- Built-in SPF RR support
+- Support IDNA label encoding
+- Optionally support M$ compatible UTF-8 label encoding.
 * Thu Sep 25 2008 Stuart Gathman <stuart@bmsi.com> 2.3.3-3
 - Accept unicode names, encode to ascii with exception if non-ascii
 * Thu Sep 25 2008 Stuart Gathman <stuart@bmsi.com> 2.3.3-2
