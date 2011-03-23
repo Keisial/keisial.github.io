@@ -3,11 +3,12 @@
 # This file is part of the pydns project.
 # Homepage: http://pydns.sourceforge.net
 #
-# This code is covered by the standard Python License.
+# This code is covered by the standard Python License. See LICENSE for details.
 #
 
 # routines for lazy people.
 from . import Base
+from . Base import DNSError
 
 class NoDataError(IndexError): pass
 class StatusError(IndexError): pass
@@ -15,44 +16,47 @@ class StatusError(IndexError): pass
 def revlookup(name):
     "convenience routine for doing a reverse lookup of an address"
     if Base.defaults['server'] == []: Base.DiscoverNameServers()
-    a = name.split('.')
-    a.reverse()
-    b = '.'.join(a)+'.in-addr.arpa'
-    # this will only return one of any records returned.
-    result = Base.DnsRequest(b, qtype = 'ptr').req()
-    if result.header['status'] != 'NOERROR':
-        raise StatusError("DNS query status: %s" % result.header['status'])
-    elif len(result.answers) == 0:
-        raise NoDataError("No PTR records for %s" % name)
-    else:
-        return result.answers[0]['data']
+    names = revlookupall(name)
+    if not names: return None
+    return names[0]     # return shortest name
 
-def revlookupfull(name):
+def revlookupall(name):
     "convenience routine for doing a reverse lookup of an address"
-    if Base.defaults['server'] == []: Base.DiscoverNameServers()
+    # FIXME: check for IPv6
     a = name.split('.')
     a.reverse()
     b = '.'.join(a)+'.in-addr.arpa'
+    names = dnslookup(b, qtype = 'ptr')
     # this will return all records.
-    names = list(map(lambda x: x['data'], Base.DnsRequest(b, qtype = 'ptr').req().answers))
-    if len(names)==0 and Base.defaults['server_rotate']: # check with next DNS server
-        names = list(map(lambda x: x['data'], Base.DnsRequest(b, qtype = 'ptr').req().answers))
     names.sort(key=str.__len__)
     return names
+
+def dnslookup(name,qtype):
+    "convenience routine to return just answer data for any query type"
+    if Base.defaults['server'] == []: Base.DiscoverNameServers()
+    result = Base.DnsRequest(name=name, qtype=qtype).req()
+    if result.header['status'] != 'NOERROR':
+        raise DNSError("DNS query status: %s" % result.header['status'])
+    elif len(result.answers) == 0 and Base.defaults['server_rotate']:
+        # check with next DNS server
+        result = Base.DnsRequest(name=name, qtype=qtype).req()
+    if result.header['status'] != 'NOERROR':
+        raise DNSError("DNS query status: %s" % result.header['status'])
+    return [x['data'] for x in result.answers]
 
 def mxlookup(name):
     """
     convenience routine for doing an MX lookup of a name. returns a
     sorted list of (preference, mail exchanger) records
     """
-    if Base.defaults['server'] == []: Base.DiscoverNameServers()
-    a = Base.DnsRequest(name, qtype = 'mx').req().answers
-    l = [x['data'] for x in a]
-    l.sort()
+    l = dnslookup(name, qtype = 'mx')
     return l
 
 #
 # $Log$
+# Revision 1.5.2.1.2.1  2011/02/18 19:35:22  customdesigned
+# Python3 updates from Scott Kitterman
+#
 # Revision 1.5.2.1  2007/05/22 20:23:38  customdesigned
 # Lazy call to DiscoverNameServers
 #

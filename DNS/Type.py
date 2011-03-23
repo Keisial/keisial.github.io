@@ -5,7 +5,7 @@
  This file is part of the pydns project.
  Homepage: http://pydns.sourceforge.net
 
- This code is covered by the standard Python License.
+ This code is covered by the standard Python License. See LICENSE for details.
 
  TYPE values (section 3.2.2)
 """
@@ -54,6 +54,9 @@ def typestr(type):
     else: return repr(type)
 #
 # $Log$
+# Revision 1.6.2.2.2.1  2011/02/18 19:35:22  customdesigned
+# Python3 updates from Scott Kitterman
+#
 # Revision 1.6.2.2  2009/06/09 18:39:06  customdesigned
 # Built-in SPF support
 #

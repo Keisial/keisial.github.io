@@ -4,7 +4,7 @@
  This file is part of the pydns project.
  Homepage: http://pydns.sourceforge.net
 
- This code is covered by the standard Python License.
+ This code is covered by the standard Python License. See LICENSE for details.
 
  Opcode values in message header. RFC 1035, 1996, 2136.
 """
@@ -30,6 +30,9 @@ def opcodestr(opcode):
 
 #
 # $Log$
+# Revision 1.6.4.1  2011/02/18 19:35:22  customdesigned
+# Python3 updates from Scott Kitterman
+#
 # Revision 1.6  2002/04/23 10:51:43  anthonybaxter
 # Added UPDATE, NOTIFY.
 #

@@ -1,9 +1,12 @@
-Release 3.0 Wed Feb  9 23:35:22 EST 2011
+Release 3.0 Sun Mar 2-9 23:07:22 2011 -0400
 
 Ported to Python3 by Scott Kitterman <scott@kitterman.com>.  This is mostly a
 minimal port to work with Python3 (tested with python3.2) plus addition of
-some of the patches that people have submitted on Sourceforge.  It should be
-fully API compatible with 2.3.
+some of the patches that people have submitted on Sourceforge. It should be
+fully API compatible with 2.3. Note: Version 3.0.0 shipped with a new
+lazy.lookupfull function in advance of 2.3. This was incorporated in pydns
+2.3.5 as lazy.lookupalll. It has been renamed in 3.0.1 to stay API compatible
+with pydns 2.3.
 
 Release 2.3 Mon May  6 16:18:02 EST 2002
 

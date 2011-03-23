@@ -4,7 +4,7 @@ $Id$
 This file is part of the pydns project.
 Homepage: http://pydns.sourceforge.net
 
-This code is covered by the standard Python License.
+This code is covered by the standard Python License. See LICENSE for details.
 
     Base functionality. Request and Response classes, that sort of thing.
 """
@@ -89,7 +89,8 @@ class DnsRequest:
             if len(name) == 1:
                 if name[0]:
                     args['name']=name[0]
-        if defaults['server_rotate'] and type(defaults['server']) == types.ListType:
+        if defaults['server_rotate'] and \
+                type(defaults['server']) == types.ListType:
             defaults['server'] = defaults['server'][1:]+defaults['server'][:1]
         for i in list(defaults.keys()):
             if i not in args:
@@ -114,21 +115,32 @@ class DnsRequest:
         self.args['server']=self.ns
         return self.processReply()
 
+    def _readall(self,f,count):
+      res = f.read(count)
+      while len(res) < count:
+        if self.timeout > 0:
+            # should we restart timeout everytime we get a dribble of data?
+            rem = self.time_start + self.timeout - time.time()
+            if rem <= 0: raise DNSError('Timeout')
+            self.s.settimeout(rem)
+        buf = f.read(count - len(res))
+        if not buf:
+          raise DNSError('incomplete reply - %d of %d read' % (len(res),count))
+        res += buf
+      return res
+
     def processTCPReply(self):
         if self.timeout > 0:
-            r,w,e = select.select([self.s],[],[],self.timeout)
-            if not len(r):
-                raise DNSError('Timeout')
-        f = self.s.makefile('r')
-        header = f.read(2)
-        if len(header) < 2:
-            raise DNSError('EOF')
-        count = Lib.unpack16bit(header)
-        self.reply = f.read(count)
-        if len(self.reply) != count:
-            # FIXME: Since we are non-blocking, it could just be a large reply
-            # that we need to loop and wait for.
-            raise DNSError('incomplete reply')
+            self.s.settimeout(self.timeout)
+        else:
+            self.s.settimeout(None)
+        f = self.s.makefile('rb')
+        try:
+            header = self._readall(f,2)
+            count = Lib.unpack16bit(header)
+            self.reply = self._readall(f,count)
+        finally:
+            f.close()
         self.time_finish=time.time()
         self.args['server']=self.ns
         return self.processReply()
@@ -278,7 +290,8 @@ class DnsRequest:
                     # FIXME: throws WOULDBLOCK if request too large to fit in
                     # system buffer
                     self.s.sendall(buf)
-                    self.s.shutdown(socket.SHUT_WR)
+                    # SHUT_WR breaks blocking IO with google DNS (8.8.8.8)
+                    #self.s.shutdown(socket.SHUT_WR)
                     r=self.processTCPReply()
                     if r.header['id'] == self.tid:
                         self.response = r
@@ -324,6 +337,9 @@ class DnsAsyncRequest(DnsRequest,asyncore.dispatcher_with_send):
 
 #
 # $Log$
+# Revision 1.12.2.11.2.1  2011/02/18 19:35:22  customdesigned
+# Python3 updates from Scott Kitterman
+#
 # Revision 1.12.2.10  2008/08/01 03:58:03  customdesigned
 # Don't try to close socket when never opened.
 #

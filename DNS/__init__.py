@@ -6,11 +6,11 @@
 #
 # Changes for Python3 port © 2011 Scott Kitterman <scott@kitterman.com>
 #
-# This code is covered by the standard Python License.
+# This code is covered by the standard Python License. See LICENSE for details.
 
 # __init__.py for DNS class.
 
-__version__ = '3.0.0'
+__version__ = '3.0.1'
 
 from . import Type
 from . import Opcode
@@ -30,6 +30,9 @@ Base._DiscoverNameServers()
 
 #
 # $Log$
+# Revision 1.8.2.7.2.1  2011/02/18 19:35:22  customdesigned
+# Python3 updates from Scott Kitterman
+#
 # Revision 1.8.2.7  2009/06/09 18:05:29  customdesigned
 # Release 2.3.4
 #

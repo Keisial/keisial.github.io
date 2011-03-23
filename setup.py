@@ -1,4 +1,3 @@
-#! /usr/bin/python3
 # 
 # $Id$
 #
@@ -40,6 +39,9 @@ setup(
 
 #
 # $Log$
+# Revision 1.4.2.3.2.1  2011/02/18 19:35:22  customdesigned
+# Python3 updates from Scott Kitterman
+#
 # Revision 1.4.2.3  2008/08/01 04:01:25  customdesigned
 # Release 2.3.3
 #

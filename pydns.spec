@@ -1,5 +1,5 @@
 %define name py3dns
-%define version 3.0.0
+%define version 3.0.1
 %define release 3.0
 
 Summary: Python DNS library
