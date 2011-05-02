@@ -209,7 +209,7 @@ class DnsRequest:
             print((self.args))
             raise DNSError('nothing to lookup')
         qname = self.args['name']
-        if qtype == Type.AXFR:
+        if qtype == Type.AXFR and protocol != 'tcp':
             print('Query type AXFR, protocol forced to TCP')
             protocol = 'tcp'
         #print('QTYPE %d(%s)' % (qtype, Type.typestr(qtype)))
@@ -337,6 +337,9 @@ class DnsAsyncRequest(DnsRequest,asyncore.dispatcher_with_send):
 
 #
 # $Log$
+# Revision 1.12.2.11.2.2  2011/03/23 01:42:07  customdesigned
+# Changes from 2.3 branch
+#
 # Revision 1.12.2.11.2.1  2011/02/18 19:35:22  customdesigned
 # Python3 updates from Scott Kitterman
 #
