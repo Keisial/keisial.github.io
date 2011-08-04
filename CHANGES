@@ -1,0 +1,18 @@
+3.0.1 Mon Jul 18 19:46:30 EDT 2011
+
+ * Add CHANGES to document post-Python 3 port changes
+ * Add LICENSE file
+ * Port pydns 2.3.5 changes to py3dns
+   - Handle large TCP replies (change to blocking IO with timeout)
+   - Add new lazy.dnslookup function to retrieve answer data for any query
+     type
+   - Add large TCP reply test to tests/test.py
+ * Add automatic name server discovery for OS X
+
+3.0.0 Wed Feb  9 23:35:22 EST 2011
+
+Ported to Python3 by Scott Kitterman <scott@kitterman.com>.  This is mostly a
+minimal port to work with Python3 (tested with python3.2) plus addition of
+some of the patches that people have submitted on Sourceforge.  It should be
+fully API compatible with 2.3.
+

@@ -61,6 +61,8 @@ def _DiscoverNameServers():
     if sys.platform in ('win32', 'nt'):
         from . import win32dns
         defaults['server']=win32dns.RegistryResolve()
+    if sys.platform == 'darwin':
+        ParseOSXSysConfig()
     else:
         return ParseResolvConf()
 
@@ -335,8 +337,38 @@ class DnsAsyncRequest(DnsRequest,asyncore.dispatcher_with_send):
     def showResult(self,*s):
         self.response.show()
 
+def ParseOSXSysConfig():
+    "Retrieves the current Mac OS X resolver settings using the scutil(8) command."
+    import os, re
+    scutil = os.popen('scutil --dns', 'r')
+    res_re = re.compile('^\s+nameserver[]0-9[]*\s*\:\s*(\S+)$')
+    sets = [ ]
+    currentset = None
+    while True:
+        l = scutil.readline()
+        if not l:
+            break
+        l = l.rstrip()
+        if len(l) < 1 or l[0] not in string.whitespace:
+            currentset = None
+            continue
+        m = res_re.match(l)
+        if m:
+            if currentset is None:
+                currentset = [ ]
+                sets.append(currentset)
+            currentset.append(m.group(1))
+    scutil.close()
+    # Someday: Figure out if we should do something other than simply concatenate the sets.
+    for currentset in sets:
+        defaults['server'].extend(currentset)
+
 #
 # $Log$
+# Revision 1.12.2.11.2.3  2011/05/02 16:04:32  customdesigned
+# Don't complain about AXFR protocol unless actually changing it.
+# Reported by Ewoud Kohl van Wijngaarden.
+#
 # Revision 1.12.2.11.2.2  2011/03/23 01:42:07  customdesigned
 # Changes from 2.3 branch
 #

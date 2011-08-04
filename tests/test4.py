@@ -6,4 +6,5 @@ import DNS
 
 DNS.ParseResolvConf()
 
+print(DNS.mxlookup("hotmail.com"))
 print(DNS.mxlookup("connect.com.au"))
