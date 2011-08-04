@@ -1,3 +1,4 @@
+%define __python python3
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python3-pydns
@@ -10,7 +11,7 @@ License:        Python Software Foundation License
 URL:            http://pydns.sourceforge.net/
 Source0:        pydns-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-
+Requires:	python3
 BuildArch:      noarch
 
 %description
@@ -46,7 +47,6 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %doc CREDITS.txt PKG-INFO README-guido.txt README.txt
 %{python_sitelib}/DNS/*.py*
-%{python_sitelib}/pydns-2.3.3-py2.5.egg-info
 
 %changelog
 * Tue Jun 09 2009 Stuart Gathman <stuart@bmsi.com> 2.3.4-1

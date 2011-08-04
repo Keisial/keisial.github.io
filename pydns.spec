@@ -1,11 +1,10 @@
 %define name py3dns
 %define version 3.0.1
-%define release 3.0
 
 Summary: Python DNS library
-Name: %{name}
-Version: %{version}
-Release: %{release}
+Name: py3dns
+Version: 3.0.1
+Release: 1
 Source0: %{name}-%{version}.tar.gz
 License: Python license
 Group: Development/Libraries
@@ -15,6 +14,7 @@ BuildArch: noarch
 Vendor: Anthony Baxter and others <pydns-developer@lists.sourceforge.net>
 Packager: Stuart D. Gathman <stuart@bmsi.com>
 Url: http://pydns.sourceforge.net/
+Requires: python3
 
 %description
 Python3 DNS library
