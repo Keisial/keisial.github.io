@@ -27,8 +27,3 @@ r = DNS.DnsRequest("imsavscan.netvigator.com", qtype="A", server=['8.8.8.8'], pr
 res = r.req()
 res.show()
 
-# do a TCP reply
-r = DNS.DnsRequest("imsavscan.netvigator.com", qtype="A", server=['8.8.8.8'], protocol='tcp', timeout=300)
-res = r.req()
-res.show()
-
