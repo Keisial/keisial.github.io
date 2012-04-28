@@ -8,7 +8,7 @@
 
 # routines for lazy people.
 from . import Base
-from . Base import DNSError
+from . Base import ServerError
 
 class NoDataError(IndexError): pass
 class StatusError(IndexError): pass
@@ -36,12 +36,14 @@ def dnslookup(name,qtype):
     if Base.defaults['server'] == []: Base.DiscoverNameServers()
     result = Base.DnsRequest(name=name, qtype=qtype).req()
     if result.header['status'] != 'NOERROR':
-        raise DNSError("DNS query status: %s" % result.header['status'])
+        raise ServerError("DNS query status: %s" % result.header['status'],
+            result.header['rcode'])
     elif len(result.answers) == 0 and Base.defaults['server_rotate']:
         # check with next DNS server
         result = Base.DnsRequest(name=name, qtype=qtype).req()
     if result.header['status'] != 'NOERROR':
-        raise DNSError("DNS query status: %s" % result.header['status'])
+        raise ServerError("DNS query status: %s" % result.header['status'],
+            result.header['rcode'])
     return [x['data'] for x in result.answers]
 
 def mxlookup(name):
@@ -54,6 +56,9 @@ def mxlookup(name):
 
 #
 # $Log$
+# Revision 1.5.2.1.2.2  2011/03/23 01:42:07  customdesigned
+# Changes from 2.3 branch
+#
 # Revision 1.5.2.1.2.1  2011/02/18 19:35:22  customdesigned
 # Python3 updates from Scott Kitterman
 #

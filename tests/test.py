@@ -27,3 +27,12 @@ r = DNS.DnsRequest("imsavscan.netvigator.com", qtype="A", server=['8.8.8.8'], pr
 res = r.req()
 res.show()
 
+# look up a TXT record
+r = DNS.DnsRequest("kitterman.com", qtype="TXT", protocol='tcp')
+res = r.req()
+res.show()
+
+# look up a AAAA record
+r = DNS.DnsRequest("mailout03.controlledmail.com", qtype="AAAA", protocol='tcp')
+res = r.req()
+res.show()

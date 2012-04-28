@@ -26,8 +26,19 @@ except:
   import random
 
 class DNSError(Exception): pass
+class ArgumentError(DNSError): pass
+class SocketError(DNSError): pass
+class TimeoutError(DNSError): pass
 
-# Lib uses DNSError, so import after defining.
+class ServerError(DNSError):
+    def __init__(self, message, rcode):
+        DNSError.__init__(self, message, rcode)
+        self.message = message
+        self.rcode = rcode
+
+class IncompleteReplyError(DNSError): pass
+
+# Lib uses some of the above exception classes, so import after defining.
 from . import Lib
 
 defaults= { 'protocol':'udp', 'port':53, 'opcode':Opcode.QUERY,
@@ -111,7 +122,7 @@ class DnsRequest:
         if self.timeout > 0:
             r,w,e = select.select([self.s],[],[],self.timeout)
             if not len(r):
-                raise DNSError('Timeout')
+                raise TimeoutError('Timeout')
         (self.reply, self.from_address) = self.s.recvfrom(65535)
         self.time_finish=time.time()
         self.args['server']=self.ns
@@ -192,7 +203,7 @@ class DnsRequest:
         " needs a refactoring "
         self.argparse(name,args)
         #if not self.args:
-        #    raise DNSError,'reinitialize request before reuse'
+        #    raise ArgumentError, 'reinitialize request before reuse'
         protocol = self.args['protocol']
         self.port = self.args['port']
         self.tid = random.randint(0,65535)
@@ -204,12 +215,12 @@ class DnsRequest:
             try:
                 qtype = getattr(Type, str(self.args['qtype'].upper()))
             except AttributeError:
-                raise DNSError('unknown query type')
+                raise ArgumentError('unknown query type')
         else:
             qtype = self.args['qtype']
         if 'name' not in self.args:
             print((self.args))
-            raise DNSError('nothing to lookup')
+            raise ArgumentError('nothing to lookup')
         qname = self.args['name']
         if qtype == Type.AXFR and protocol != 'tcp':
             print('Query type AXFR, protocol forced to TCP')
@@ -228,16 +239,15 @@ class DnsRequest:
             else:
                 self.sendTCPRequest(server)
         except socket.error as reason:
-            raise DNSError(reason)
+            raise SocketError(reason)
         if self.async:
             return None
         else:
-            if not self.response:
-                raise DNSError('no working nameservers found')
             return self.response
 
     def sendUDPRequest(self, server):
         "refactor me"
+        first_socket_error = None
         self.response=None
         for self.ns in server:
             try:
@@ -266,12 +276,18 @@ class DnsRequest:
                 finally:
                     if not self.async:
                         self.s.close()
-            except socket.error:
+            except socket.error as e:
+                # Keep trying more nameservers, but preserve the first error
+                # that occurred so it can be reraised in case none of the
+                # servers worked:
+                first_socket_error = first_socket_error or e
                 continue
-            break
+        if not self.response and first_socket_error:
+            raise first_socket_error
 
     def sendTCPRequest(self, server):
         " do the work of sending a TCP request "
+        first_socket_error = None
         self.response=None
         for self.ns in server:
             #print "trying tcp",self.ns
@@ -300,8 +316,11 @@ class DnsRequest:
                         break
                 finally:
                     self.s.close()
-            except socket.error:
+            except socket.error as e:
+                first_socket_error = first_socket_error or e
                 continue
+        if not self.response and first_socket_error:
+            raise first_socket_error
 
 #class DnsAsyncRequest(DnsRequest):
 class DnsAsyncRequest(DnsRequest,asyncore.dispatcher_with_send):
@@ -365,6 +384,9 @@ def ParseOSXSysConfig():
 
 #
 # $Log$
+# Revision 1.12.2.11.2.4  2011/08/04 22:53:09  customdesigned
+# Add OSX support
+#
 # Revision 1.12.2.11.2.3  2011/05/02 16:04:32  customdesigned
 # Don't complain about AXFR protocol unless actually changing it.
 # Reported by Ewoud Kohl van Wijngaarden.

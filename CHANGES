@@ -1,3 +1,11 @@
+3.0.2 Thu Jan 19 10:59:00 EST 2012
+
+ * Fix DNS.getTXTdata to return bytes instead of a Unicode string
+ * Add more granular exception sub classes of DNSError, see SF #3388075
+   - Thanks to Julian Mehnle for the patch
+ * Add AAAA record support, works like A records
+   - Thanks to Shane Kerr for the patch
+
 3.0.1 Mon Jul 18 19:46:30 EDT 2011
 
  * Add CHANGES to document post-Python 3 port changes

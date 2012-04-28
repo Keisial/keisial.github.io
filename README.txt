@@ -1,3 +1,13 @@
+Release 3.0.2 Thu Jan 19 01:25:00 EST 2012
+
+This release introduces two potentially incompatible changes from the python
+verion of DNS (pydns).  First, the data portion of DNS records of types TXT
+and SPF are returned as bytes instead of strings.  Second, additional sub
+classes of DNSError have been added.  Any code that catches DNSError should
+be checked to see if it needs updating to catch one of the new sub classes:
+ArgumentError, SocketError, TimeoutError, ServerError, and
+IncompleteReplyError.
+
 Release 3.0 Sun Mar 2-9 23:07:22 2011 -0400
 
 Ported to Python3 by Scott Kitterman <scott@kitterman.com>.  This is mostly a

@@ -43,7 +43,7 @@ class PackError(DNSError): pass
 
 from struct import pack as struct_pack
 from struct import unpack as struct_unpack
-from socket import inet_ntoa, inet_aton
+from socket import inet_ntoa, inet_aton, inet_ntop, AF_INET6
 
 def pack16bit(n):
     return struct_pack('!H', n)
@@ -90,6 +90,9 @@ def addr2bin(addr):
 
 def bin2addr(n):
     return inet_ntoa(struct_pack('!L', n))
+
+def bin2addr6(n):
+    return inet_ntop(AF_INET6, n)
 
 # Packing class
 
@@ -239,6 +242,12 @@ class Unpacker:
         else:
           enc = DNS.LABEL_ENCODING
         return bytes(bin2addr(self.get32bit()),enc)
+    def getaddr6(self):
+        if DNS.LABEL_UTF8:
+          enc = 'utf8'
+        else:
+          enc = DNS.LABEL_ENCODING
+        return bytes(bin2addr6(self.getbytes(16)),enc)
     def getstring(self):
         return self.getbytes(self.getbyte())
     def getname(self):
@@ -475,12 +484,8 @@ class RRunpacker(Unpacker):
                ('minimum',)+prettyTime(self.get32bit())
     def getTXTdata(self):
         tlist = []
-        if DNS.LABEL_UTF8:
-            enc = 'utf8'
-        else:
-            enc = DNS.LABEL_ENCODING
         while self.offset != self.rdend:
-            tlist.append(str(self.getstring(), enc))
+            tlist.append(bytes(self.getstring()))
         return tlist
     getSPFdata = getTXTdata
     def getAdata(self):
@@ -489,6 +494,12 @@ class RRunpacker(Unpacker):
         else:
             enc = DNS.LABEL_ENCODING
         return self.getaddr().decode(enc)
+    def getAAAAdata(self):
+        if DNS.LABEL_UTF8:
+            enc = 'utf8'
+        else:
+            enc = DNS.LABEL_ENCODING
+        return self.getaddr6().decode(enc)
     def getWKSdata(self):
         address = self.getaddr()
         protocol = ord(self.getbyte())
@@ -713,6 +724,9 @@ if __name__ == "__main__":
     testpacker()
 #
 # $Log$
+# Revision 1.11.2.7.2.2  2011/03/23 01:42:07  customdesigned
+# Changes from 2.3 branch
+#
 # Revision 1.11.2.7.2.1  2011/02/18 19:35:22  customdesigned
 # Python3 updates from Scott Kitterman
 #
