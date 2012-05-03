@@ -28,13 +28,21 @@ def GetNS(domain):
     if r.header['status'] != 'NOERROR':
         Error("received status of %s when attempting to look up SOA for domain"%
                 (r.header['status']))
-    primary,email,serial,refresh,retry,expire,minimum = r.answers[0]['data']
-    print("Primary nameserver for domain %s is: %s"%(domain,primary))
+    if r.header['status'] != 'NXDOMAIN':
+        print("SOA request was NXDOMAIN")
+        primary = ''
+    else:
+        if r.answers:
+            primary,email,serial,refresh,retry,expire,minimum = r.answers[0]['data']
+            print("Primary nameserver for domain %s is: %s"%(domain,primary))
+        else:
+            print("No answer to SOA query")
+        primary = ''
     r = DNS.Request(domain,qtype='NS',server=primary,aa=1).req()
     if r.header['status'] != 'NOERROR':
         Error("received status of %s when attempting to query %s for NSs"%
                 (r.header['status']))
-    if r.header['aa'] != 1:
+    if r.header['aa'] != 1 and primary is not '':
         Error("primary NS %s doesn't believe that it's authoritative!"% primary)
     nslist = [x['data'] for x in r.answers]
     print("Full list of nameservers for domain %s is: %s"%(domain,nslist))
