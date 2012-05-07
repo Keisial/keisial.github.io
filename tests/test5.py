@@ -28,7 +28,7 @@ def GetNS(domain):
     if r.header['status'] != 'NOERROR':
         Error("received status of %s when attempting to look up SOA for domain"%
                 (r.header['status']))
-    if r.header['status'] != 'NXDOMAIN':
+    if r.header['status'] == 'NXDOMAIN':
         print("SOA request was NXDOMAIN")
         primary = ''
     else:
