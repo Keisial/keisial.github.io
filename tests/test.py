@@ -34,5 +34,5 @@ res.show()
 
 # look up a AAAA record
 r = DNS.DnsRequest("mailout03.controlledmail.com", qtype="AAAA", protocol='tcp')
-res = r.req()
+res = r.req(resulttype='text')
 res.show()

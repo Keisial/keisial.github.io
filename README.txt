@@ -1,3 +1,11 @@
+Release 3.0.3 UNRELEASED
+
+The last release inadvertently changed the default result for AAAA lookups
+from binary to text.  This has been corrected and a more generalized solution
+implemented.  To specify resulttype, in a DnsRequest object, use
+DnsRequest.req(resulttype='binary/text/default').  Default equates to 3.0
+defaults.
+
 Release 3.0.2 Thu Jan 19 01:25:00 EST 2012
 
 This release introduces two potentially incompatible changes from the python

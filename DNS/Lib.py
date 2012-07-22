@@ -494,12 +494,6 @@ class RRunpacker(Unpacker):
         else:
             enc = DNS.LABEL_ENCODING
         return self.getaddr().decode(enc)
-    def getAAAAdata(self):
-        if DNS.LABEL_UTF8:
-            enc = 'utf8'
-        else:
-            enc = DNS.LABEL_ENCODING
-        return self.getaddr6().decode(enc)
     def getWKSdata(self):
         address = self.getaddr()
         protocol = ord(self.getbyte())
@@ -516,6 +510,32 @@ class RRunpacker(Unpacker):
         #print '***priority, weight, port, target', priority, weight, port, target
         return priority, weight, port, target
 
+class RRunpackerText(RRunpacker):
+    def __init__(self, buf):
+        RRunpacker.__init__(self, buf)
+    def getAAAAdata(self):
+        if DNS.LABEL_UTF8:
+            enc = 'utf8'
+        else:
+            enc = DNS.LABEL_ENCODING
+        return self.getaddr6().decode(enc)
+
+        
+class RRunpackerBinary(Unpacker):
+    def __init__(self, buf):
+        Unpacker.__init__(self, buf)
+        self.rdend = None
+    def getRRheader(self):
+        name = self.getname()
+        rrtype = self.get16bit()
+        klass = self.get16bit()
+        ttl = self.get32bit()
+        rdlength = self.get16bit()
+        self.rdend = self.offset + rdlength
+        return (name, rrtype, klass, ttl, rdlength)
+    def endRR(self):
+        if self.offset != self.rdend:
+            raise UnpackError('end of RR not reached')
 
 # Pack/unpack Message Header (section 4.1)
 
@@ -574,7 +594,12 @@ class Mpacker(RRpacker, Qpacker, Hpacker):
 class Munpacker(RRunpacker, Qunpacker, Hunpacker):
     pass
 
+class MunpackerText(RRunpackerText, Qunpacker, Hunpacker):
+    pass
 
+class MunpackerBinary(RRunpackerBinary, Qunpacker, Hunpacker):
+    pass
+    
 # Routines to print an unpacker to stdout, for debugging.
 # These affect the unpacker's current position!
 

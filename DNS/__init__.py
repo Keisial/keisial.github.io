@@ -10,7 +10,7 @@
 
 # __init__.py for DNS class.
 
-__version__ = '3.0.1'
+__version__ = '3.0.3'
 
 from . import Type
 from . import Opcode

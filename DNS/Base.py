@@ -160,7 +160,14 @@ class DnsRequest:
 
     def processReply(self):
         self.args['elapsed']=(self.time_finish-self.time_start)*1000
-        u = Lib.Munpacker(self.reply)
+        if self.resulttype == 'default':
+            u = Lib.Munpacker(self.reply)
+        elif self.resulttype == 'binary':
+            u = Lib.MunpackerBinary(self.reply)
+        elif self.resulttype == 'text':
+            u = Lib.MunpackerText(self.reply)
+        else:
+            raise SyntaxError('Unknown resulttype: ' + self.resulttype)
         r=Lib.DnsResult(u,self.args)
         r.args=self.args
         #self.args=None  # mark this DnsRequest object as used.
@@ -200,6 +207,12 @@ class DnsRequest:
         self.s.connect((self.ns,self.port))
 
     def req(self,*name,**args):
+        '''
+        Request function for the DnsRequest class.  In addition to standard
+        DNS args, the special pydns arg 'resulttype' can optionally be passed.
+        Valid resulttypes are 'default', 'text', and 'binary'.  AAAA requests
+        default to binary.  Most others default to text.
+        '''
         " needs a refactoring "
         self.argparse(name,args)
         #if not self.args:
@@ -211,6 +224,10 @@ class DnsRequest:
         opcode = self.args['opcode']
         rd = self.args['rd']
         server=self.args['server']
+        if 'resulttype' in self.args:
+            self.resulttype = self.args['resulttype']
+        else:
+            self.resulttype = 'default'
         if type(self.args['qtype']) == bytes or type(self.args['qtype']) == str:
             try:
                 qtype = getattr(Type, str(self.args['qtype'].upper()))
