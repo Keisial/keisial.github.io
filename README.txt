@@ -4,7 +4,8 @@ The last release inadvertently changed the default result for AAAA lookups
 from binary to text.  This has been corrected and a more generalized solution
 implemented.  To specify resulttype, in a DnsRequest object, use
 DnsRequest.req(resulttype='binary/text/default').  Default equates to 3.0
-defaults.
+defaults.  Additionally, TXT and SPF records data are returned as strings,
+restoring 3.0.2 behavior and matching what dnspython3 returns.
 
 Release 3.0.2 Thu Jan 19 01:25:00 EST 2012
 

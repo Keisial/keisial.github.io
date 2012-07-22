@@ -483,9 +483,13 @@ class RRunpacker(Unpacker):
                ('expire',)+prettyTime(self.get32bit()), \
                ('minimum',)+prettyTime(self.get32bit())
     def getTXTdata(self):
+        if DNS.LABEL_UTF8:
+            enc = 'utf8'
+        else:
+            enc = DNS.LABEL_ENCODING
         tlist = []
         while self.offset != self.rdend:
-            tlist.append(bytes(self.getstring()))
+            tlist.append(str(self.getstring(), enc))
         return tlist
     getSPFdata = getTXTdata
     def getAdata(self):
