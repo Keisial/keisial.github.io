@@ -1,3 +1,6 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
 import DNS
 import unittest
 
@@ -20,7 +23,8 @@ class TestBase(unittest.TestCase):
         self.assertEqual(DNS.defaults['server'][0], '127.0.0.1')
         self.assertEqual(DNS.defaults['domain'], 'example.org')
         
-    def testDnsRequestAv4(self):
+    def testDnsRequestA(self):
+        # try with asking for strings, and asking for bytes
         dnsobj = DNS.DnsRequest('example.org')
         
         a_response = dnsobj.req(qtype='A', resulttype='text')
@@ -88,7 +92,29 @@ class TestBase(unittest.TestCase):
         self.assertEqual(len(data), 4)
         self.assertEqual(data[2], 389)
         self.assertTrue('openldap.org' in data[3])
-                         
+
+    def testDkimRequest(self):
+        q = '20120113._domainkey.google.com'
+        dnsobj = DNS.Request(q, qtype='txt')
+        resp = dnsobj.req()
+        
+        self.assertTrue(resp.answers)
+        # should the result be bytes or a string?
+        data = resp.answers[0]['data']
+        self.assertTrue(isinstance(data[0], str))
+        self.assertTrue(data[0].startswith('k='))
+
+    def testIDN(self):
+        """Can we lookup an internationalized domain name?"""
+        dnsobj = DNS.DnsRequest('xn--hxajbheg2az3al.xn--jxalpdlp')
+        unidnsobj = DNS.DnsRequest('παράδειγμα.δοκιμή')
+        a_resp = dnsobj.req(qtype='AAAA', resulttype='text')
+        ua_resp = unidnsobj.req(qtype='AAAA', resulttype='text')
+        self.assertTrue(a_resp.answers)
+        self.assertTrue(ua_resp.answers)
+        self.assertEqual(ua_resp.answers[0]['data'], 
+                         a_resp.answers[0]['data'])
+            
 def test_suite():
     from unittest import TestLoader
     return TestLoader().loadTestsFromName(__name__)
