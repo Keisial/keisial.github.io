@@ -47,8 +47,12 @@ defaults= { 'protocol':'udp', 'port':53, 'opcode':Opcode.QUERY,
 
 def ParseResolvConf(resolv_path="/etc/resolv.conf"):
     "parses the /etc/resolv.conf file and sets defaults for name servers"
+    with open(resolv_path, 'r') as stream:
+        return ParseResolvConfFromIterable(stream)
+
+def ParseResolvConfFromIterable(lines):
+    "parses a resolv.conf formatted stream and sets defaults for name servers"
     global defaults
-    lines=open(resolv_path).readlines()
     for line in lines:
         line = line.strip()
         if not line or line[0]==';' or line[0]=='#':

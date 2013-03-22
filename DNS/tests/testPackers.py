@@ -367,6 +367,9 @@ class testPackingOfTXT2(PackerTestCase):
 #    def doPack(self, p):
 #        self.assertEquals(0,"NotImplemented")
 
+def test_suite():
+    from unittest import TestLoader
+    return TestLoader().loadTestsFromName(__name__)
 
 if __name__ == "__main__":
     unittest.main()

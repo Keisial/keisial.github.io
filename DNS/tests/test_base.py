@@ -1,0 +1,97 @@
+import DNS
+import unittest
+
+def assertIsByte(b):
+    assert b >= 0
+    assert b <= 255
+    
+class TestBase(unittest.TestCase):
+    def testParseResolvConf(self):
+        # reset elments set by Base._DiscoverNameServers
+        DNS.defaults['server'] = []
+        del DNS.defaults['domain']
+        self.assertEqual(len(DNS.defaults['server']), 0)
+        resolv = ['# a comment',
+                  'domain example.org',
+                  'nameserver 127.0.0.1',
+                 ]
+        DNS.ParseResolvConfFromIterable(resolv)
+        self.assertEqual(len(DNS.defaults['server']), 1)
+        self.assertEqual(DNS.defaults['server'][0], '127.0.0.1')
+        self.assertEqual(DNS.defaults['domain'], 'example.org')
+        
+    def testDnsRequestAv4(self):
+        dnsobj = DNS.DnsRequest('example.org')
+        
+        a_response = dnsobj.req(qtype='A', resulttype='text')
+        self.assertTrue(a_response.answers)
+        # is the result vaguely ipv4 like?
+        self.assertEqual(a_response.answers[0]['data'].count('.'), 3)
+
+        ad_response = dnsobj.req(qtype='A')
+        self.assertTrue(ad_response.answers)
+        # is the result vaguely ipv4 like?
+        self.assertEqual(ad_response.answers[0]['data'].count('.'), 3)
+
+        ab_response = dnsobj.req(qtype='A', resulttype='binary')
+        self.assertTrue(ab_response.answers)
+        # is the result ipv4 binary like?
+        self.assertEqual(len(ab_response.answers[0]['data']), 4)
+        for b in ab_response.answers[0]['data']:
+            assertIsByte(b)
+
+
+    def testDnsRequestAAAA(self):
+        dnsobj = DNS.DnsRequest('example.org')
+        
+        aaaa_response = dnsobj.req(qtype='AAAA', resulttype='text')
+        self.assertTrue(aaaa_response.answers)
+        # does the result look like an ipv6 address?
+        self.assertTrue(':' in aaaa_response.answers[0]['data'])
+
+        # default is returning binary instead of text
+        aaaad_response = dnsobj.req(qtype='AAAA')
+        self.assertTrue(aaaad_response.answers)
+        # does the result look like a binary ipv6 address?
+        self.assertEqual(len(aaaad_response.answers[0]['data']) , 16)
+        for b in aaaad_response.answers[0]['data']:
+            assertIsByte(b)
+        
+        aaaab_response = dnsobj.req(qtype='AAAA', resulttype='binary')
+        self.assertTrue(aaaab_response.answers)
+        # is it ipv6 looking?
+        self.assertEqual(len(aaaab_response.answers[0]['data']) , 16)
+        for b in aaaab_response.answers[0]['data']:
+            assertIsByte(b)
+
+    def testDnsRequestEmptyMX(self):
+        dnsobj = DNS.DnsRequest('example.org')
+
+        mx_empty_response = dnsobj.req(qtype='MX')
+        self.assertFalse(mx_empty_response.answers)
+
+    def testDnsRequestMX(self):
+        dnsobj = DNS.DnsRequest('ietf.org')
+        mx_response = dnsobj.req(qtype='MX')
+        self.assertTrue(mx_response.answers[0])
+        # is hard coding a remote address a good idea?
+        self.assertEqual(mx_response.answers[0]['data'], (0, 'mail.ietf.org'))
+
+        m = DNS.mxlookup('ietf.org')
+        self.assertEqual(mx_response.answers[0]['data'], m[0])
+
+    def testDnsRequestSrv(self):
+        dnsobj = DNS.Request(qtype='srv')
+        resp = dnsobj.req('_ldap._tcp.openldap.org', resulttype='text')
+        self.assertTrue(resp.answers)
+        data = resp.answers[0]['data']
+        self.assertEqual(len(data), 4)
+        self.assertEqual(data[2], 389)
+        self.assertTrue('openldap.org' in data[3])
+                         
+def test_suite():
+    from unittest import TestLoader
+    return TestLoader().loadTestsFromName(__name__)
+
+if __name__ == "__main__":
+    unittest.main()
