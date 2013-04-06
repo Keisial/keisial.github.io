@@ -36,3 +36,8 @@ res.show()
 r = DNS.DnsRequest("mailout03.controlledmail.com", qtype="AAAA", protocol='tcp')
 res = r.req(resulttype='text')
 res.show()
+
+# look up a A record set that falls over to EDNS0/TCP
+r = DNS.DnsRequest("long-a-record.tana.it", qtype="A", protocol='udp')
+res = r.req(resulttype='text')
+res.show()
