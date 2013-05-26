@@ -56,6 +56,7 @@ class TestBase(unittest.TestCase):
         self.assertTrue(aaaa_response.answers)
         # does the result look like an ipv6 address?
         self.assertTrue(':' in aaaa_response.answers[0]['data'])
+        self.assertEqual(aaaa_response.answers[0]['data'],'2001:500:88:200::10')
 
         # default is returning binary instead of text
         aaaad_response = dnsobj.req(qtype='AAAA')
@@ -64,6 +65,7 @@ class TestBase(unittest.TestCase):
         self.assertEqual(len(aaaad_response.answers[0]['data']) , 16)
         for b in aaaad_response.answers[0]['data']:
             assertIsByte(b)
+        self.assertEqual(aaaad_response.answers[0]['data'],b' \x01\x05\x00\x00\x88\x02\x00\x00\x00\x00\x00\x00\x00\x00\x10')
         
         aaaab_response = dnsobj.req(qtype='AAAA', resulttype='binary')
         self.assertTrue(aaaab_response.answers)
@@ -71,6 +73,7 @@ class TestBase(unittest.TestCase):
         self.assertEqual(len(aaaab_response.answers[0]['data']) , 16)
         for b in aaaab_response.answers[0]['data']:
             assertIsByte(b)
+        self.assertEqual(aaaab_response.answers[0]['data'],b' \x01\x05\x00\x00\x88\x02\x00\x00\x00\x00\x00\x00\x00\x00\x10')
 
     def testDnsRequestEmptyMX(self):
         dnsobj = DNS.DnsRequest('example.org')
