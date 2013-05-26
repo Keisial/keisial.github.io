@@ -12,7 +12,8 @@ class TestBase(unittest.TestCase):
     def testParseResolvConf(self):
         # reset elments set by Base._DiscoverNameServers
         DNS.defaults['server'] = []
-        del DNS.defaults['domain']
+        if 'domain' in  DNS.defaults:
+            del DNS.defaults['domain']
         self.assertEqual(len(DNS.defaults['server']), 0)
         resolv = ['# a comment',
                   'domain example.org',
