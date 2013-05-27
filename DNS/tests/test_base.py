@@ -48,6 +48,12 @@ class TestBase(unittest.TestCase):
             assertIsByte(b)
         self.assertEqual(ab_response.answers[0]['data'],b'\xc0\x00+\n')
 
+        ai_response = dnsobj.req(qtype='A', resulttype='integer')
+        self.assertTrue(ai_response.answers)
+        # is the result ipv4 decimal like?
+        self.assertEqual(type(ab_response.answers[0]['data']), 'int')
+        self.assertEqual(ai_response.answers[0]['data'],3221236490)
+
 
     def testDnsRequestAAAA(self):
         dnsobj = DNS.DnsRequest('example.org')
@@ -86,6 +92,7 @@ class TestBase(unittest.TestCase):
         mx_response = dnsobj.req(qtype='MX')
         self.assertTrue(mx_response.answers[0])
         # is hard coding a remote address a good idea?
+        # I think it's unavoidable. - sk
         self.assertEqual(mx_response.answers[0]['data'], (0, 'mail.ietf.org'))
 
         m = DNS.mxlookup('ietf.org')
