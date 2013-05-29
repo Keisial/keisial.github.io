@@ -1,11 +1,16 @@
-Release 3.0.3 UNRELEASED
+Release 3.1.0 UNRELEASED
 
-The last release inadvertently changed the default result for AAAA lookups
-from binary to text.  This has been corrected and a more generalized solution
-implemented.  To specify resulttype, in a DnsRequest object, use
-DnsRequest.req(resulttype='binary/text/default').  Default equates to 3.0
-defaults.  Additionally, TXT and SPF records data are returned as strings,
-restoring 3.0.2 behavior and matching what dnspython3 returns.
+More choices about result types are provided in 3.1.0.  To specify resulttype,
+in a DnsRequest object, use DnsRequest.req(resulttype='binary/text/default').
+Default equates to pydns defaults.  TXT and SPF records data are returned as
+strings by default, this matches what dnspython3 returns.
+
+Release 3.0.3 Wed May 29 00:05:00 EDT 2013
+
+There was a third, unintended incompatiblity in 3.0.2 in that IPv6 addresses
+were returned in their string format rather than their decimal format.  This
+breaks pyspf queries when the connect IP is IPv6.  3.0.3 is a release strictly
+to revert this change.
 
 Release 3.0.2 Thu Jan 19 01:25:00 EST 2012
 

@@ -170,6 +170,8 @@ class DnsRequest:
             u = Lib.MunpackerBinary(self.reply)
         elif self.resulttype == 'text':
             u = Lib.MunpackerText(self.reply)
+        elif self.resulttype == 'integer':
+            u = Lib.MunpackerInteger(self.reply)
         else:
             raise SyntaxError('Unknown resulttype: ' + self.resulttype)
         r=Lib.DnsResult(u,self.args)
@@ -214,8 +216,11 @@ class DnsRequest:
         '''
         Request function for the DnsRequest class.  In addition to standard
         DNS args, the special pydns arg 'resulttype' can optionally be passed.
-        Valid resulttypes are 'default', 'text', and 'binary'.  AAAA requests
-        default to binary.  Most others default to text.
+        Valid resulttypes are 'default', 'text', 'decimal', and 'binary'.
+
+        Defaults are configured to be compatible with pydns:
+        AAAA: decimal
+        Others: text
         '''
         " needs a refactoring "
         self.argparse(name,args)

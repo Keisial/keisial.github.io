@@ -1,10 +1,13 @@
-3.0.3 UNRELEASED
+3.1.0 UNRELEASED
  * Add options for 'resulttype' to DnsResult.req to allow for binary or text
    data to be returned
- * Returned AAAA to it's pre-3.0.2 default of binary result (text results can
-   still be gotten via resulttype='text')
  * Switch DNS.getTXTdata back to returning a string.  This is consistent with
    what dnspython3 does as well.  The switch to bytes was a bad idea.
+
+3.0.3 Wed May 29 00:05:00 EDT 2013
+
+ * Revert returning IPv6 addresses from AAAA lookups as string.  Causing
+   incompatiblities that are deeply annoying to fix on the other end.
 
 3.0.2 Thu Jan 19 10:59:00 EST 2012
 

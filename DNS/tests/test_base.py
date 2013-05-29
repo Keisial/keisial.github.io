@@ -50,8 +50,6 @@ class TestBase(unittest.TestCase):
 
         ai_response = dnsobj.req(qtype='A', resulttype='integer')
         self.assertTrue(ai_response.answers)
-        # is the result ipv4 decimal like?
-        self.assertEqual(type(ab_response.answers[0]['data']), 'int')
         self.assertEqual(ai_response.answers[0]['data'],3221236490)
 
 

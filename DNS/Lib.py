@@ -24,6 +24,7 @@
 
 
 import types
+import socket
 
 from . import Type
 from . import Class
@@ -278,7 +279,6 @@ class Unpacker:
         else:
             return domain + '.' + remains
 
-
 # Test program for packin/unpacking (section 4.1.4)
 
 def testpacker():
@@ -524,7 +524,23 @@ class RRunpackerText(RRunpacker):
             enc = DNS.LABEL_ENCODING
         return self.getaddr6().decode(enc)
 
-        
+class RRunpackerInteger(RRunpacker):
+    def __init__(self, buf):
+        RRunpacker.__init__(self, buf)
+    def getAdata(self):
+        if DNS.LABEL_UTF8:
+            enc = 'utf8'
+        else:
+            enc = DNS.LABEL_ENCODING
+        x = socket.inet_aton(self.getaddr().decode(enc))
+        return struct_unpack("!I", x)[0]
+    def getAAAAdata(self):
+        if DNS.LABEL_UTF8:
+            enc = 'utf8'
+        else:
+            enc = DNS.LABEL_ENCODING
+        return self.getaddr6().decode(enc)
+ 
 class RRunpackerBinary(Unpacker):
     def __init__(self, buf):
         Unpacker.__init__(self, buf)
@@ -603,7 +619,10 @@ class MunpackerText(RRunpackerText, Qunpacker, Hunpacker):
 
 class MunpackerBinary(RRunpackerBinary, Qunpacker, Hunpacker):
     pass
-    
+
+class MunpackerInteger(RRunpackerInteger, Qunpacker, Hunpacker):
+    pass
+ 
 # Routines to print an unpacker to stdout, for debugging.
 # These affect the unpacker's current position!
 
