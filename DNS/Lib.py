@@ -95,6 +95,11 @@ def bin2addr(n):
 def bin2addr6(n):
     return inet_ntop(AF_INET6, n)
 
+def bin2long6(str):
+    # Also from pyspf
+    h, l = struct_unpack("!QQ", str)
+    return h << 64 | l
+
 # Packing class
 
 class Packer:
@@ -244,11 +249,7 @@ class Unpacker:
           enc = DNS.LABEL_ENCODING
         return bytes(bin2addr(self.get32bit()),enc)
     def getaddr6(self):
-        if DNS.LABEL_UTF8:
-          enc = 'utf8'
-        else:
-          enc = DNS.LABEL_ENCODING
-        return bytes(bin2addr6(self.getbytes(16)),enc)
+        return (self.getbytes(16))
     def getstring(self):
         return self.getbytes(self.getbyte())
     def getname(self):
@@ -518,11 +519,7 @@ class RRunpackerText(RRunpacker):
     def __init__(self, buf):
         RRunpacker.__init__(self, buf)
     def getAAAAdata(self):
-        if DNS.LABEL_UTF8:
-            enc = 'utf8'
-        else:
-            enc = DNS.LABEL_ENCODING
-        return self.getaddr6().decode(enc)
+        return bin2addr6(self.getaddr6())
 
 class RRunpackerInteger(RRunpacker):
     def __init__(self, buf):
@@ -535,11 +532,7 @@ class RRunpackerInteger(RRunpacker):
         x = socket.inet_aton(self.getaddr().decode(enc))
         return struct_unpack("!I", x)[0]
     def getAAAAdata(self):
-        if DNS.LABEL_UTF8:
-            enc = 'utf8'
-        else:
-            enc = DNS.LABEL_ENCODING
-        return self.getaddr6().decode(enc)
+        return bin2long6(self.getaddr6())
  
 class RRunpackerBinary(Unpacker):
     def __init__(self, buf):

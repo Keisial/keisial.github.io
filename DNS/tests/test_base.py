@@ -78,6 +78,10 @@ class TestBase(unittest.TestCase):
         for b in aaaab_response.answers[0]['data']:
             assertIsByte(b)
         self.assertEqual(aaaab_response.answers[0]['data'],b' \x01\x05\x00\x00\x88\x02\x00\x00\x00\x00\x00\x00\x00\x00\x10')
+        # IPv6 decimal
+        aaaai_response = dnsobj.req(qtype='AAAA', resulttype='integer')
+        self.assertTrue(aaaai_response.answers)
+        self.assertEqual(aaaai_response.answers[0]['data'], 42540589574188284375103031468607143952)
 
     def testDnsRequestEmptyMX(self):
         dnsobj = DNS.DnsRequest('example.org')
