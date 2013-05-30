@@ -12,17 +12,17 @@ import DNS
 
 setup(
         #-- Package description
-        name = 'pydns',
+        name = 'py3dns',
         license = 'Python License',
         version = DNS.__version__,
-        description = 'Python DNS library',
-        long_description = """Python DNS library:
+        description = 'Python 3 DNS library',
+        long_description = """Python 3 DNS library:
 """,
         author = 'Anthony Baxter and others', 
-        author_email = 'pydns-developer@lists.sourceforge.net',
-      maintainer="Stuart D. Gathman",
-      maintainer_email="stuart@bmsi.com",
-      url = 'http://pydns.sourceforge.net/',
+        author_email = 'py3dns-hackers@lists.launchpad.net ',
+      maintainer="Scott Kitterman",
+      maintainer_email="scott@kitterman.com",
+      url = 'https://launchpad.net/py3dns',
       packages = ['DNS'], keywords = ['DNS'],
       classifiers = [
         'Development Status :: 5 - Production/Stable',
@@ -31,7 +31,7 @@ setup(
         'License :: OSI Approved :: Python License (CNRI Python License)',
         'Natural Language :: English',
         'Operating System :: OS Independent',
-        'Programming Language :: Python',
+        'Programming Language :: Python :: 3',
         'Topic :: Internet :: Name Service (DNS)',
         'Topic :: Software Development :: Libraries :: Python Modules'
       ]

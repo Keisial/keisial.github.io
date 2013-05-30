@@ -3,6 +3,7 @@ recursive-include tools *.py
 recursive-include tests *.py
 include LICENSE
 include CHANGES
+include MANIFEST.in
 include *.txt
 include setup.*
 include *.spec
