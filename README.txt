@@ -124,6 +124,10 @@ authoritative, and that the zone serial numbers match.
 
 see also README.guido for the original docs.
 
+py3dns is derived from pydns.  The sourceforge details below refer to pydns.
+All py3dns issues/comments/etc should be reported via
+https://launchpad.net/py3dns.
+
 comments to me, anthony@interlink.com.au, or to the mailing list,
 pydns-developer@lists.sourceforge.net.
 

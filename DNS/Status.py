@@ -1,8 +1,8 @@
 """
  $Id$
 
- This file is part of the pydns project.
- Homepage: http://pydns.sourceforge.net
+ This file is part of the py3dns project.
+ Homepage: https://launchpad.net/py3dns
 
  This code is covered by the standard Python License. See LICENSE for details.
 
@@ -39,28 +39,3 @@ def statusstr(status):
     if status in statusmap: return statusmap[status]
     else: return repr(status)
 
-#
-# $Log$
-# Revision 1.7.4.1  2011/02/18 19:35:22  customdesigned
-# Python3 updates from Scott Kitterman
-#
-# Revision 1.7  2002/04/23 12:52:19  anthonybaxter
-# cleanup whitespace.
-#
-# Revision 1.6  2002/04/23 10:57:57  anthonybaxter
-# update to complete the list of response codes.
-#
-# Revision 1.5  2002/03/19 12:41:33  anthonybaxter
-# tabnannied and reindented everything. 4 space indent, no tabs.
-# yay.
-#
-# Revision 1.4  2002/03/19 12:26:13  anthonybaxter
-# death to leading tabs.
-#
-# Revision 1.3  2001/08/09 09:08:55  anthonybaxter
-# added identifying header to top of each file
-#
-# Revision 1.2  2001/07/19 06:57:07  anthony
-# cvs keywords added
-#
-#

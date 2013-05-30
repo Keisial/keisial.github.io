@@ -17,6 +17,8 @@
 
  (c) 2001 Copyright by Wolfgang Strobl ws@mystrobl.de,
           License analog to the current Python license
+
+ WARNING: Python3 port completely untested on Windows.
 """
 
 import re
@@ -114,31 +116,3 @@ def RegistryResolve():
 if __name__=="__main__":
     print("Name servers:",RegistryResolve())
 
-#
-# $Log$
-# Revision 1.3.2.1  2007/05/22 20:26:49  customdesigned
-# Fix win32 nameserver discovery.
-#
-# Revision 1.3  2002/05/06 06:15:31  anthonybaxter
-# apparently some versions of windows return servers as unicode
-# string with space sep, rather than strings with comma sep.
-# *sigh*
-#
-# Revision 1.2  2002/03/19 12:41:33  anthonybaxter
-# tabnannied and reindented everything. 4 space indent, no tabs.
-# yay.
-#
-# Revision 1.1  2001/08/09 09:22:28  anthonybaxter
-# added what I hope is win32 resolver lookup support. I'll need to try
-# and figure out how to get the CVS checkout onto my windows machine to
-# make sure it works (wow, doing something other than games on the
-# windows machine :)
-#
-# Code from Wolfgang.Strobl@gmd.de
-# win32dns.py from
-# http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/66260
-#
-# Really, ParseResolvConf() should be renamed "FindNameServers" or
-# some such.
-#
-#

@@ -1,10 +1,12 @@
 """
 $Id$
 
-This file is part of the pydns project.
-Homepage: http://pydns.sourceforge.net
+This file is part of the py3dns project.
+Homepage: https://launchpad.net/py3dns
 
 This code is covered by the standard Python License. See LICENSE for details.
+
+Changes for Python3 port © 2011-13 Scott Kitterman <scott@kitterman.com>
 
     Base functionality. Request and Response classes, that sort of thing.
 """
@@ -408,114 +410,3 @@ def ParseOSXSysConfig():
     for currentset in sets:
         defaults['server'].extend(currentset)
 
-#
-# $Log$
-# Revision 1.12.2.11.2.4  2011/08/04 22:53:09  customdesigned
-# Add OSX support
-#
-# Revision 1.12.2.11.2.3  2011/05/02 16:04:32  customdesigned
-# Don't complain about AXFR protocol unless actually changing it.
-# Reported by Ewoud Kohl van Wijngaarden.
-#
-# Revision 1.12.2.11.2.2  2011/03/23 01:42:07  customdesigned
-# Changes from 2.3 branch
-#
-# Revision 1.12.2.11.2.1  2011/02/18 19:35:22  customdesigned
-# Python3 updates from Scott Kitterman
-#
-# Revision 1.12.2.10  2008/08/01 03:58:03  customdesigned
-# Don't try to close socket when never opened.
-#
-# Revision 1.12.2.9  2008/08/01 03:48:31  customdesigned
-# Fix more breakage from port randomization patch.  Support Ipv6 queries.
-#
-# Revision 1.12.2.8  2008/07/31 18:22:59  customdesigned
-# Wait until tcp response at least starts coming in.
-#
-# Revision 1.12.2.7  2008/07/28 01:27:00  customdesigned
-# Check configured port.
-#
-# Revision 1.12.2.6  2008/07/28 00:17:10  customdesigned
-# Randomize source ports.
-#
-# Revision 1.12.2.5  2008/07/24 20:10:55  customdesigned
-# Randomize tid in requests, and check in response.
-#
-# Revision 1.12.2.4  2007/05/22 20:28:31  customdesigned
-# Missing import Lib
-#
-# Revision 1.12.2.3  2007/05/22 20:25:52  customdesigned
-# Use socket.inetntoa,inetaton.
-#
-# Revision 1.12.2.2  2007/05/22 20:21:46  customdesigned
-# Trap socket error
-#
-# Revision 1.12.2.1  2007/05/22 20:19:35  customdesigned
-# Skip bogus but non-empty lines in resolv.conf
-#
-# Revision 1.12  2002/04/23 06:04:27  anthonybaxter
-# attempt to refactor the DNSRequest.req method a little. after doing a bit
-# of this, I've decided to bite the bullet and just rewrite the puppy. will
-# be checkin in some design notes, then unit tests and then writing the sod.
-#
-# Revision 1.11  2002/03/19 13:05:02  anthonybaxter
-# converted to class based exceptions (there goes the python1.4 compatibility :)
-#
-# removed a quite gross use of 'eval()'.
-#
-# Revision 1.10  2002/03/19 12:41:33  anthonybaxter
-# tabnannied and reindented everything. 4 space indent, no tabs.
-# yay.
-#
-# Revision 1.9  2002/03/19 12:26:13  anthonybaxter
-# death to leading tabs.
-#
-# Revision 1.8  2002/03/19 10:30:33  anthonybaxter
-# first round of major bits and pieces. The major stuff here (summarised
-# from my local, off-net CVS server :/ this will cause some oddities with
-# the
-#
-# tests/testPackers.py:
-#   a large slab of unit tests for the packer and unpacker code in DNS.Lib
-#
-# DNS/Lib.py:
-#   placeholder for addSRV.
-#   added 'klass' to addA, make it the same as the other A* records.
-#   made addTXT check for being passed a string, turn it into a length 1 list.
-#   explicitly check for adding a string of length > 255 (prohibited).
-#   a bunch of cleanups from a first pass with pychecker
-#   new code for pack/unpack. the bitwise stuff uses struct, for a smallish
-#     (disappointly small, actually) improvement, while addr2bin is much
-#     much faster now.
-#
-# DNS/Base.py:
-#   added DiscoverNameServers. This automatically does the right thing
-#     on unix/ win32. No idea how MacOS handles this.  *sigh*
-#     Incompatible change: Don't use ParseResolvConf on non-unix, use this
-#     function, instead!
-#   a bunch of cleanups from a first pass with pychecker
-#
-# Revision 1.5  2001/08/09 09:22:28  anthonybaxter
-# added what I hope is win32 resolver lookup support. I'll need to try
-# and figure out how to get the CVS checkout onto my windows machine to
-# make sure it works (wow, doing something other than games on the
-# windows machine :)
-#
-# Code from Wolfgang.Strobl@gmd.de
-# win32dns.py from
-# http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/66260
-#
-# Really, ParseResolvConf() should be renamed "FindNameServers" or
-# some such.
-#
-# Revision 1.4  2001/08/09 09:08:55  anthonybaxter
-# added identifying header to top of each file
-#
-# Revision 1.3  2001/07/19 07:20:12  anthony
-# Handle blank resolv.conf lines.
-# Patch from Bastian Kleineidam
-#
-# Revision 1.2  2001/07/19 06:57:07  anthony
-# cvs keywords added
-#
-#

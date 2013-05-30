@@ -2,10 +2,12 @@
 """
  $Id$
 
- This file is part of the pydns project.
- Homepage: http://pydns.sourceforge.net
+ This file is part of the py3dns project.
+ Homepage: https://launchpad.net/py3dns
 
  This code is covered by the standard Python License. See LICENSE for details.
+
+Changes for Python3 port © 2011-13 Scott Kitterman <scott@kitterman.com>
 
  Library code. Largely this is packers and unpackers for various types.
 """
@@ -763,88 +765,3 @@ def dumpRR(u):
 
 if __name__ == "__main__":
     testpacker()
-#
-# $Log$
-# Revision 1.11.2.7.2.2  2011/03/23 01:42:07  customdesigned
-# Changes from 2.3 branch
-#
-# Revision 1.11.2.7.2.1  2011/02/18 19:35:22  customdesigned
-# Python3 updates from Scott Kitterman
-#
-# Revision 1.11.2.7  2009/06/09 18:39:06  customdesigned
-# Built-in SPF support
-#
-# Revision 1.11.2.6  2008/10/15 22:34:06  customdesigned
-# Default to idna encoding.
-#
-# Revision 1.11.2.5  2008/09/17 17:35:14  customdesigned
-# Use 7-bit ascii encoding, because case folding needs to be disabled
-# before utf8 is safe to use, even experimentally.
-#
-# Revision 1.11.2.4  2008/09/17 16:09:53  customdesigned
-# Encode unicode labels as UTF-8
-#
-# Revision 1.11.2.3  2007/05/22 20:27:40  customdesigned
-# Fix unpacker underflow.
-#
-# Revision 1.11.2.2  2007/05/22 20:25:53  customdesigned
-# Use socket.inetntoa,inetaton.
-#
-# Revision 1.11.2.1  2007/05/22 20:20:39  customdesigned
-# Mark utf-8 encoding
-#
-# Revision 1.11  2002/03/19 13:05:02  anthonybaxter
-# converted to class based exceptions (there goes the python1.4 compatibility :)
-#
-# removed a quite gross use of 'eval()'.
-#
-# Revision 1.10  2002/03/19 12:41:33  anthonybaxter
-# tabnannied and reindented everything. 4 space indent, no tabs.
-# yay.
-#
-# Revision 1.9  2002/03/19 10:30:33  anthonybaxter
-# first round of major bits and pieces. The major stuff here (summarised
-# from my local, off-net CVS server :/ this will cause some oddities with
-# the
-#
-# tests/testPackers.py:
-#   a large slab of unit tests for the packer and unpacker code in DNS.Lib
-#
-# DNS/Lib.py:
-#   placeholder for addSRV.
-#   added 'klass' to addA, make it the same as the other A* records.
-#   made addTXT check for being passed a string, turn it into a length 1 list.
-#   explicitly check for adding a string of length > 255 (prohibited).
-#   a bunch of cleanups from a first pass with pychecker
-#   new code for pack/unpack. the bitwise stuff uses struct, for a smallish
-#     (disappointly small, actually) improvement, while addr2bin is much
-#     much faster now.
-#
-# DNS/Base.py:
-#   added DiscoverNameServers. This automatically does the right thing
-#     on unix/ win32. No idea how MacOS handles this.  *sigh*
-#     Incompatible change: Don't use ParseResolvConf on non-unix, use this
-#     function, instead!
-#   a bunch of cleanups from a first pass with pychecker
-#
-# Revision 1.8  2001/08/09 09:08:55  anthonybaxter
-# added identifying header to top of each file
-#
-# Revision 1.7  2001/07/19 07:50:44  anthony
-# Added SRV (RFC 2782) support. Code from Michael Ströder.
-#
-# Revision 1.6  2001/07/19 07:39:18  anthony
-# 'type' -> 'rrtype' in getRRheader(). Fix from Michael Ströder.
-#
-# Revision 1.5  2001/07/19 07:34:19  anthony
-# oops. glitch in storeRR (fixed now).
-# Reported by Bastian Kleineidam and by greg lin.
-#
-# Revision 1.4  2001/07/19 07:16:42  anthony
-# Changed (opcode&0xF)<<11 to (opcode*0xF)<<11.
-# Patch from Timothy J. Miller.
-#
-# Revision 1.3  2001/07/19 06:57:07  anthony
-# cvs keywords added
-#
-#

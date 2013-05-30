@@ -11,6 +11,7 @@ by:
  Arnaud Fontaine
  Scott Kitterman
  Stuart Gathman
+ Diane Trout
 
 It's possible there's other people - the old RCS logs for my
 code were lost some time ago. The list above is almost certainly
