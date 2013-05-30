@@ -102,9 +102,9 @@ class TestBase(unittest.TestCase):
 
     def testDnsRequestSrv(self):
         dnsobj = DNS.Request(qtype='srv')
-        resp = dnsobj.req('_ldap._tcp.openldap.org', resulttype='text')
-        self.assertTrue(resp.answers)
-        data = resp.answers[0]['data']
+        respdef = dnsobj.req('_ldap._tcp.openldap.org')
+        self.assertTrue(respdef.answers)
+        data = respdef.answers[0]['data']
         self.assertEqual(len(data), 4)
         self.assertEqual(data[2], 389)
         self.assertTrue('openldap.org' in data[3])
