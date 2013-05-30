@@ -2,7 +2,7 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python3-pydns
-Version:        3.0.1
+Version:        3.1.0
 Release:        1%{?dist}
 Summary:        Python module for DNS (Domain Name Service).
 

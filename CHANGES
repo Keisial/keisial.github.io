@@ -1,8 +1,7 @@
 3.1.0 UNRELEASED
- * Add options for 'resulttype' to DnsResult.req to allow for binary or text
-   data to be returned
- * Switch DNS.getTXTdata back to returning a string.  This is consistent with
-   what dnspython3 does as well.  The switch to bytes was a bad idea.
+ * Add options for 'resulttype' to DnsResult.req to allow for binary, integer,
+   or text data to be returned for IP addresses
+ * New unittest based test suite - thanks to Diane Trout
 
 3.0.3 Wed May 29 00:05:00 EDT 2013
 
@@ -11,7 +10,6 @@
 
 3.0.2 Thu Jan 19 10:59:00 EST 2012
 
- * Fix DNS.getTXTdata to return bytes instead of a Unicode string
  * Add more granular exception sub classes of DNSError, see SF #3388075
    - Thanks to Julian Mehnle for the patch
  * Add AAAA record support, works like A records
