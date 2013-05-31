@@ -120,6 +120,25 @@ class TestBase(unittest.TestCase):
         self.assertTrue(isinstance(data[0], str))
         self.assertTrue(data[0].startswith('k='))
 
+    def testDNSRequestTXT(self):
+        dnsobj = DNS.Request('fail.kitterman.org', qtype='txt')
+        respdef = dnsobj.req()
+        self.assertTrue(respdef.answers)
+        data = respdef.answers[0]['data']
+        self.assertEqual(data, ['v=spf1 -all'])
+
+        dnsobj = DNS.Request('fail.kitterman.org', qtype='txt', resulttype='text')
+        resptext = dnsobj.req()
+        self.assertTrue(resptext.answers)
+        data = resptext.answers[0]['data']
+        self.assertEqual(data, ['v=spf1 -all'])
+
+        #dnsobj = DNS.Request('fail.kitterman.org', qtype='txt', resulttype='binary')
+        #respbin = dnsobj.req()
+        #self.assertTrue(respbin.answers)
+        #data = respbin.answers[0]['data']
+        #self.assertEqual(data, [''])
+
     def testIDN(self):
         """Can we lookup an internationalized domain name?"""
         dnsobj = DNS.DnsRequest('xn--hxajbheg2az3al.xn--jxalpdlp')
