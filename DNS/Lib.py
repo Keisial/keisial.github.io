@@ -546,11 +546,18 @@ class RRunpackerBinary(Unpacker):
         klass = self.get16bit()
         ttl = self.get32bit()
         rdlength = self.get16bit()
+        self.rdlength = rdlength
         self.rdend = self.offset + rdlength
         return (name, rrtype, klass, ttl, rdlength)
     def endRR(self):
         if self.offset != self.rdend:
             raise UnpackError('end of RR not reached')
+    def getTXTdata(self):
+        tlist = []
+        while self.offset != self.rdend:
+            tlist.append(self.getbytes(self.rdlength))
+        return tlist
+    getSPFdata = getTXTdata
 
 # Pack/unpack Message Header (section 4.1)
 
@@ -607,6 +614,7 @@ class Mpacker(RRpacker, Qpacker, Hpacker):
     pass
 
 class Munpacker(RRunpacker, Qunpacker, Hunpacker):
+    # Default results
     pass
 
 class MunpackerText(RRunpackerText, Qunpacker, Hunpacker):
