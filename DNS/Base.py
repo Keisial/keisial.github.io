@@ -208,7 +208,7 @@ class DnsRequest:
                 break
             except socket.error as msg: 
                 # Error 98, 'Address already in use'
-                if msg[0] != 98: raise
+                if msg.errno != 98: raise
 
     def conn(self):
         self.getSource()
