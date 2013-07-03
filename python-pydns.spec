@@ -9,7 +9,7 @@ Summary:        Python module for DNS (Domain Name Service).
 Group:          Development/Languages
 License:        Python Software Foundation License
 URL:            http://pydns.sourceforge.net/
-Source0:        pydns-%{version}.tar.gz
+Source0:        py3dns-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Requires:	python3
 BuildArch:      noarch
@@ -27,7 +27,7 @@ This version was ported to Python3 by Scott Kitterman <scott@kitterman.com>
 
 %define namewithoutpythonprefix %(echo %{name} | sed 's/^python-//')
 %prep
-%setup -q -n %{namewithoutpythonprefix}-%{version}
+%setup -q -n py3dns-%{version}
 #patch -p1 -b .sdg
 
 %build
@@ -45,35 +45,40 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%doc CREDITS.txt PKG-INFO README-guido.txt README.txt
+%doc CREDITS.txt PKG-INFO README-guido.txt README.txt LICENSE CHANGES
 %{python_sitelib}/DNS/*.py*
+%{python_sitelib}/DNS/__pycache__/*.py*
+%{python_sitelib}/py3dns-3.1.0-py3.2.egg-info
 
 %changelog
-* Tue Jun 09 2009 Stuart Gathman <stuart@bmsi.com> 2.3.4-1
-- Support IDNA label encoding
-- Optionally support M$ compatible UTF-8 label encoding.
-* Thu Sep 25 2008 Stuart Gathman <stuart@bmsi.com> 2.3.3-3
-- Accept unicode names, encode to ascii with exception if non-ascii
-* Thu Sep 25 2008 Stuart Gathman <stuart@bmsi.com> 2.3.3-2
-- Support IPv6 queries
-* Fri Aug 01 2008 Stuart Gathman <stuart@bmsi.com> 2.3.3-1
-- Support IPv6 nameservers
-* Thu Jul 24 2008 Stuart Gathman <stuart@bmsi.com> 2.3.2-2
-- Fix tcp timeout
-* Thu Jul 24 2008 Stuart Gathman <stuart@bmsi.com> 2.3.2-1
-- Randomize TID and source port, CVE-2008-4099 CVE-2008-4126
-* Tue May 22 2007 Stuart Gathman <stuart@bmsi.com> 2.3.1-1
-- Bug fix release
-- BTS Patches:
-- 01resolv-conf-parse patch, thanks to Arnaud Fontaine <arnaud@andesi.org>
-  (closes: #378991)
-- Changes from Ubuntu (SF = Sourceforge project bug #) (closes: #411138):
-- 02utf-8 patch for files with UTF-8 content
-- 03socket-error-trap patch, Added DNSError trap for socket.error.
-- 04lazy-init SF 1563723 lazy should initilize defaults['server']
-- 05addr2bin2addr SF 863364 Mac OS X, Win2000 DHCP, addr2bin and bin2addr.
-- 06win32-fix SF 1180344 win32dns.py fails on windows server 2003
-- 07unpacker SF 954095 Bug in DNS.Lib.Unpacker.getbyte()
-- 08import-lib SF 658601 Missing "import Lib"; for TCP protocol
-* Tue Aug 29 2006 Sean Reifschneider <jafo@tummy.com> 2.3.0-1
-- Initial RPM spec file.
+* Wed Jul 03 2013 Stuart Gathman <stuart@gathman.org> 3.1.0-1
+- Add options for 'resulttype' to DnsResult.req to allow for binary, integer,
+  or text data to be returned for IP addresses
+- New unittest based test suite - thanks to Diane Trout
+
+* Wed May 29 2013 Stuart Gathman <stuart@gathman.org> 3.0.3-1
+- Revert returning IPv6 addresses from AAAA lookups as string.  Causing
+  incompatiblities that are deeply annoying to fix on the other end.
+
+* Thu Jan 19 2012 Stuart Gathman <stuart@gathman.org> 3.0.2-1
+- Add more granular exception sub classes of DNSError, see SF #3388075
+  o Thanks to Julian Mehnle for the patch
+- Add AAAA record support, works like A records
+  o Thanks to Shane Kerr for the patch
+
+* Mon Jul 18 2011 Stuart Gathman <stuart@gathman.org> 3.0.1-1
+- Add CHANGES to document post-Python 3 port changes
+- Add LICENSE file
+- Port pydns 2.3.5 changes to py3dns
+  o Handle large TCP replies (change to blocking IO with timeout)
+  o Add new lazy.dnslookup function to retrieve answer data for any query
+    type
+  o Add large TCP reply test to tests/test.py
+- Add automatic name server discovery for OS X
+
+* Wed Feb  9 2011 Stuart Gathman <stuart@gathman.org> 3.0.0-1
+- Ported to Python3 by Scott Kitterman <scott@kitterman.com>.  This is mostly a
+  minimal port to work with Python3 (tested with python3.2) plus addition of
+  some of the patches that people have submitted on Sourceforge.  It should be
+  fully API compatible with 2.3.
+
