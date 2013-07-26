@@ -12,6 +12,7 @@
 
 import sys ; sys.path.insert(0, '..')
 import DNS
+import socket
 import unittest
 
 TestCompleted = "TestCompleted" # exc.
@@ -145,9 +146,12 @@ class testUnpackingMangled(unittest.TestCase):
 
 class PackerTestCase(unittest.TestCase):
     " base class for tests of Packing code. Laziness on my part, I know. "
+    def setUp(self):
+        self.RRpacker = DNS.Lib.RRpacker
+        self.RRunpacker = DNS.Lib.RRunpacker
+        
     def testPacker(self):
-        from DNS.Lib import RRpacker
-        p = RRpacker()
+        p = self.RRpacker()
         check = self.doPack(p)
         if (p is not None) and (check is not TestCompleted):
             return self.checkPackResult(p)
@@ -169,11 +173,10 @@ class PackerTestCase(unittest.TestCase):
                                 self.unpackerExpectedResult)
 
     def testUnpacker(self):
-        from DNS.Lib import RRunpacker
         if self.doUnpack is not None:
             if hasattr(self.__class__, 'doUnpack') \
                     and hasattr(self, 'packerExpectedResult'):
-                u = RRunpacker(self.packerExpectedResult)
+                u = self.RRunpacker(self.packerExpectedResult)
                 rrbits = u.getRRheader()[:4]
                 specbits = self.doUnpack(u)
                 try:
@@ -361,6 +364,58 @@ class testPackingOfTXT2(PackerTestCase):
         self.assertRaises(ValueError, f)
         return TestCompleted
     doUnpack = None
+
+class testPackingOfAAAAText(PackerTestCase):
+    "addAAAA(self, name, klass, ttl, address)"
+    def setUp(self):
+        self.RRpacker = DNS.Lib.RRpacker
+        self.RRunpacker = DNS.Lib.RRunpackerText
+        
+    def doPack(self, p):
+        addAAAA(p, 'google.com', DNS.Class.IN, 4, '2607:f8b0:4005:802::1005')
+    def doUnpack(self, u):
+        r = u.getAAAAdata()
+        return r
+    packerExpectedResult = b'\x06google\x03com\x00\x00\x1c\x00\x01\x00\x00\x00\x04\x00\x10&\x07\xf8\xb0@\x05\x08\x02\x00\x00\x00\x00\x00\x00\x10\x05'
+    unpackerExpectedResult = (('google.com', DNS.Type.AAAA, DNS.Class.IN, 4), '2607:f8b0:4005:802::1005')
+    
+class testPackingOfAAAABinary(PackerTestCase):
+    "addAAAA(self, name, klass, ttl, address)"
+    def setUp(self):
+        self.RRpacker = DNS.Lib.RRpacker
+        self.RRunpacker = DNS.Lib.RRunpackerBinary
+        
+    def doPack(self, p):
+        addAAAA(p, 'google.com', DNS.Class.IN, 4, '2607:f8b0:4005:802::1005')
+    def doUnpack(self, u):
+        self.assertFalse(hasattr(u, "getAAAAdata"))
+        r = u.getbytes(16)
+        return r
+    packerExpectedResult = b'\x06google\x03com\x00\x00\x1c\x00\x01\x00\x00\x00\x04\x00\x10&\x07\xf8\xb0@\x05\x08\x02\x00\x00\x00\x00\x00\x00\x10\x05'
+    unpackerExpectedResult = (('google.com', DNS.Type.AAAA, DNS.Class.IN, 4), b'&\x07\xf8\xb0@\x05\x08\x02\x00\x00\x00\x00\x00\x00\x10\x05')
+    
+class testPackingOfAAAAInteger(PackerTestCase):
+    "addAAAA(self, name, klass, ttl, address)"
+    def setUp(self):
+        self.RRpacker = DNS.Lib.RRpacker
+        self.RRunpacker = DNS.Lib.RRunpackerInteger
+            
+    def doPack(self, p):
+        addAAAA(p, 'google.com', DNS.Class.IN, 4, '2607:f8b0:4005:802::1005')
+    def doUnpack(self, u):
+        r = u.getAAAAdata()
+        return r
+    packerExpectedResult = b'\x06google\x03com\x00\x00\x1c\x00\x01\x00\x00\x00\x04\x00\x10&\x07\xf8\xb0@\x05\x08\x02\x00\x00\x00\x00\x00\x00\x10\x05'
+    unpackerExpectedResult = (('google.com', DNS.Type.AAAA, DNS.Class.IN, 4), 50552053919387978162022445795852161029)
+
+def addAAAA(p, name, klass, ttl, address):
+    """Add AAAA record to a packer.
+    """
+    addr_buf = socket.inet_pton(socket.AF_INET6, address)
+    p.addRRheader(name, DNS.Type.AAAA, klass, ttl)
+    p.buf = p.buf + addr_buf
+    p.endRR()
+    return p
 
 #class testPackingOfQuestion(PackerTestCase):
 #    "addQuestion(self, qname, qtype, qclass)"
