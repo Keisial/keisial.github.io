@@ -38,7 +38,7 @@ class TestBase(unittest.TestCase):
         self.assertTrue(ad_response.answers)
         # is the result vaguely ipv4 like?
         self.assertEqual(ad_response.answers[0]['data'].count('.'), 3)
-        self.assertEqual(a_response.answers[0]['data'],'192.0.43.10')
+        self.assertEqual(ad_response.answers[0]['data'],'192.0.43.10')
 
         ab_response = dnsobj.req(qtype='A', resulttype='binary')
         self.assertTrue(ab_response.answers)
