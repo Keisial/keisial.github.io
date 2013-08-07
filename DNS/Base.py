@@ -310,6 +310,11 @@ class DnsRequest:
                 # servers worked:
                 first_socket_error = first_socket_error or e
                 continue
+            except TimeoutError as t:
+                first_socket_error = first_socket_error or t
+                continue
+            if self.response:
+                break
         if not self.response and first_socket_error:
             raise first_socket_error
 
@@ -347,6 +352,11 @@ class DnsRequest:
             except socket.error as e:
                 first_socket_error = first_socket_error or e
                 continue
+            except TimeoutError as t:
+                first_socket_error = first_socket_error or t
+                continue
+            if self.response:
+                break
         if not self.response and first_socket_error:
             raise first_socket_error
 
