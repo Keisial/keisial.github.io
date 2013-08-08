@@ -32,13 +32,13 @@ class TestBase(unittest.TestCase):
         self.assertTrue(a_response.answers)
         # is the result vaguely ipv4 like?
         self.assertEqual(a_response.answers[0]['data'].count('.'), 3)
-        self.assertEqual(a_response.answers[0]['data'],'192.0.43.10')
+        self.assertEqual(a_response.answers[0]['data'],'93.184.216.119')
 
         ad_response = dnsobj.req(qtype='A')
         self.assertTrue(ad_response.answers)
         # is the result vaguely ipv4 like?
         self.assertEqual(ad_response.answers[0]['data'].count('.'), 3)
-        self.assertEqual(ad_response.answers[0]['data'],'192.0.43.10')
+        self.assertEqual(ad_response.answers[0]['data'],'93.184.216.119')
 
         ab_response = dnsobj.req(qtype='A', resulttype='binary')
         self.assertTrue(ab_response.answers)
@@ -46,11 +46,11 @@ class TestBase(unittest.TestCase):
         self.assertEqual(len(ab_response.answers[0]['data']), 4)
         for b in ab_response.answers[0]['data']:
             assertIsByte(b)
-        self.assertEqual(ab_response.answers[0]['data'],b'\xc0\x00+\n')
+        self.assertEqual(ab_response.answers[0]['data'],b']\xb8\xd8w')
 
         ai_response = dnsobj.req(qtype='A', resulttype='integer')
         self.assertTrue(ai_response.answers)
-        self.assertEqual(ai_response.answers[0]['data'],3221236490)
+        self.assertEqual(ai_response.answers[0]['data'],1572395127)
 
 
     def testDnsRequestAAAA(self):
@@ -60,7 +60,7 @@ class TestBase(unittest.TestCase):
         self.assertTrue(aaaa_response.answers)
         # does the result look like an ipv6 address?
         self.assertTrue(':' in aaaa_response.answers[0]['data'])
-        self.assertEqual(aaaa_response.answers[0]['data'],'2001:500:88:200::10')
+        self.assertEqual(aaaa_response.answers[0]['data'],'2606:2800:220:6d:26bf:1447:1097:aa7')
 
         # default is returning binary instead of text
         aaaad_response = dnsobj.req(qtype='AAAA')
@@ -69,7 +69,7 @@ class TestBase(unittest.TestCase):
         self.assertEqual(len(aaaad_response.answers[0]['data']) , 16)
         for b in aaaad_response.answers[0]['data']:
             assertIsByte(b)
-        self.assertEqual(aaaad_response.answers[0]['data'],b' \x01\x05\x00\x00\x88\x02\x00\x00\x00\x00\x00\x00\x00\x00\x10')
+        self.assertEqual(aaaad_response.answers[0]['data'],b'&\x06(\x00\x02 \x00m&\xbf\x14G\x10\x97\n\xa7')
         
         aaaab_response = dnsobj.req(qtype='AAAA', resulttype='binary')
         self.assertTrue(aaaab_response.answers)
@@ -77,11 +77,11 @@ class TestBase(unittest.TestCase):
         self.assertEqual(len(aaaab_response.answers[0]['data']) , 16)
         for b in aaaab_response.answers[0]['data']:
             assertIsByte(b)
-        self.assertEqual(aaaab_response.answers[0]['data'],b' \x01\x05\x00\x00\x88\x02\x00\x00\x00\x00\x00\x00\x00\x00\x10')
+        self.assertEqual(aaaab_response.answers[0]['data'],b'&\x06(\x00\x02 \x00m&\xbf\x14G\x10\x97\n\xa7')
         # IPv6 decimal
         aaaai_response = dnsobj.req(qtype='AAAA', resulttype='integer')
         self.assertTrue(aaaai_response.answers)
-        self.assertEqual(aaaai_response.answers[0]['data'], 42540589574188284375103031468607143952)
+        self.assertEqual(aaaai_response.answers[0]['data'], 50542628918019815862290244053507705511)
 
     def testDnsRequestEmptyMX(self):
         dnsobj = DNS.DnsRequest('example.org')
