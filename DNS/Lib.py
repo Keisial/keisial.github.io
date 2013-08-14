@@ -623,11 +623,11 @@ class Qunpacker(Unpacker):
 class Mpacker(RRpacker, Qpacker, Hpacker):
     pass
 
-class Munpacker(RRunpackerDefault, Qunpacker, Hunpacker):
+class Munpacker(RRunpacker, Qunpacker, Hunpacker):
     # Default results for DNS.req
     pass
 
-class MunpackerDefault(RRunpacker, Qunpacker, Hunpacker):
+class MunpackerDefault(RRunpackerDefault, Qunpacker, Hunpacker):
     # Default results for DNS.qry
     pass
 
