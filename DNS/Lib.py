@@ -512,10 +512,10 @@ class RRunpacker(Unpacker):
         #print '***priority, weight, port, target', priority, weight, port, target
         return priority, weight, port, target
 
-class RRunpackerDefault(Unpacker):
+class RRunpackerDefault(RRunpacker):
     # Default for DNS.qry
     def __init__(self, buf):
-        Unpacker.__init__(self, buf)
+        RRunpacker.__init__(self, buf)
         self.rdend = None
     def getRRheader(self):
         name = self.getname()
@@ -580,7 +580,7 @@ class RRunpackerDefault(Unpacker):
 
 class RRunpackerText(RRunpackerDefault):
     def __init__(self, buf):
-        RRunpacker.__init__(self, buf)
+        RRunpackerDefault.__init__(self, buf)
     def getAAAAdata(self):
         return bin2addr6(self.getaddr6())
     def getTXTdata(self):
@@ -595,7 +595,7 @@ class RRunpackerText(RRunpackerDefault):
 
 class RRunpackerInteger(RRunpackerDefault):
     def __init__(self, buf):
-        RRunpacker.__init__(self, buf)
+        RRunpackerDefault.__init__(self, buf)
     def getAdata(self):
         if DNS.LABEL_UTF8:
             enc = 'utf8'
