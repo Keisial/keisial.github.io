@@ -7,6 +7,14 @@
    or text data to be returned for IP addresses
  * New unittest based test suite - thanks to Diane Trout
 
+3.0.4 Wed Aug  7 02:25:00 EDT 2013
+
+ * Fix timeouts associated with only one of several available nameservers
+   being unavailable(LP: #1209071):
+   - Only raise timeout error after trying all available servers
+   - Stop lookups once an answer is gotten
+ * Removed unmaintained spec files
+
 3.0.3 Wed May 29 00:05:00 EDT 2013
 
  * Revert returning IPv6 addresses from AAAA lookups as string.  Causing
