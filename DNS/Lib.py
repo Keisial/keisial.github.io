@@ -447,7 +447,6 @@ def prettyTime(seconds):
     else:
         return seconds,"%d weeks"%(seconds/604800)
 
-
 class RRunpacker(Unpacker):
     def __init__(self, buf):
         Unpacker.__init__(self, buf)
@@ -486,13 +485,9 @@ class RRunpacker(Unpacker):
                ('expire',)+prettyTime(self.get32bit()), \
                ('minimum',)+prettyTime(self.get32bit())
     def getTXTdata(self):
-        if DNS.LABEL_UTF8:
-            enc = 'utf8'
-        else:
-            enc = DNS.LABEL_ENCODING
         tlist = []
         while self.offset != self.rdend:
-            tlist.append(str(self.getstring(), enc))
+            tlist.append(bytes(self.getstring()))
         return tlist
     getSPFdata = getTXTdata
     def getAdata(self):
@@ -517,13 +512,88 @@ class RRunpacker(Unpacker):
         #print '***priority, weight, port, target', priority, weight, port, target
         return priority, weight, port, target
 
-class RRunpackerText(RRunpacker):
+class RRunpackerDefault(Unpacker):
+    # Default for DNS.qry
+    def __init__(self, buf):
+        Unpacker.__init__(self, buf)
+        self.rdend = None
+    def getRRheader(self):
+        name = self.getname()
+        rrtype = self.get16bit()
+        klass = self.get16bit()
+        ttl = self.get32bit()
+        rdlength = self.get16bit()
+        self.rdend = self.offset + rdlength
+        return (name, rrtype, klass, ttl, rdlength)
+    def endRR(self):
+        if self.offset != self.rdend:
+            raise UnpackError('end of RR not reached')
+    def getCNAMEdata(self):
+        return self.getname()
+    def getHINFOdata(self):
+        if DNS.LABEL_UTF8:
+            enc = 'utf8'
+        else:
+            enc = DNS.LABEL_ENCODING
+        return str(self.getstring(), enc), str(self.getstring(),enc)
+    def getMXdata(self):
+        return self.get16bit(), self.getname()
+    def getNSdata(self):
+        return self.getname()
+    def getPTRdata(self):
+        return self.getname()
+    def getSOAdata(self):
+        return self.getname(), \
+               self.getname(), \
+               ('serial',)+(self.get32bit(),), \
+               ('refresh ',)+prettyTime(self.get32bit()), \
+               ('retry',)+prettyTime(self.get32bit()), \
+               ('expire',)+prettyTime(self.get32bit()), \
+               ('minimum',)+prettyTime(self.get32bit())
+    def getTXTdata(self):
+        tlist = []
+        while self.offset != self.rdend:
+            tlist.append(bytes(self.getstring()))
+        return tlist
+    getSPFdata = getTXTdata
+    def getAdata(self):
+        if DNS.LABEL_UTF8:
+            enc = 'utf8'
+        else:
+            enc = DNS.LABEL_ENCODING
+        return self.getaddr().decode(enc)
+    def getWKSdata(self):
+        address = self.getaddr()
+        protocol = ord(self.getbyte())
+        bitmap = self.getbytes(self.rdend - self.offset)
+        return address, protocol, bitmap
+    def getSRVdata(self):
+        """
+        _Service._Proto.Name TTL Class SRV Priority Weight Port Target
+        """
+        priority = self.get16bit()
+        weight = self.get16bit()
+        port = self.get16bit()
+        target = self.getname()
+        #print '***priority, weight, port, target', priority, weight, port, target
+        return priority, weight, port, target
+
+class RRunpackerText(RRunpackerDefault):
     def __init__(self, buf):
         RRunpacker.__init__(self, buf)
     def getAAAAdata(self):
         return bin2addr6(self.getaddr6())
+    def getTXTdata(self):
+        if DNS.LABEL_UTF8:
+            enc = 'utf8'
+        else:
+            enc = DNS.LABEL_ENCODING
+        tlist = []
+        while self.offset != self.rdend:
+            tlist.append(str(self.getstring(), enc))
+        return tlist
 
-class RRunpackerInteger(RRunpacker):
+class RRunpackerInteger(RRunpackerDefault):
     def __init__(self, buf):
         RRunpacker.__init__(self, buf)
     def getAdata(self):
@@ -613,8 +683,12 @@ class Qunpacker(Unpacker):
 class Mpacker(RRpacker, Qpacker, Hpacker):
     pass
 
-class Munpacker(RRunpacker, Qunpacker, Hunpacker):
-    # Default results
+class Munpacker(RRunpackerDefault, Qunpacker, Hunpacker):
+    # Default results for DNS.req
+    pass
+
+class MunpackerDefault(RRunpacker, Qunpacker, Hunpacker):
+    # Default results for DNS.qry
     pass
 
 class MunpackerText(RRunpackerText, Qunpacker, Hunpacker):

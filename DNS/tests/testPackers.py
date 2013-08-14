@@ -354,7 +354,7 @@ class testPackingOfTXT(PackerTestCase):
     def doUnpack(self, u):
         return u.getTXTdata()
     packerExpectedResult = b'\x08ekit-inc\x03com\x00\x00\x10\x00\x01\x00\x00\x0e\x10\x00\x16\x15this is a text record'
-    unpackerExpectedResult = (('ekit-inc.com', 16, 1, 3600), ['this is a text record'])
+    unpackerExpectedResult = (('ekit-inc.com', 16, 1, 3600), [b'this is a text record'])
 
 # check what the maximum/minimum &c of TXT records are.
 class testPackingOfTXT2(PackerTestCase):

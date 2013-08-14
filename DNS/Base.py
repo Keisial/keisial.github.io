@@ -98,6 +98,7 @@ class DnsRequest:
         self.argparse(name,args)
         self.defaults = self.args
         self.tid = 0
+        self.resulttype = ''
 
     def argparse(self,name,args):
         if not name and 'name' in self.defaults:
@@ -166,8 +167,10 @@ class DnsRequest:
 
     def processReply(self):
         self.args['elapsed']=(self.time_finish-self.time_start)*1000
-        if self.resulttype == 'default':
+        if not self.resulttype:
             u = Lib.Munpacker(self.reply)
+        elif self.resulttype == 'default':
+            u = Lib.MunpackerDefault(self.reply)
         elif self.resulttype == 'binary':
             u = Lib.MunpackerBinary(self.reply)
         elif self.resulttype == 'text':
@@ -214,7 +217,7 @@ class DnsRequest:
         self.getSource()
         self.s.connect((self.ns,self.port))
 
-    def req(self,*name,**args):
+    def qry(self,*name,**args):
         '''
         Request function for the DnsRequest class.  In addition to standard
         DNS args, the special pydns arg 'resulttype' can optionally be passed.
@@ -239,6 +242,58 @@ class DnsRequest:
             self.resulttype = self.args['resulttype']
         else:
             self.resulttype = 'default'
+        if type(self.args['qtype']) == bytes or type(self.args['qtype']) == str:
+            try:
+                qtype = getattr(Type, str(self.args['qtype'].upper()))
+            except AttributeError:
+                raise ArgumentError('unknown query type')
+        else:
+            qtype = self.args['qtype']
+        if 'name' not in self.args:
+            print((self.args))
+            raise ArgumentError('nothing to lookup')
+        qname = self.args['name']
+        if qtype == Type.AXFR and protocol != 'tcp':
+            print('Query type AXFR, protocol forced to TCP')
+            protocol = 'tcp'
+        #print('QTYPE %d(%s)' % (qtype, Type.typestr(qtype)))
+        m = Lib.Mpacker()
+        # jesus. keywords and default args would be good. TODO.
+        m.addHeader(self.tid,
+              0, opcode, 0, 0, rd, 0, 0, 0,
+              1, 0, 0, 0)
+        m.addQuestion(qname, qtype, Class.IN)
+        self.request = m.getbuf()
+        try:
+            if protocol == 'udp':
+                self.sendUDPRequest(server)
+            else:
+                self.sendTCPRequest(server)
+        except socket.error as reason:
+            raise SocketError(reason)
+        if self.async:
+            return None
+        else:
+            return self.response
+
+    def req(self,*name,**args):
+        " needs a refactoring "
+        self.argparse(name,args)
+        #if not self.args:
+        #    raise ArgumentError, 'reinitialize request before reuse'
+        try:
+            if self.args['resulttype']:
+                raise ArgumentError('Restulttype {0} set with DNS.req, use DNS.qry to specify result type.'(format(self.args['resulttype'])))
+        except:
+            # resulttype isn't set and that's what we want for DNS.req
+            pass
+        protocol = self.args['protocol']
+        self.port = self.args['port']
+        self.tid = random.randint(0,65535)
+        self.timeout = self.args['timeout'];
+        opcode = self.args['opcode']
+        rd = self.args['rd']
+        server=self.args['server']
         if type(self.args['qtype']) == bytes or type(self.args['qtype']) == str:
             try:
                 qtype = getattr(Type, str(self.args['qtype'].upper()))

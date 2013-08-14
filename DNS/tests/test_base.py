@@ -28,19 +28,19 @@ class TestBase(unittest.TestCase):
         # try with asking for strings, and asking for bytes
         dnsobj = DNS.DnsRequest('example.org')
         
-        a_response = dnsobj.req(qtype='A', resulttype='text')
+        a_response = dnsobj.qry(qtype='A', resulttype='text')
         self.assertTrue(a_response.answers)
         # is the result vaguely ipv4 like?
         self.assertEqual(a_response.answers[0]['data'].count('.'), 3)
         self.assertEqual(a_response.answers[0]['data'],'93.184.216.119')
 
-        ad_response = dnsobj.req(qtype='A')
+        ad_response = dnsobj.qry(qtype='A')
         self.assertTrue(ad_response.answers)
         # is the result vaguely ipv4 like?
         self.assertEqual(ad_response.answers[0]['data'].count('.'), 3)
         self.assertEqual(ad_response.answers[0]['data'],'93.184.216.119')
 
-        ab_response = dnsobj.req(qtype='A', resulttype='binary')
+        ab_response = dnsobj.qry(qtype='A', resulttype='binary')
         self.assertTrue(ab_response.answers)
         # is the result ipv4 binary like?
         self.assertEqual(len(ab_response.answers[0]['data']), 4)
@@ -48,7 +48,7 @@ class TestBase(unittest.TestCase):
             assertIsByte(b)
         self.assertEqual(ab_response.answers[0]['data'],b']\xb8\xd8w')
 
-        ai_response = dnsobj.req(qtype='A', resulttype='integer')
+        ai_response = dnsobj.qry(qtype='A', resulttype='integer')
         self.assertTrue(ai_response.answers)
         self.assertEqual(ai_response.answers[0]['data'],1572395127)
 
@@ -56,14 +56,14 @@ class TestBase(unittest.TestCase):
     def testDnsRequestAAAA(self):
         dnsobj = DNS.DnsRequest('example.org')
         
-        aaaa_response = dnsobj.req(qtype='AAAA', resulttype='text')
+        aaaa_response = dnsobj.qry(qtype='AAAA', resulttype='text')
         self.assertTrue(aaaa_response.answers)
         # does the result look like an ipv6 address?
         self.assertTrue(':' in aaaa_response.answers[0]['data'])
         self.assertEqual(aaaa_response.answers[0]['data'],'2606:2800:220:6d:26bf:1447:1097:aa7')
 
         # default is returning binary instead of text
-        aaaad_response = dnsobj.req(qtype='AAAA')
+        aaaad_response = dnsobj.qry(qtype='AAAA')
         self.assertTrue(aaaad_response.answers)
         # does the result look like a binary ipv6 address?
         self.assertEqual(len(aaaad_response.answers[0]['data']) , 16)
@@ -71,7 +71,7 @@ class TestBase(unittest.TestCase):
             assertIsByte(b)
         self.assertEqual(aaaad_response.answers[0]['data'],b'&\x06(\x00\x02 \x00m&\xbf\x14G\x10\x97\n\xa7')
         
-        aaaab_response = dnsobj.req(qtype='AAAA', resulttype='binary')
+        aaaab_response = dnsobj.qry(qtype='AAAA', resulttype='binary')
         self.assertTrue(aaaab_response.answers)
         # is it ipv6 looking?
         self.assertEqual(len(aaaab_response.answers[0]['data']) , 16)
@@ -79,19 +79,19 @@ class TestBase(unittest.TestCase):
             assertIsByte(b)
         self.assertEqual(aaaab_response.answers[0]['data'],b'&\x06(\x00\x02 \x00m&\xbf\x14G\x10\x97\n\xa7')
         # IPv6 decimal
-        aaaai_response = dnsobj.req(qtype='AAAA', resulttype='integer')
+        aaaai_response = dnsobj.qry(qtype='AAAA', resulttype='integer')
         self.assertTrue(aaaai_response.answers)
         self.assertEqual(aaaai_response.answers[0]['data'], 50542628918019815862290244053507705511)
 
     def testDnsRequestEmptyMX(self):
         dnsobj = DNS.DnsRequest('example.org')
 
-        mx_empty_response = dnsobj.req(qtype='MX')
+        mx_empty_response = dnsobj.qry(qtype='MX')
         self.assertFalse(mx_empty_response.answers)
 
     def testDnsRequestMX(self):
         dnsobj = DNS.DnsRequest('ietf.org')
-        mx_response = dnsobj.req(qtype='MX')
+        mx_response = dnsobj.qry(qtype='MX')
         self.assertTrue(mx_response.answers[0])
         # is hard coding a remote address a good idea?
         # I think it's unavoidable. - sk
@@ -102,7 +102,7 @@ class TestBase(unittest.TestCase):
 
     def testDnsRequestSrv(self):
         dnsobj = DNS.Request(qtype='srv')
-        respdef = dnsobj.req('_ldap._tcp.openldap.org')
+        respdef = dnsobj.qry('_ldap._tcp.openldap.org')
         self.assertTrue(respdef.answers)
         data = respdef.answers[0]['data']
         self.assertEqual(len(data), 4)
@@ -112,28 +112,28 @@ class TestBase(unittest.TestCase):
     def testDkimRequest(self):
         q = '20120113._domainkey.google.com'
         dnsobj = DNS.Request(q, qtype='txt')
-        resp = dnsobj.req()
+        resp = dnsobj.qry()
         
         self.assertTrue(resp.answers)
-        # should the result be bytes or a string?
+        # should the result be bytes or a string? (Bytes, we finally settled on bytes)
         data = resp.answers[0]['data']
-        self.assertTrue(isinstance(data[0], str))
-        self.assertTrue(data[0].startswith('k='))
+        self.assertFalse(isinstance(data[0], str))
+        self.assertTrue(data[0].startswith(b'k=rsa'))
 
     def testDNSRequestTXT(self):
         dnsobj = DNS.DnsRequest('fail.kitterman.org')
 
-        respdef = dnsobj.req(qtype='TXT')
+        respdef = dnsobj.qry(qtype='TXT')
         self.assertTrue(respdef.answers)
         data = respdef.answers[0]['data']
-        self.assertEqual(data, ['v=spf1 -all'])
+        self.assertEqual(data, [b'v=spf1 -all'])
 
-        resptext = dnsobj.req(qtype='TXT', resulttype='text')
+        resptext = dnsobj.qry(qtype='TXT', resulttype='text')
         self.assertTrue(resptext.answers)
         data = resptext.answers[0]['data']
         self.assertEqual(data, ['v=spf1 -all'])
 
-        respbin = dnsobj.req(qtype='TXT', resulttype='binary')
+        respbin = dnsobj.qry(qtype='TXT', resulttype='binary')
         self.assertTrue(respbin.answers)
         data = respbin.answers[0]['data']
         self.assertEqual(data, [b'\x0bv=spf1 -all'])
@@ -142,13 +142,93 @@ class TestBase(unittest.TestCase):
         """Can we lookup an internationalized domain name?"""
         dnsobj = DNS.DnsRequest('xn--hxajbheg2az3al.xn--jxalpdlp')
         unidnsobj = DNS.DnsRequest('παράδειγμα.δοκιμή')
-        a_resp = dnsobj.req(qtype='AAAA', resulttype='text')
-        ua_resp = unidnsobj.req(qtype='AAAA', resulttype='text')
+        a_resp = dnsobj.qry(qtype='AAAA', resulttype='text')
+        ua_resp = unidnsobj.qry(qtype='AAAA', resulttype='text')
         self.assertTrue(a_resp.answers)
         self.assertTrue(ua_resp.answers)
         self.assertEqual(ua_resp.answers[0]['data'], 
                          a_resp.answers[0]['data'])
-            
+
+    # Test defaults with legacy DNS.req
+
+    def testDnsRequestAD(self):
+        # try with asking for strings, and asking for bytes
+        dnsob = DNS.DnsRequest('example.org')
+
+        ad_response = dnsob.req(qtype='A')
+        self.assertTrue(ad_response.answers)
+        # is the result vaguely ipv4 like?
+        self.assertEqual(ad_response.answers[0]['data'].count('.'), 3)
+        self.assertEqual(ad_response.answers[0]['data'],'93.184.216.119')
+
+    def testDnsRequestAAAAD(self):
+        dnsob = DNS.DnsRequest('example.org')
+        
+        # default is returning binary instead of text
+        aaaad_response = dnsob.req(qtype='AAAA')
+        self.assertTrue(aaaad_response.answers)
+        # does the result look like a binary ipv6 address?
+        self.assertEqual(len(aaaad_response.answers[0]['data']) , 16)
+        for b in aaaad_response.answers[0]['data']:
+            assertIsByte(b)
+        self.assertEqual(aaaad_response.answers[0]['data'],b'&\x06(\x00\x02 \x00m&\xbf\x14G\x10\x97\n\xa7')
+        
+    def testDnsRequestEmptyMXD(self):
+        dnsob = DNS.DnsRequest('example.org')
+
+        mx_empty_response = dnsob.req(qtype='MX')
+        self.assertFalse(mx_empty_response.answers)
+
+    def testDnsRequestMXD(self):
+        dnsob = DNS.DnsRequest('ietf.org')
+        mx_response = dnsob.req(qtype='MX')
+        self.assertTrue(mx_response.answers[0])
+        # is hard coding a remote address a good idea?
+        # I think it's unavoidable. - sk
+        self.assertEqual(mx_response.answers[0]['data'], (0, 'mail.ietf.org'))
+
+        m = DNS.mxlookup('ietf.org')
+        self.assertEqual(mx_response.answers[0]['data'], m[0])
+
+    def testDnsRequestSrvD(self):
+        dnsob = DNS.Request(qtype='srv')
+        respdef = dnsob.req('_ldap._tcp.openldap.org')
+        self.assertTrue(respdef.answers)
+        data = respdef.answers[0]['data']
+        self.assertEqual(len(data), 4)
+        self.assertEqual(data[2], 389)
+        self.assertTrue('openldap.org' in data[3])
+
+    def testDkimRequestD(self):
+        q = '20120113._domainkey.google.com'
+        dnsob = DNS.Request(q, qtype='txt')
+        resp = dnsob.req()
+        
+        self.assertTrue(resp.answers)
+        # should the result be bytes or a string? (Bytes, we finally settled on bytes)
+        data = resp.answers[0]['data']
+        self.assertFalse(isinstance(data[0], str))
+        self.assertTrue(data[0].startswith(b'k=rsa'))
+
+    def testDNSRequestTXTD(self):
+        dnsob = DNS.DnsRequest('fail.kitterman.org')
+
+        respdef = dnsob.req(qtype='TXT')
+        self.assertTrue(respdef.answers)
+        data = respdef.answers[0]['data']
+        self.assertEqual(data, [b'v=spf1 -all'])
+
+    def testIDND(self):
+        """Can we lookup an internationalized domain name?"""
+        dnsob = DNS.DnsRequest('xn--hxajbheg2az3al.xn--jxalpdlp')
+        unidnsob = DNS.DnsRequest('παράδειγμα.δοκιμή')
+        a_resp = dnsob.req(qtype='AAAA', resulttype='text')
+        ua_resp = unidnsob.req(qtype='AAAA', resulttype='text')
+        self.assertTrue(a_resp.answers)
+        self.assertTrue(ua_resp.answers)
+        self.assertEqual(ua_resp.answers[0]['data'], 
+                         a_resp.answers[0]['data'])
+    
 def test_suite():
     from unittest import TestLoader
     return TestLoader().loadTestsFromName(__name__)

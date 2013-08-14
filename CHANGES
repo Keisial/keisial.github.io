@@ -1,5 +1,9 @@
 3.1.0 UNRELEASED
- * Add options for 'resulttype' to DnsResult.req to allow for binary, integer,
+ * Add new DNS.DnsRequest.qry function to supercede DNS.DnsRequest.req to
+   allow for non-backward compatible changes to be made in .qry while
+   maintaining full backward compatibility with 3.0.3 and later in the 3.0
+   series in .req
+ * Add options for 'resulttype' to DnsResult.qry to allow for binary, integer,
    or text data to be returned for IP addresses
  * New unittest based test suite - thanks to Diane Trout
 
