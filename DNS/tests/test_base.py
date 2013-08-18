@@ -149,6 +149,18 @@ class TestBase(unittest.TestCase):
         self.assertEqual(ua_resp.answers[0]['data'], 
                          a_resp.answers[0]['data'])
 
+    def testNS(self):
+        """Lookup NS record from SOA"""
+        dnsob = DNS.DnsRequest('kitterman.com')
+        resp = dnsob.qry(qtype='SOA')
+        self.assertTrue(resp.answers)
+        primary = resp.answers[0]['data'][0]
+        self.assertEqual(primary, 'ns1.pairnic.com')
+        resp = dnsob.qry(qtype='NS',server=primary,aa=1)
+        nslist = [x['data'] for x in resp.answers]
+        nslist.sort()
+        self.assertEqual(nslist, ['NS1.PAIRNIC.com', 'NS2.PAIRNIC.com'])
+
     # Test defaults with legacy DNS.req
 
     def testDnsRequestAD(self):
@@ -228,7 +240,19 @@ class TestBase(unittest.TestCase):
         self.assertTrue(ua_resp.answers)
         self.assertEqual(ua_resp.answers[0]['data'], 
                          a_resp.answers[0]['data'])
-    
+
+    def testNSD(self):
+        """Lookup NS record from SOA"""
+        dnsob = DNS.DnsRequest('kitterman.com')
+        resp = dnsob.req(qtype='SOA')
+        self.assertTrue(resp.answers)
+        primary = resp.answers[0]['data'][0]
+        self.assertEqual(primary, 'ns1.pairnic.com')
+        resp = dnsob.req(qtype='NS',server=primary,aa=1)
+        nslist = [x['data'] for x in resp.answers]
+        nslist.sort()
+        self.assertEqual(nslist, ['NS1.PAIRNIC.com', 'NS2.PAIRNIC.com'])
+
 def test_suite():
     from unittest import TestLoader
     return TestLoader().loadTestsFromName(__name__)
