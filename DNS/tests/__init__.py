@@ -4,7 +4,7 @@ import importlib
 def test_suite():
     module_names = [
         '.testPackers',
-        '.test_base',
+        '.test_base'
     ]
     suites = []
     for m in module_names:

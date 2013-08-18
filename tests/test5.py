@@ -37,7 +37,7 @@ def GetNS(domain):
             print("Primary nameserver for domain %s is: %s"%(domain,primary))
         else:
             print("No answer to SOA query")
-        primary = ''
+            primary = ''
     r = DNS.Request(domain,qtype='NS',server=primary,aa=1).req()
     if r.header['status'] != 'NOERROR':
         Error("received status of %s when attempting to query %s for NSs"%
