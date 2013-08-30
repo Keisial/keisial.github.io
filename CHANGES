@@ -1,4 +1,6 @@
 3.1.0 UNRELEASED
+ * Raise DNSError when no nameservers have been found by the time a
+   Base.DNSRequest object is initialized
  * Add new DNS.DnsRequest.qry function to supercede DNS.DnsRequest.req to
    allow for non-backward compatible changes to be made in .qry while
    maintaining full backward compatibility with 3.0.3 and later in the 3.0

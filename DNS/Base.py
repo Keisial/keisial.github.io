@@ -99,6 +99,8 @@ class DnsRequest:
         self.defaults = self.args
         self.tid = 0
         self.resulttype = ''
+        if len(self.defaults['server']) == 0:
+            raise DNSError('No working name servers discovered')
 
     def argparse(self,name,args):
         if not name and 'name' in self.defaults:
