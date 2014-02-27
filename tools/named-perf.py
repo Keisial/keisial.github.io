@@ -21,28 +21,6 @@ def main():
     import DNS
     import socket
     import time
-
-    timer = time.time
-
-    t0 = t1 = 0
-
-    def start():
-        global t0
-        t0 = timer()
-
-    def finish():
-        global t1
-        t1 = timer()
-
-    def seconds():
-        return int(t1 - t0)
-
-    def milli():
-        return int((t1 - t0) * 1000)
-
-    def micro():
-            return int((t1 - t0) * 1000000)
-
     res = {}
     for server in servers:
         res[server] = [100000,0,0,0] # min,max,tot,failed
@@ -51,12 +29,12 @@ def main():
             for server in servers:
                 d = DNS.DnsRequest(server=server,timeout=1)
                 fail = 0
-                start()
+                timingstart = time.time()
                 try:
                     r=d.req(name=what,qtype=querytype)
                 except DNS.Error:
                     fail = 1
-                finish()
+                timingfinish = time.time()
                 if fail:
                     res[server][3] =  res[server][3] + 1
                     print("(failed)",res[server][3])
@@ -64,7 +42,7 @@ def main():
                     if r.header['ancount'] == 0:
                         print("WARNING: Server",server,"got no answers for", \
                             what, querytype)
-                    t = milli()
+                    t = int(1000 * (timingfinish - timingstart))
                     print(server,"took",t,"ms for",what,querytype)
                     res[server][0] = min(t,res[server][0])
                     res[server][1] = max(t,res[server][1])
