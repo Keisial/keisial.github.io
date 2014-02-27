@@ -12,6 +12,14 @@
 
 __version__ = '3.1.0'
 
+try:
+    import ipaddress
+except ImportError:
+    try:
+        import ipaddr as ipaddress
+    except ImportError:
+        raise Exception("py3dns 3.1 requires either ipaddress (python3.3) or ipaddr, see CHANGES for 3.1.0")
+
 from . import Type
 from . import Opcode
 from . import Status

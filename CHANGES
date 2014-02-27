@@ -7,6 +7,11 @@
    series in .req
  * Add options for 'resulttype' to DnsResult.qry to allow for binary, integer,
    or text data to be returned for IP addresses
+ * The default result type for IPv4 and IPv6 addresses in DNS.DnsRequest.qry
+   is an ipaddress object
+ * The ipaddress module is used internally.  This is included in python3.3 and
+   the ipaddr-py module from https://code.google.com/p/ipaddr-py/ can be used
+   with python3.2
  * New unittest based test suite - thanks to Diane Trout
 
 3.0.4 Wed Aug  7 02:25:00 EDT 2013
