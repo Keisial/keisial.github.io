@@ -140,10 +140,10 @@ class TestBase(unittest.TestCase):
 
     def testIDN(self):
         """Can we lookup an internationalized domain name?"""
-        dnsobj = DNS.DnsRequest('xn--hxajbheg2az3al.xn--jxalpdlp')
-        unidnsobj = DNS.DnsRequest('παράδειγμα.δοκιμή')
-        a_resp = dnsobj.qry(qtype='AAAA', resulttype='text')
-        ua_resp = unidnsobj.qry(qtype='AAAA', resulttype='text')
+        dnsobj = DNS.DnsRequest('xn--bb-eka.at')
+        unidnsobj = DNS.DnsRequest('öbb.at')
+        a_resp = dnsobj.qry(qtype='A', resulttype='text')
+        ua_resp = unidnsobj.qry(qtype='A', resulttype='text')
         self.assertTrue(a_resp.answers)
         self.assertTrue(ua_resp.answers)
         self.assertEqual(ua_resp.answers[0]['data'], 
@@ -232,10 +232,10 @@ class TestBase(unittest.TestCase):
 
     def testIDND(self):
         """Can we lookup an internationalized domain name?"""
-        dnsob = DNS.DnsRequest('xn--hxajbheg2az3al.xn--jxalpdlp')
-        unidnsob = DNS.DnsRequest('παράδειγμα.δοκιμή')
-        a_resp = dnsob.req(qtype='AAAA', resulttype='text')
-        ua_resp = unidnsob.req(qtype='AAAA', resulttype='text')
+        dnsob = DNS.DnsRequest('xn--bb-eka.at')
+        unidnsob = DNS.DnsRequest('öbb.at')
+        a_resp = dnsob.req(qtype='A', resulttype='text')
+        ua_resp = unidnsob.req(qtype='A', resulttype='text')
         self.assertTrue(a_resp.answers)
         self.assertTrue(ua_resp.answers)
         self.assertEqual(ua_resp.answers[0]['data'], 
