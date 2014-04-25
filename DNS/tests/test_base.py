@@ -3,6 +3,7 @@
 
 import DNS
 import unittest
+import ipaddress
 
 def assertIsByte(b):
     assert b >= 0
@@ -34,11 +35,10 @@ class TestBase(unittest.TestCase):
         self.assertEqual(a_response.answers[0]['data'].count('.'), 3)
         self.assertEqual(a_response.answers[0]['data'],'93.184.216.119')
 
+        # Default result type for .qry object is an ipaddress object
         ad_response = dnsobj.qry(qtype='A')
         self.assertTrue(ad_response.answers)
-        # is the result vaguely ipv4 like?
-        self.assertEqual(ad_response.answers[0]['data'].count('.'), 3)
-        self.assertEqual(ad_response.answers[0]['data'],'93.184.216.119')
+        self.assertEqual(ad_response.answers[0]['data'],ipaddress.IPv4Address('93.184.216.119'))
 
         ab_response = dnsobj.qry(qtype='A', resulttype='binary')
         self.assertTrue(ab_response.answers)
@@ -54,6 +54,7 @@ class TestBase(unittest.TestCase):
 
 
     def testDnsRequestAAAA(self):
+        import ipaddress
         dnsobj = DNS.DnsRequest('example.org')
         
         aaaa_response = dnsobj.qry(qtype='AAAA', resulttype='text')
@@ -62,14 +63,10 @@ class TestBase(unittest.TestCase):
         self.assertTrue(':' in aaaa_response.answers[0]['data'])
         self.assertEqual(aaaa_response.answers[0]['data'],'2606:2800:220:6d:26bf:1447:1097:aa7')
 
-        # default is returning binary instead of text
+        # default is returning ipaddress object
         aaaad_response = dnsobj.qry(qtype='AAAA')
         self.assertTrue(aaaad_response.answers)
-        # does the result look like a binary ipv6 address?
-        self.assertEqual(len(aaaad_response.answers[0]['data']) , 16)
-        for b in aaaad_response.answers[0]['data']:
-            assertIsByte(b)
-        self.assertEqual(aaaad_response.answers[0]['data'],b'&\x06(\x00\x02 \x00m&\xbf\x14G\x10\x97\n\xa7')
+        self.assertEqual(aaaad_response.answers[0]['data'],ipaddress.IPv6Address('2606:2800:220:6d:26bf:1447:1097:aa7'))
         
         aaaab_response = dnsobj.qry(qtype='AAAA', resulttype='binary')
         self.assertTrue(aaaab_response.answers)

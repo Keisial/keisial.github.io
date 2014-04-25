@@ -517,10 +517,27 @@ class RRunpackerDefault(RRunpacker):
     def __init__(self, buf):
         RRunpacker.__init__(self, buf)
         self.rdend = None
+    def getAdata(self):
+        import ipaddress
+        if DNS.LABEL_UTF8:
+            enc = 'utf8'
+        else:
+            enc = DNS.LABEL_ENCODING
+        x = socket.inet_aton(self.getaddr().decode(enc))
+        return ipaddress.IPv4Address(struct_unpack("!I", x)[0])
+    def getAAAAdata(self):
+        import ipaddress
+        return ipaddress.IPv6Address(bin2addr6(self.getaddr6()))
 
 class RRunpackerText(RRunpackerDefault):
     def __init__(self, buf):
         RRunpackerDefault.__init__(self, buf)
+    def getAdata(self):
+        if DNS.LABEL_UTF8:
+            enc = 'utf8'
+        else:
+            enc = DNS.LABEL_ENCODING
+        return self.getaddr().decode(enc)
     def getAAAAdata(self):
         return bin2addr6(self.getaddr6())
     def getTXTdata(self):
