@@ -157,9 +157,9 @@ class TestBase(unittest.TestCase):
         primary = resp.answers[0]['data'][0]
         self.assertEqual(primary, 'ns1.pairnic.com')
         resp = dnsob.qry(qtype='NS',server=primary,aa=1)
-        nslist = [x['data'] for x in resp.answers]
+        nslist = [x['data'].lower() for x in resp.answers]
         nslist.sort()
-        self.assertEqual(nslist, ['NS1.PAIRNIC.com', 'NS2.PAIRNIC.com'])
+        self.assertEqual(nslist, ['ns1.pairnic.com', 'ns2.pairnic.com'])
 
     # Test defaults with legacy DNS.req
 
@@ -249,9 +249,9 @@ class TestBase(unittest.TestCase):
         primary = resp.answers[0]['data'][0]
         self.assertEqual(primary, 'ns1.pairnic.com')
         resp = dnsob.req(qtype='NS',server=primary,aa=1)
-        nslist = [x['data'] for x in resp.answers]
+        nslist = [x['data'].lower() for x in resp.answers]
         nslist.sort()
-        self.assertEqual(nslist, ['NS1.PAIRNIC.com', 'NS2.PAIRNIC.com'])
+        self.assertEqual(nslist, ['ns1.pairnic.com', 'ns2.pairnic.com'])
 
 def test_suite():
     from unittest import TestLoader
