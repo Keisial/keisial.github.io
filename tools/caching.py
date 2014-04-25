@@ -19,7 +19,7 @@ class DNSCache:
 
     def lookup(self,IP = None,name = None):
         import DNS
-	now = time.time()
+        now = time.time()
         if (not IP) and (not name):
             return None
         if IP:
@@ -36,7 +36,7 @@ class DNSCache:
             cache = self.forCache
             qt = 'a'
         if name in cache:
-	    # Check if it's timed out or not
+            # Check if it's timed out or not
             if cache[name][1] < now:
                 del(cache[name])
             else:
@@ -48,7 +48,7 @@ class DNSCache:
             return 'Timeout'
         if len(x.response.answers) > 0:
             cache[name] = ( x.response.answers[0]['data'], x.time_finish + 
-			    x.response.answers[0]['ttl'])
+                            x.response.answers[0]['ttl'])
         else:
             cache[name] = (None,now+self.negCache)
         return cache[name][0]
