@@ -6,7 +6,7 @@ Homepage: https://launchpad.net/py3dns
 
 This code is covered by the standard Python License. See LICENSE for details.
 
-Changes for Python3 port © 2011-13 Scott Kitterman <scott@kitterman.com>
+Changes for Python3 port © 2011-14 Scott Kitterman <scott@kitterman.com>
 
     Base functionality. Request and Response classes, that sort of thing.
 """

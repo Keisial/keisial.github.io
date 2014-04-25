@@ -1,9 +1,14 @@
-Release 3.1.0 UNRELEASED
+Release 3.1.0 Thu Apr 24 23:52:00 EDT 2014
 
 More choices about result types are provided in 3.1.0.  To specify resulttype,
-in a DnsRequest object, use DnsRequest.req(resulttype='binary/text/default').
-Default equates to pydns defaults.  TXT and SPF records data are returned as
-strings by default, this matches what dnspython3 returns.
+in a DnsRequest object, use the new function DnsRequest.qry
+(resulttype='binary/text/default'). DnsRequest.qry returns ipaddress objects
+for A and AAAA queries by defaults.  Other defaults are the same as
+DnsRequest.req.  Continue to use DnsRequest.req for exact backward
+compatibility with pydns and older py3dns defaults.  TXT and SPF record data
+are returned as strings by default, this matches what dnspython3 returns.
+
+The ipaddress module is used internally now.  See CHANGES for details.
 
 Release 3.0.3 Wed May 29 00:05:00 EDT 2013
 
