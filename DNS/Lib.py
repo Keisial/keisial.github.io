@@ -194,7 +194,7 @@ class Packer:
             else:
                 print('DNS.Lib.Packer.addname:')
                 print('warning: pointer too big')
-            buf = buf + (bytes(chr(n), enc) + label)
+            buf = buf + bytes([n]) + label
         if pointer:
             buf = buf + (pack16bit(pointer | 0xC000))
         else:

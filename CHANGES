@@ -4,6 +4,9 @@
    - Patch thanks to Arfrever Frehtes Taifersar Arahesis
  * Correct error in _DiscoverNameServers from OS X implementation in 3.0.1
    that prevents name server discovery on windows (LP: #1442424)
+ * Correct encoding issue with label length to fix issues with DNS labels
+   greater than 46 characters (LP: #1502853)
+   - Thanks to Petr Czepiec for the patch
 
 3.1.0 Thu Apr 24 23:52:00 EDT 2014
  * Raise DNSError when no nameservers have been found by the time a
