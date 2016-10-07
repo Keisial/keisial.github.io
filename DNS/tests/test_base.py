@@ -3,7 +3,10 @@
 
 import DNS
 import unittest
-import ipaddress
+try:
+    import ipaddress
+except ImportError:
+    import ipaddr as ipaddress
 
 def assertIsByte(b):
     assert b >= 0
@@ -54,7 +57,6 @@ class TestBase(unittest.TestCase):
 
 
     def testDnsRequestAAAA(self):
-        import ipaddress
         dnsobj = DNS.DnsRequest('example.org')
         
         aaaa_response = dnsobj.qry(qtype='AAAA', resulttype='text')

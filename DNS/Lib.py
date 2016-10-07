@@ -36,6 +36,11 @@ import DNS
 
 from .Base import DNSError
 
+try:
+    import ipaddress
+except ImportError:
+    import ipaddr as ipaddress
+
 LABEL_UTF8 = False
 LABEL_ENCODING = 'idna'
 
@@ -518,7 +523,6 @@ class RRunpackerDefault(RRunpacker):
         RRunpacker.__init__(self, buf)
         self.rdend = None
     def getAdata(self):
-        import ipaddress
         if DNS.LABEL_UTF8:
             enc = 'utf8'
         else:
@@ -526,7 +530,6 @@ class RRunpackerDefault(RRunpacker):
         x = socket.inet_aton(self.getaddr().decode(enc))
         return ipaddress.IPv4Address(struct_unpack("!I", x)[0])
     def getAAAAdata(self):
-        import ipaddress
         return ipaddress.IPv6Address(bin2addr6(self.getaddr6()))
 
 class RRunpackerText(RRunpackerDefault):
