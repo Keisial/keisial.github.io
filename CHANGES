@@ -2,6 +2,8 @@
  * Update test suite for new example.org IP addresses
  * Fix missing bits for use of ipaddr-py with python3 < 3.3 (LP: #1319611)
    - Patch thanks to Arfrever Frehtes Taifersar Arahesis
+ * Correct error in _DiscoverNameServers from OS X implementation in 3.0.1
+   that prevents name server discovery on windows (LP: #1442424)
 
 3.1.0 Thu Apr 24 23:52:00 EDT 2014
  * Raise DNSError when no nameservers have been found by the time a
