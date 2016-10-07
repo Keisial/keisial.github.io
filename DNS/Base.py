@@ -454,7 +454,7 @@ class DnsAsyncRequest(DnsRequest,asyncore.dispatcher_with_send):
 def ParseOSXSysConfig():
     "Retrieves the current Mac OS X resolver settings using the scutil(8) command."
     import os, re
-    scutil = os.popen('scutil --dns', 'r')
+    scutil = os.popen('/usr/sbin/scutil --dns', 'r')
     res_re = re.compile('^\s+nameserver[]0-9[]*\s*\:\s*(\S+)$')
     sets = [ ]
     currentset = None

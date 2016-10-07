@@ -7,6 +7,8 @@
  * Correct encoding issue with label length to fix issues with DNS labels
    greater than 46 characters (LP: #1502853)
    - Thanks to Petr Czepiec for the patch
+ * Use full path to /usr/sbin/scutil on OS X since scutil is not always in the
+   search path (LP: #1630844)
 
 3.1.0 Thu Apr 24 23:52:00 EDT 2014
  * Raise DNSError when no nameservers have been found by the time a
