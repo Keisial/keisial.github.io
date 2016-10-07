@@ -1,4 +1,4 @@
-3.1.1 UNRELEASED
+3.1.1 Thu, 06 Oct 2016 22:00:13 -0400
  * Update test suite for new example.org IP addresses
  * Fix missing bits for use of ipaddr-py with python3 < 3.3 (LP: #1319611)
    - Patch thanks to Arfrever Frehtes Taifersar Arahesis
