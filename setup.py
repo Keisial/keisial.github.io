@@ -2,7 +2,7 @@ import sys,os
 
 sys.path.insert(0,os.getcwd())
 
-from distutils.core import setup
+from setuptools import setup
 
 import DNS
 
@@ -20,6 +20,7 @@ setup(
       maintainer_email="scott@kitterman.com",
       url = 'https://launchpad.net/py3dns',
       packages = ['DNS'], keywords = ['DNS'],
+      zip_safe = False,
       classifiers = [
         'Development Status :: 5 - Production/Stable',
         'Environment :: No Input/Output (Daemon)',

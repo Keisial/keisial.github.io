@@ -1,6 +1,7 @@
 3.2.0 Mon, 23 Jul 2018
  * Rename internal use of async since it is a reserved word in python3.7
    (LP: #1776027)
+ * Switch from distutils to setuptools
 
 3.1.1 Thu, 06 Oct 2016 22:00:13 -0400
  * Update test suite for new example.org IP addresses

@@ -1,3 +1,9 @@
+Release 3.2.0 Mon Jul 23 2018
+
+Switched from distutils to setuptools because "it's the future".  It is
+unlikely to have end user impact.  For python3.3+ no additional dependencies
+are required.
+
 Release 3.1.0 Thu Apr 24 23:52:00 EDT 2014
 
 More choices about result types are provided in 3.1.0.  To specify resulttype,
