@@ -6,4 +6,4 @@ include CHANGES
 include MANIFEST.in
 include *.txt
 include setup.*
-include *.spec
+include test.py
