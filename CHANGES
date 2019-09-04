@@ -4,6 +4,8 @@
  * Use errno.EADDRINUSE instead of the hard coded Linux value for improved
    portability (LP: #1793540)
  * Update test suite to correct for use of no longer existing DNS records
+ * Set timeout=1 for tests so testing with a non-responsive nameserver will
+   finish in a reasonable time
 
 3.2.0 Mon, 23 Jul 2018
  * Rename internal use of async since it is a reserved word in python3.7
