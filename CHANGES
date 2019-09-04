@@ -1,3 +1,6 @@
+3.2.1
+ * Fixed DNS.req resulttype error format (LP: #1842423)
+
 3.2.0 Mon, 23 Jul 2018
  * Rename internal use of async since it is a reserved word in python3.7
    (LP: #1776027)

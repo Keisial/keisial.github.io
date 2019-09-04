@@ -285,7 +285,7 @@ class DnsRequest:
         #    raise ArgumentError, 'reinitialize request before reuse'
         try:
             if self.args['resulttype']:
-                raise ArgumentError('Restulttype {0} set with DNS.req, use DNS.qry to specify result type.'(format(self.args['resulttype'])))
+                raise ArgumentError('Restulttype {0} set with DNS.req, use DNS.qry to specify result type.'.format(self.args['resulttype']))
         except:
             # resulttype isn't set and that's what we want for DNS.req
             pass
