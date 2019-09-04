@@ -1,4 +1,5 @@
 DNS/__pycache__/
+DNS/tests/__pycache__/
 dist/
 py3dns.egg-info/
 
