@@ -13,45 +13,47 @@ from . Base import ServerError
 class NoDataError(IndexError): pass
 class StatusError(IndexError): pass
 
-def revlookup(name):
+def revlookup(name,timeout=30):
     "convenience routine for doing a reverse lookup of an address"
     if Base.defaults['server'] == []: Base.DiscoverNameServers()
-    names = revlookupall(name)
+    names = revlookupall(name, timeout)
     if not names: return None
     return names[0]     # return shortest name
 
-def revlookupall(name):
+def revlookupall(name,timeout=30):
     "convenience routine for doing a reverse lookup of an address"
     # FIXME: check for IPv6
     a = name.split('.')
     a.reverse()
     b = '.'.join(a)+'.in-addr.arpa'
-    names = dnslookup(b, qtype = 'ptr')
+    qtype='ptr'
+    names = dnslookup(b, qtype, timeout)
     # this will return all records.
     names.sort(key=str.__len__)
     return names
 
-def dnslookup(name,qtype):
+def dnslookup(name,qtype,timeout=30):
     "convenience routine to return just answer data for any query type"
     if Base.defaults['server'] == []: Base.DiscoverNameServers()
-    result = Base.DnsRequest(name=name, qtype=qtype).req()
+    result = Base.DnsRequest(name=name, qtype=qtype).req(timeout=timeout)
     if result.header['status'] != 'NOERROR':
         raise ServerError("DNS query status: %s" % result.header['status'],
             result.header['rcode'])
     elif len(result.answers) == 0 and Base.defaults['server_rotate']:
         # check with next DNS server
-        result = Base.DnsRequest(name=name, qtype=qtype).req()
+        result = Base.DnsRequest(name=name, qtype=qtype).req(timeout=timeout)
     if result.header['status'] != 'NOERROR':
         raise ServerError("DNS query status: %s" % result.header['status'],
             result.header['rcode'])
     return [x['data'] for x in result.answers]
 
-def mxlookup(name):
+def mxlookup(name,timeout=30):
     """
     convenience routine for doing an MX lookup of a name. returns a
     sorted list of (preference, mail exchanger) records
     """
-    l = dnslookup(name, qtype = 'mx')
+    qtype = 'mx'
+    l = dnslookup(name, qtype, timeout)
     return l
 
 #
