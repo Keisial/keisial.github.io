@@ -109,7 +109,7 @@ class TestBase(unittest.TestCase):
         self.assertTrue('openldap.org' in data[3])
 
     def testDkimRequest(self):
-        q = '20120113._domainkey.google.com'
+        q = '20161025._domainkey.google.com'
         dnsobj = DNS.Request(q, qtype='txt')
         resp = dnsobj.qry()
         
@@ -211,7 +211,7 @@ class TestBase(unittest.TestCase):
         self.assertTrue('openldap.org' in data[3])
 
     def testDkimRequestD(self):
-        q = '20120113._domainkey.google.com'
+        q = '20161025._domainkey.google.com'
         dnsob = DNS.Request(q, qtype='txt')
         resp = dnsob.req()
         
