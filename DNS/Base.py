@@ -12,6 +12,7 @@ Changes for Python3 port © 2011-14 Scott Kitterman <scott@kitterman.com>
 """
 
 import socket, string, types, time, select
+import errno
 from . import Type,Class,Opcode
 import asyncore
 #
@@ -212,8 +213,8 @@ class DnsRequest:
                 self.s.bind(('', source_port))
                 break
             except socket.error as msg: 
-                # Error 98, 'Address already in use'
-                if msg.errno != 98: raise
+                # errno.EADDRINUSE, 'Address already in use'
+                if msg.errno != errno.EADDRINUSE: raise
 
     def conn(self):
         self.getSource()
