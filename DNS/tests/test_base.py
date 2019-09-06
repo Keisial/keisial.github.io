@@ -83,7 +83,7 @@ class TestBase(unittest.TestCase):
         self.assertEqual(aaaai_response.answers[0]['data'], 50542628918019813867414319910101719366)
 
     def testDnsRequestEmptyMX(self):
-        dnsobj = DNS.DnsRequest('example.org')
+        dnsobj = DNS.DnsRequest('mail.kitterman.org')
 
         mx_empty_response = dnsobj.qry(qtype='MX', timeout=1)
         self.assertFalse(mx_empty_response.answers)
@@ -185,7 +185,7 @@ class TestBase(unittest.TestCase):
         self.assertEqual(aaaad_response.answers[0]['data'],b'&\x06(\x00\x02 \x00\x01\x02H\x18\x93%\xc8\x19F')
         
     def testDnsRequestEmptyMXD(self):
-        dnsob = DNS.DnsRequest('example.org')
+        dnsob = DNS.DnsRequest('mail.kitterman.org')
 
         mx_empty_response = dnsob.req(qtype='MX', timeout=1)
         self.assertFalse(mx_empty_response.answers)
